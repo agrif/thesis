@@ -1,0 +1,34 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% Package: sa-draftwater
+% File(s): sa-draftwater.sty
+% 
+% Dependencies: eso-pic
+% 
+% Description: Provides commands for placing ``DRAFT'' watermark on
+%              pages. It works with pdftex and allows one to choose 
+%              which pages to watermark. Existing packages do not 
+%              do both as far as I know.
+% 
+% Bugs/known Issues:
+% 
+% Future Improvements:
+%  - draft and final options (when loading graphicx)
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{sa-draftwater}[2010/04/28 v0.5 SA's DRAFT watermark package]
+
+\RequirePackage{eso-pic}
+\RequirePackage[final]{graphicx}
+
+%%%%%%%%%%%%%%%%%%%%%%%%% The Commands %%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand\draftwaterpage{
+\AddToShipoutPicture*{\resizebox{0.9\pdfpagewidth}{0.9\pdfpageheight}{\rotatebox{60}{\color[gray]{0.8}\hspace*{5mm}\textsc{DRAFT \today}}}}}
+
+\newcommand\draftwaterall{
+\AddToShipoutPicture{\resizebox{0.9\pdfpagewidth}{0.9\pdfpageheight}{\rotatebox{60}{\color[gray]{0.8}\hspace*{5mm}\textsc{DRAFT \today}}}}}

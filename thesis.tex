@@ -1,0 +1,99 @@
+\documentclass[11pt,draft,phd]{osudiss-2} 
+
+\usepackage[english]{babel}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\usepackage{siunitx}
+\usepackage{bm}
+
+%\usepackage[acronym, section=chapter]{glossaries}
+%\makeglossaries
+%\include{acronyms}
+
+\usepackage{lipsum}
+
+% style stuff
+\renewcommand\bibname{References}
+\bibliographystyle{ieeetr}
+\nocite{*} % Display all refs
+
+% custom commands
+\DeclareMathOperator{\Tanh}{\mathbf{tanh}}
+
+\title{Essential Reservoir Computing}
+\author{Aaron Griffith}
+\advisorname{Daniel J. Gauthier}
+\degree{Doctor of Philosophy}
+\member{Amy Connolly}
+\member{Ciriyam Jayaprakash}
+\member{Gregory Lafyatis}
+\authordegrees{B.S.}
+\graduationyear{2021}
+\unit{Graduate Program in Physics}
+
+\begin{document}
+
+\frontmatter
+
+\begin{abstract}
+  An abstract goes here. It should be less than \textbf{500 words}.
+\end{abstract}
+
+\dedication{For my parents Gregory and Mary Lea, and my brother Nathan.}
+
+\begin{acknowledgments}
+  This work would not have been possible without the committed support
+  of my advisor, Daniel J. Gauthier, or my insightful collaborators,
+  including Wendson A.~S. Barbosa, Daniel Canaday, and Andrew
+  Pomerance.
+
+  In addition, many discussions over the years have
+  re-contextualized my understanding of reservoir computers. I would
+  specifically like to thank Edward Ott, Brian Hunt, Michelle Girvan,
+  and Erik Bollt.
+\end{acknowledgments}
+
+\begin{vita}
+  \dateitem{2009-2014}{B.S., Mathematics and Physics \\ The Ohio State University}
+  \dateitem{2015-2016}{Graduate Teaching Associate \\ Department of Physics \\ The Ohio State University}
+  \dateitem{2016-2021}{Graduate Research Associate \\ Department of Physics \\ The Ohio State University}
+
+  \begin{publist}
+    \pubitem{D.~Canaday, A.~Griffith, and D.J.~Gauthier, `Rapid Time Series Prediction with a Hardware-Based Reservoir Computer,' \textit{Chaos} \textbf{28}, 123119 (2018).} %https://doi.org/10.1063/1.5048199
+    \pubitem{A.~Griffith, A.~Pomerance, D.J.~Gauthier, `Forecasting Chaotic Systems with Very Low Connectivity Reservoir Computers,' \textit{Chaos} \textbf{29}, 123108 (2019).} % https://doi.org/10.1063/1.5120710
+    % these are on arxiv. FIXME is arxiv ok? ??
+    % symmetry-aware via wendson, if published
+    % NG-RC if published
+  \end{publist}
+
+  \begin{fieldsstudy}
+    \majorfield{Physics}
+  \end{fieldsstudy}
+\end{vita}
+
+\tableofcontents 
+
+\clearpage
+\listoffigures 
+
+\clearpage
+\listoftables 
+
+%\clearpage
+%\PrintListofAbbreviations{List of Abbreviations}
+
+\mainmatter
+\include{1-introduction}
+
+\backmatter
+\bibliography{thesis}
+
+\appendix
+%\include{app1}
+%\include{app2}
+
+\end{document}
