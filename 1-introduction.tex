@@ -1,6 +1,105 @@
-\chapter{My First Chapter}
-\begin{quote}
-\lipsum[1]
-\end{quote}
+\chapter{Introduction}\label{ch:introduction}
 
-\lipsum[1-3]
+% Goals:
+% - contextualize RC in physics
+% - new field, interest, ML physics
+% - outline rest, put important figures in intro
+% - who helped and what did I do
+
+Recently, many difficult problems have been solved using methods from
+the field of machine learning, in particular using neural
+networks. Machine learning methods work by learning solutions from
+example data alone, without the need for an existing model for that
+data.  Physicists have used neural networks to find the masses of
+particles from decay data~\cite{lonnblad1992} and separate quark and
+gluon jets in $e^+ e^-$ annihilation~\cite{csabai1991}.  In other
+fields, this approach has been used effectively on handwritten digit
+recognition~\cite{lecun1998,simard2003}, speech
+recognition~\cite{hinton2012}, and speech production~\cite{oord2016}.
+These are all problems with large sets of example data, but which are
+otherwise difficult or intractable with a more traditional programming
+approach. Put simply, it is easy to provide examples of what the
+number ``\num{2}'' looks like, while it is difficult to define what
+features a written ``\num{2}'' must have in a programming language.
+
+By its nature, many problems in physics are defined in terms of
+time-varying data. Neural networks that contain internal cycles,
+called recurrent neural networks, are a natural fit for these
+problems. The addition of cycles gives the resulting network memory
+and allows it to be used to effectively solve many time-domain
+problems, such as forecasting chaotic
+systems~\cite{garcia-pedrero2010}. However, this modification has a
+cost: recurrent neural networks take much more time to train, as the
+training algorithm takes exponentially longer to learn how to utilize
+past inputs~\cite{bengio1994,lukosevicius2009}.
+
+More recently, a new machine learning tool has emerged for dealing
+with time-domain problems.  Known as \emph{reservoir computing}, this
+tool was originally formulated as a novel way to reduce the
+computational cost of training recurrent neural
+networks~\cite{lukosevicius2009}. Reservoir computers (RCs) have been
+effectively applied to chaotic system
+forecasting~\cite{jaeger1978,pathak2017}, system state
+inference~\cite{lu2017}. More than just short-term prediction, RCs are
+capable of reproducing the \emph{climate} of a dynamical
+system;~\cite{pathak2017,haluszczynski2019} it learns the long-term
+features of the system, such as the system's attractor and Lyapunov
+exponents.
+
+RCs are interesting to physicists not only as a tool to solve
+problems. At the heart of a RC is a dynamic system called the
+\emph{reservoir}, which provides the rich dynamics the RC draws on to
+function. This is usually implemented as a neural network, but in
+practice many dynamic systems function well. This opens the door to
+building RCs around real physical systems, such as a network of
+autonomous logic on an FPGA~\cite{canaday2018} or an optical feedback
+system~\cite{antonik2016}. This is interesting from a theoretical
+perspective, as physical RCs use an ancillary system to help answer
+questions about a main system, but they are also practically
+interesting: by relying on physical reservoirs, rather than simulated,
+these methods perform chaotic system forecasting at a very high rate.
+
+% choosing reservoir is fraught
+% what parts are necessary? what can we discard?
+% I will demonstrate some RCs with less than usual, promise eventually No Net
+
+%%% FIXME after this is verbatim from chaos paper
+
+A common issue that must be addressed in all of these implementations
+is designing the internal reservoir. Commonly, the reservoir is
+created as a network of interacting nodes with a random topology. Many
+types of topologies have been investigated, from
+Erd{\"{o}}s-R{\'{e}}nyi networks and small-world
+networks\cite{haluszczynski2019} to simpler cycle and line
+networks.\cite{rodan2011} Optimizing the RC performance for a specific
+task is accomplished by adjusting some large-scale network properties,
+known as \emph{hyperparameters}, while constraining others.
+
+Choosing the correct hyperparameters is a difficult problem because the hyperparameter space can be large. There are a handful of known results for some
+parameters, such as setting the \emph{spectral radius} $\rho_r$ of the network near to unity and the need for recurrent network connections,\cite{jaeger2001,lukosevicius2012} but the applicability of these results is narrow. In the absence of guiding rules, choosing the hyperparameters is done with costly optimization methods, such as grid search,\cite{rodan2011} or methods that only work on continuous parameters, such
+as gradient descent.\cite{jaeger2007}
+
+The hyperparameter optimization problem has also been solved with
+Bayesian methods,\cite{yperman2016,maat2018} which are well suited to optimize over either discrete or continuous functions that are computationally intensive and potentially noisy. Hyperparameters
+optimized in this way can be surprising: the Bayesian algorithm can
+find an optimum set of parameters that defy common heuristics for
+choosing reservoir parameters, as we demonstrate below.
+
+We use this Bayesian approach for optimizing RC hyperparameters for the task of replicating the climate of the chaotic Lorenz '63
+attractor,\cite{lorenz1963}
+the R{\"{o}}ssler attractor,\cite{rossler1976} and a chaotic double-scroll circuit.\cite{gauthier1996}
+We introduce a new
+measure of reservoir performance designed to emphasize global climate
+reproduction as opposed to focusing only on short-term forecasting.  During
+optimization, we find that the optimizer often settled on
+hyperparameters that describe a reservoir network with extremely low
+connectivity, but which function as well as networks with higher
+connectivity. Inspired by this observation, we investigate even simpler
+reservoir topologies. We discover reservoirs that successfully
+replicate the climate despite having no recurrent connections and 
+$\rho_r=0$. Such simple network topologies may be easier to synthesize in physical RC realizations, where internal connections and recurrence
+have a hardware cost.
+
+\section{Outline and Summary of Contributions}
+
+This is a reference to \cref{ch:nvar}.
