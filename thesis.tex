@@ -3,11 +3,14 @@
 \usepackage[english]{babel}
 \usepackage{microtype}
 \usepackage{amsmath}
+\usepackage[numbers]{natbib}
 \usepackage{graphicx}
+\usepackage{dcolumn}
 \usepackage{booktabs}
 \usepackage{hyperref}
-\usepackage[nameinlink,noabbrev]{cleveref}
+\usepackage[nameinlink,capitalize]{cleveref}
 \usepackage{siunitx}
+\usepackage{enumitem}
 \usepackage{bm}
 
 %\usepackage[acronym, section=chapter]{glossaries}
@@ -18,8 +21,8 @@
 
 % style stuff
 \renewcommand\bibname{References}
-\bibliographystyle{ieeetr}
-\nocite{*} % Display all refs
+\bibliographystyle{ieeetrurl} % FIXME this puts [link] if it can't find a title
+\hypersetup{hidelinks}
 
 % custom commands
 \DeclareMathOperator{\Tanh}{\mathbf{tanh}}
@@ -88,8 +91,15 @@
 
 \mainmatter
 \include{1-introduction}
+\include{2-reservoir-computing}
+\include{3-low-connectivity}
+\include{4-nvar}
+\include{5-nvar-application}
+\include{6-nvar-hardware}
+\include{7-conclusion}
 
 \backmatter
+\nocite{*} % Display all refs
 \bibliography{thesis}
 
 \appendix
