@@ -59,47 +59,73 @@ questions about a main system, but they are also practically
 interesting: by relying on physical reservoirs, rather than simulated,
 these methods perform chaotic system forecasting at a very high rate.
 
-% choosing reservoir is fraught
-% what parts are necessary? what can we discard?
-% I will demonstrate some RCs with less than usual, promise eventually No Net
+As a new field, reservoir computing still has many unanswered
+fundamental questions. What qualities should the internal reservoir
+have to create a good RC? A common practice is to use a random network
+as the reservoir, generated from a set of metaparameters. There are a
+handful of results for some parameters, such as setting the
+\emph{spectral radius} of the network near unity and the need for
+recurrent network connections,\cite{jaeger2001,lukosevicius2012} but
+the applicability of these results is narrow. What features of the
+reservoir are necessary, and which can be discarded?
 
-%%% FIXME after this is verbatim from chaos paper
-
-A common issue that must be addressed in all of these implementations
-is designing the internal reservoir. Commonly, the reservoir is
-created as a network of interacting nodes with a random topology. Many
-types of topologies have been investigated, from
-Erd{\"{o}}s-R{\'{e}}nyi networks and small-world
-networks\cite{haluszczynski2019} to simpler cycle and line
-networks.\cite{rodan2011} Optimizing the RC performance for a specific
-task is accomplished by adjusting some large-scale network properties,
-known as \emph{hyperparameters}, while constraining others.
-
-Choosing the correct hyperparameters is a difficult problem because the hyperparameter space can be large. There are a handful of known results for some
-parameters, such as setting the \emph{spectral radius} $\rho_r$ of the network near to unity and the need for recurrent network connections,\cite{jaeger2001,lukosevicius2012} but the applicability of these results is narrow. In the absence of guiding rules, choosing the hyperparameters is done with costly optimization methods, such as grid search,\cite{rodan2011} or methods that only work on continuous parameters, such
-as gradient descent.\cite{jaeger2007}
-
-The hyperparameter optimization problem has also been solved with
-Bayesian methods,\cite{yperman2016,maat2018} which are well suited to optimize over either discrete or continuous functions that are computationally intensive and potentially noisy. Hyperparameters
-optimized in this way can be surprising: the Bayesian algorithm can
-find an optimum set of parameters that defy common heuristics for
-choosing reservoir parameters, as we demonstrate below.
-
-We use this Bayesian approach for optimizing RC hyperparameters for the task of replicating the climate of the chaotic Lorenz '63
-attractor,\cite{lorenz1963}
-the R{\"{o}}ssler attractor,\cite{rossler1976} and a chaotic double-scroll circuit.\cite{gauthier1996}
-We introduce a new
-measure of reservoir performance designed to emphasize global climate
-reproduction as opposed to focusing only on short-term forecasting.  During
-optimization, we find that the optimizer often settled on
-hyperparameters that describe a reservoir network with extremely low
-connectivity, but which function as well as networks with higher
-connectivity. Inspired by this observation, we investigate even simpler
-reservoir topologies. We discover reservoirs that successfully
-replicate the climate despite having no recurrent connections and 
-$\rho_r=0$. Such simple network topologies may be easier to synthesize in physical RC realizations, where internal connections and recurrence
-have a hardware cost.
+In this thesis, I will construct reservoir computers that do not
+follow the conventional rules for reservoir construction. These RCs
+continue to perform well on chaotic system forecasting and state
+inference, and can even reproduce the chaotic attractor of the system
+they have learned, despite the fact that their internal reservoir has
+no recurrent connections. Indeed, by the end of this thesis, they do
+not have an internal reservoir at all.
 
 \section{Outline and Summary of Contributions}
 
-This is a reference to \cref{ch:nvar}.
+In \cref{ch:reservoir-computing}, I describe the reservoir computing
+method, as well as a common concrete implementation of a RC called an
+echo state network (ESN). I explain how to construct an ESN, the
+metaparameters that govern its construction, and discuss some of the
+limited known results for choosing these metaparameters. Then, I
+discuss how the RC is trained, both for autonomous forecasting tasks
+and for inference tasks, as well as how performance quality on these
+tasks is commonly measured. I briefly discuss the known problems with
+this performance measure, and suggest a few alternative methods.
+
+In \cref{ch:low-connectivity}, I apply RCs to the task of chaotic
+system forecasting for three different chaotic systems. I use a
+Bayesian optimization algorithm to tune the metaparameters for the
+RCs, and in so doing, discover a class of well-performing RCs with very
+simple internal reservoirs. I identify four classes of reservoir
+networks with simple structure. Two of these classes had been
+previously identified. I build on this work and demonstrate that all
+four classes have the capacity to perform as well as a traditional
+RC. In particular, all four classes can reproduce the chaotic
+attractor of the system they are trained on. I then discuss the
+trade-offs between these simpler reservoir structures and a
+traditional RC.
+
+In \cref{ch:nvar} I describe a different technique known as
+non-linear vector autoregression (NVAR), which has recently been shown
+to be mathematically equivalent to an RC under certain conditions. I
+discuss the construction and training of an NVAR, and how to apply it
+to common RC tasks. Then, I discuss the parallells between the NVAR
+and RC approaches, as well as when the equivalence is known to
+hold. Finally, I discuss the tradeoffs between the two approaches.
+
+In \cref{ch:nvar-application}, I build on this equivalence with my
+collaborators to demonstrate NVARs solving two common RC tasks: system
+forecasting and state inference. I show that NVARs are capable of
+RC-equivalent performance on these tasks despite being considerably
+simpler than an RC, and can achieve this performance with very little
+training data and training time. In addition, I discuss how a trained
+NVAR can provide interpretable results, while a trained RC is
+opaque. I discuss how to move beyond the strict proven mathematical
+equivalence to solve a wider variety of problems, and then demonstrate
+this by performing chaotic system forecasting on a system previously
+unsolvable.
+
+In \cref{ch:nvar-hardware}, I utilize the simplicity of the NVAR
+approach to implement it in hardware on an FPGA.
+% FIXME you haven't done this yet
+
+Finally, in \cref{ch:conclusion}, I summarize my findings and
+contributions, and propose interesting new directions for future
+research discovered during this work.
