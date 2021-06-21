@@ -127,7 +127,7 @@ a supercomputer is desirable. For example, an RC that controls the
 motors on an airborn drone could retrain itself in the event of a
 mechanical failure.
 
-\section{Forecasting with an RC}
+\section{Forecasting with an RC}\label{sec:forecasting}
 
 One of the primary uses of an RC is \emph{system forecasting}, where
 the RC is primed with an input signal from a dynamic system and then
@@ -171,23 +171,187 @@ output layer in \cref{eq:output}, is the forecasted signal.
 
 \section{Echo State Networks}\label{sec:esn}
 
+% FIXME cite echo state more
+Although there are many choices for the dynamic reservoir at the heart
+of an RC, the reservoir computing method originated as a practical way
+to train recurrent neural networks~\cite{lukosevicius2009}, by only
+training the weights in the output layer. One such network reservoir
+design, known as an echo state network (ESN)~\cite{jaeger2001},
+remains popular and will be my choice of dynamic reservoir for this
+thesis.
+
+An echo state network is composed of number of nodes $N$. Each node in
+the network has a number of inputs, drawn either from other nodes in
+the network or from the external driving system. Each node also has an
+internal state, a single value that decays exponentially to zero over
+time with a decay rate $\gamma$. The node's inputs are summed together
+with weights, and this sum is passed through an activation function
+$f$ to produce a driving signal to the node's exponential state, which
+is used as the node's output.
+
+The input connections and weights for each node are represented by two
+matrices: $W_\text{in}$, for connections from the overall input
+$\bm{u}(t)$, and $W_r$, for recurrent connections to other nodes
+inside the network. For example, $W_{r,i,j}$ represents a connection
+from node $j$ inside the network to node $i$, while
+$W_{\text{in},i,j}$ represents a connection from input component
+$u_j(t)$ to node $i$. This means that $W_r$ is a $N \times N$ matrix,
+while $W_\text{in}$ is an $N \times d$, where $d$ is the dimension of
+the input signal $\bm{u}(t)$.
+
 \begin{figure}
   \includegraphics[width=0.6\textwidth]{figures/reservoir}
-  \caption{High-level view of a reservoir computer. Each node may have
-    three kinds of connections: connections to other nodes in the
-    network ($W_r$, blue), connections to the overall input
-    ($W_\text{in}$, red), or connections to the output
-    ($W_\text{out}$, green). Note that the internal connections may
-    contain cycles.  When the RC is used to perform forecasting,
-    the output on the right side is connected to the input on the left
-    side, allowing the RC to run autonomously with no external
-    input.}%
+  \caption{High-level view of an echo state network RC. Each node may
+    have two kinds of input connections: connections to other nodes in
+    the network ($W_r$, blue), connections to the overall input
+    ($W_\text{in}$, red). Each node may also have output connections
+    to the overall output ($W_\text{out}$, green). Note that the
+    internal connections may contain cycles.  When the RC is used to
+    perform forecasting, the output on the right side is connected to
+    the input on the left side, allowing the RC to run autonomously
+    with no external input.}%
   \label{fig:reservoir}
 \end{figure}
-% echo state network in particular
-% discrete time -- is continuous through euler
-% nonlinearity on node or output
-% how do you construct the matrices?
+
+Put together, the dynamics of an echo state network RC are
+\begin{align}
+  \label{eq:esn}
+  \dot{\bm{r}}(t) &= - \gamma \bm{r}(t) + \gamma \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;\bm{u}(t) \right), \\
+  \bm{y}(t) &= W_\text{out}\;\bm{g}\left(\bm{r}(t)\right), \nonumber
+\end{align}
+where the vector function $\bm{f}$ is understood to mean applying the
+one-dimensional activation function $f$ component-by-component. This
+construction is summarized in \cref{fig:reservoir}. I will discuss
+choosing the matrices $W_\text{in}$ and $W_r$, the parameter $\gamma$,
+and the activation function $f$ in \cref{sec:esn-construction}.
+
+This is the continuous-time formulation of an ESN. It is also common
+to see a discrete-time formulation, which can be derived simply from
+\cref{eq:esn} by the application of forward Euler
+integration. Additionally, the forecasting method described in
+\cref{sec:forecasting} involves a modification to the RC equation once
+the RC is trained. These variations on the ESN equation are summarized
+in \cref{tab:esn}.
+
+\begin{table}
+  \caption{A summary of variations of the ESN equation. The
+    discrete-time formulation is the result of Euler-integrating the
+    continuous-time formulation, and the forecasting variant is
+    derived via the substitution described in \cref{sec:forecasting}.}
+  \begin{tabular}{lrl}
+    Variation Name & & Equations \\
+    \hline
+    \rule{0pt}{4ex}
+    Continuous Time & $\bm{\dot{r}}(t) =$ & $- \gamma \bm{r}(t) + \gamma \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;\bm{u}(t) \right)$ \\
+    (inference) & $\bm{y}(t) =$ & $W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)$ \\
+    \rule{0pt}{4ex}
+    Continuous Time & $\bm{\dot{r}}(t) =$ & $- \gamma \bm{r}(t) + \gamma \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;W_\text{out}\;\bm{g}\left(\bm{r}(t)\right) \right)$ \\
+    (forecasting) & $\bm{y}(t) =$ & $W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)$ \\
+    \rule{0pt}{4ex}
+    Discrete Time & $\bm{r}(t + \Delta t) =$ & $(1 - \gamma \Delta t) \bm{r}(t) + \gamma \Delta t \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;\bm{u}(t) \right)$ \\
+    (inference) & $\bm{y}(t) =$ & $W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)$ \\
+    \rule{0pt}{4ex}
+    Discrete Time & $\bm{r}(t + \Delta t) =$ & $(1 - \gamma \Delta t) \bm{r}(t) + \gamma \Delta t \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;W_\text{out}\;\bm{g}\left(\bm{r}(t)\right) \right)$ \\
+    (forecasting) & $\bm{y}(t) =$ & $W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)$ \\
+  \end{tabular}
+  \label{tab:esn}
+\end{table}
+
+% FIXME cite \gamma \Delta t = 1
+The Euler integration is only an accurate representation of
+\cref{eq:esn} when $\gamma \Delta t \ll 1$. However, many authors will
+take $\gamma \Delta t = 1$. Although this is no longer an accurate
+approximation to the continuous-time ESN in \cref{eq:esn}, these
+discrete-time ESNs still function well as an RC. That the RC is not
+sensitive to this kind of fundamental change in the underlying
+reservoir is a hallmark of the RC method. The specific form of the
+underlying reservoir is largely unimportant, except for a few
+requirements to be discussed in
+\cref{sec:reservoir-properties}. Indeed, the internal structure of an
+ESN is determined randomly!
+
+\section{Constructing ESNs}\label{sec:esn-construction}
+
+The parameters $W_r$, $W_\text{in}$, $\gamma$, and $f$ in
+\cref{eq:esn} must be set before the ESN construction is complete. Of
+these, $\gamma$ has the most simple interpretation: it controls the
+exponential decay of the value of each node in the network. If this
+rate is too slow, the reservoir will not be able to react fast enough
+to its input to be useful for computing the output; if this rate is
+too fast, the reservoir will respond immediately to its inputs and
+have no useful memory of past inputs, which may be necessary for the
+RC's task. As the reservoir network may contain cycles, there is also
+the possibility that a high decay rate may result in very rapid
+oscillation in the network, which is undesirable if the RC's desired
+output does not contain such oscillation. In practice, this decay rate
+should be matched to the characteristic timescale of the output
+signal, and then can be manually tuned from there if needed.
+
+If the read-out function $\bm{g}$ is taken to be the identity
+function, as is common, and the activation function $f$ is linear,
+then the forecasting-mode equations in \cref{tab:esn} are completely
+linear and have simple, oscillatory analytic solutions. These are
+known as \emph{linear RCs}. Linear RCs are mathematically easy to work
+with, and as a result many of the known proofs about RCs are in the
+context of linear RCs. One of the most recent and prominent results is
+discussed further in \cref{ch:nvar}.
+
+However, because the solutions to a linear RC in prediction mode are
+so simple, it is not possible for them to reproduce the strange
+attractors of chaotic systems. To do this, the activation function $f$
+is used to introduce non-linearity into the equations. The most common
+choice is the hyperbolic tangent, $f(x) = \tanh(x)$, and this will be
+used in this thesis. This satisfies the non-linearity requirement, and
+also ensures that each component of $\bm{r}(t)$ is bounded in $(-1,
+1)$. Bounds on $\bm{r}(t)$ ensure that \cref{eq:esn} is particularly
+well-behaved for numerical integrators. These bounds can also be used
+to put bounds on the output $\bm{y}(t)$, which may be useful if that
+output is driving a real-world system.
+
+It is also possible to leave $f$ linear, and introduce non-linearity
+into the system with $\bm{g}$. These \emph{output-layer nonlinear RCs} are
+also discussed further in \cref{ch:nvar,ch:nvar-application}.
+
+The matrices $W_r$ and $W_\text{in}$, and therefore the topology and
+weights of the ESN, are chosen randomly. There are many random schemes
+in use, from Erd{\"{o}}s-R{\'{e}}nyi networks and small-world
+networks\cite{haluszczynski2019} to simpler cycle and line
+networks.\cite{rodan2011} The scheme I use is simple. Although this
+thesis only discusses RCs simulated in software, this scheme was
+designed with an eye towards hardware implementation, where the number
+of inputs to each node, and the total number of connections in the
+network, have an associated hardware cost.
+
+For the internal connections $W_r$, I generate a random network where
+every node has a fixed number of inputs, or \emph{in-degree}, $k$. For
+each node, I select $k$ nodes in the network without replacement and
+use those as inputs to the current node. Each input is assigned a
+random weight drawn from a normal distribution with mean $0$ and
+variance $1$. This results in a connection matrix $W_r'$ where each
+row has exactly $k$ non-zero entries. Finally, I rescale the whole
+matrix
+\begin{equation}
+  \label{eq:setradius}
+  W_r = \frac{\rho_r}{\operatorname{SR}(W_r')}\;W_r',
+\end{equation}
+where $\operatorname{SR}(W_r')$ is the spectral radius, or maximum
+absolute eigenvalue, of the matrix $W_r'$. This scaling ensures that
+$\operatorname{SR}(W_r') = \rho_r$, and $\rho_r$ is used to tune the
+overall scale of the recurrent weights, and therefore the importance
+of recurrent connections inside the network.
+% FIXME talk about SR?
+
+For $W_\text{in}$, I randomly connect each node to each RC input in
+$\bm{u}(t)$ with probability $\sigma$. The weight for each connection
+is drawn randomly from a normal distribution with mean $0$ and
+variance $\rho_\text{in}^2$.
+
+Together, $\sigma$ and $\rho_\text{in}$ are enough to generate a
+random instantiation of $W_\text{in}$, and $k$ and $\rho_r$ are enough
+to generate a random instantiation of $W_r$. The relative scales
+$\rho_r$ and $\rho_\text{in}$ determine the importance of the
+recurrent and external inputs, respectively.
+
 % summarize metaparameters (table)
 
 \section{Properties of Good Reservoirs}\label{sec:reservoir-properties}
