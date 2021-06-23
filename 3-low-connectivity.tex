@@ -1,2 +1,41 @@
 \chapter{Low-Connectivity Reservoirs}\label{ch:low-connectivity}
 
+% how to choose hyperparameters? grid search? gradient descent?
+% introduce our task: chaotic system forecasting, using \tilde{\epsilon}
+
+\section{Bayesian Optimization}
+% overview, parameter range, focus on k.
+% during opt, will often find k=1
+
+\section{Structure of Low-Connectivity Reservoirs}
+% disconnected components
+% k=1 single cycle
+% what if cut the cycle?
+% what if it's *all loops*
+
+\section{Training, Forecasting, and Evaluation}
+% use mean 0 variance 1 signals from systems ...
+% length of time periods
+% use cross-validation for alpha
+% discussion of \tilde{\epsilon} vs \epsilon
+
+\section{RC Symmetries and their Consequences}
+% RC forecast symmetry
+% not shared by system, problem for output
+% plot!
+
+\section{Results}
+% detailed results for lorenz, violin plots, attractors
+% for other systems
+
+\section{Cross-task Performance}
+% optimized Lorenz used on double-scroll
+
+\section{Conclusion}
+% optimization is useful, and can yield surprising results
+% \tilde{\epsilon} is good
+% rho_r = 0, k=1 are useful (weird!)
+% but: they are rarer. This might be useful
+% NARX note: also look forward to next chapter. what unifies these?
+% line reservoir is almost just some time delay taps
+% can this generalize to many tasks? can it make hardware simpler?
