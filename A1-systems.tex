@@ -5,10 +5,10 @@ about dynamic systems, such as state inference and
 forecasting. Throughout this thesis, I use many small chaotic systems
 for example RC tasks. For reference, they are included here.
 
-\section{Lorenz '63}
+\section{Lorenz '63}\label{sec:lorenz}
 
 \begin{figure}
-  \includegraphics[width=0.5\textwidth]{figures/lorenz}
+  \includegraphics[width=0.6\textwidth]{figures/lorenz}
   \caption{The true Lorenz attractor in the $x$/$z$ plane, produced by integrating \cref{eq:lorenz}.}%
   \label{fig:lorenz}
 \end{figure}
@@ -27,10 +27,10 @@ system can be visualized easily in two dimensions by projecting the
 three-dimensional trajectory of the system onto a plane. I show the
 attractor in the $x$/$z$ plane in \cref{fig:lorenz}.
 
-\section{R{\"{o}}ssler}
+\section{R{\"{o}}ssler}\label{sec:rossler}
 
 \begin{figure}
-  \includegraphics[width=0.5\textwidth]{figures/rossler}
+  \includegraphics[width=0.6\textwidth]{figures/rossler}
   \caption{The true R{\"{o}}ssler attractor in the $x$/$z$ plane, produced by integrating \cref{eq:rossler}.}%
   \label{fig:rossler}
 \end{figure}
@@ -53,10 +53,10 @@ positive spikes. This makes prediction with an RC difficult. To make
 this component of the system more suitable for RC prediction, I use
 $\log z$ instead for both RC input and prediction output.
 
-\section{Double-Scroll}
+\section{Double-Scroll}\label{sec:dscroll}
 
 \begin{figure}
-  \includegraphics[width=0.5\textwidth]{figures/dscroll}
+  \includegraphics[width=0.6\textwidth]{figures/dscroll}
   \caption{The true double-scroll circuit attractor in the $V_1$/$I$ plane, produced by integrating \cref{eq:dscroll}.}%
   \label{fig:dscroll}
 \end{figure}
@@ -74,10 +74,10 @@ with parameters $R_1 = 1.2$, $R_2 = 3.44$, $R_4 = 0.193$, $I_r = 2.25
 \times 10^{-5}$, and $\alpha = 11.6$.\cite{gauthier1996} The attractor
 of this system is visualized in \cref{fig:dscroll}.
 
-\section{Mackey-Glass}
+\section{Mackey-Glass}\label{sec:mackey-glass}
 
 \begin{figure}
-  \includegraphics[width=0.5\textwidth]{figures/mackey-glass}
+  \includegraphics[width=0.6\textwidth]{figures/mackey-glass}
   \caption{The true Mackey-Glass attractor represented as a time delay embedding using $\tau$ as the delay, produced by integrating \cref{eq:mackey-glass}.}%
   \label{fig:mackey-glass}
 \end{figure}
