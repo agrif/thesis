@@ -241,21 +241,21 @@ in \cref{tab:esn}.
     discrete-time formulation is the result of Euler-integrating the
     continuous-time formulation, and the forecasting variant is
     derived via the substitution described in \cref{sec:forecasting}.}
-  \begin{tabular}{lrl}
-    Variation Name & & Equations \\
+  \begin{tabular}{clrl}
+    & Variation & & Equations \\
     \hline
     \rule{0pt}{4ex}
-    Continuous Time & $\bm{\dot{r}}(t) =$ & $- \gamma \bm{r}(t) + \gamma \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;\bm{u}(t) \right)$ \\
-    (inference) & $\bm{y}(t) =$ & $W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)$ \\
+    (a) & Continuous & $\bm{\dot{r}}(t) =$ & $- \gamma \bm{r}(t) + \gamma \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;\bm{u}(t) \right)$ \\
+    & (inference) & $\bm{y}(t) =$ & $W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)$ \\
     \rule{0pt}{4ex}
-    Continuous Time & $\bm{\dot{r}}(t) =$ & $- \gamma \bm{r}(t) + \gamma \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;W_\text{out}\;\bm{g}\left(\bm{r}(t)\right) \right)$ \\
-    (forecasting) & $\bm{y}(t) =$ & $W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)$ \\
+    (b) & Continuous & $\bm{\dot{r}}(t) =$ & $- \gamma \bm{r}(t) + \gamma \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;W_\text{out}\;\bm{g}\left(\bm{r}(t)\right) \right)$ \\
+    & (forecasting) & $\bm{y}(t) =$ & $W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)$ \\
     \rule{0pt}{4ex}
-    Discrete Time & $\bm{r}(t + \Delta t) =$ & $(1 - \gamma \Delta t) \bm{r}(t) + \gamma \Delta t \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;\bm{u}(t) \right)$ \\
-    (inference) & $\bm{y}(t) =$ & $W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)$ \\
+    (c) & Discrete & $\bm{r}(t + \Delta t) =$ & $(1 - \gamma \Delta t) \bm{r}(t) + \gamma \Delta t \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;\bm{u}(t) \right)$ \\
+    & (inference) & $\bm{y}(t) =$ & $W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)$ \\
     \rule{0pt}{4ex}
-    Discrete Time & $\bm{r}(t + \Delta t) =$ & $(1 - \gamma \Delta t) \bm{r}(t) + \gamma \Delta t \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;W_\text{out}\;\bm{g}\left(\bm{r}(t)\right) \right)$ \\
-    (forecasting) & $\bm{y}(t) =$ & $W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)$ \\
+    (d) & Discrete & $\bm{r}(t + \Delta t) =$ & $(1 - \gamma \Delta t) \bm{r}(t) + \gamma \Delta t \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;W_\text{out}\;\bm{g}\left(\bm{r}(t)\right) \right)$ \\
+    & (forecasting) & $\bm{y}(t) =$ & $W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)$ \\
   \end{tabular}
   \label{tab:esn}
 \end{table}
@@ -356,6 +356,7 @@ recurrent and external inputs, respectively. The entire construction
 is reduced to choosing these \emph{metaparameters}, summarized in
 \cref{tab:esn-metaparameters}.
 
+% FIXME N
 \begin{table}
   \caption{Summary of echo state network metaparameters. These
     parameters must be chosen to produce a random realization of an
