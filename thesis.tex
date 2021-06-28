@@ -8,6 +8,7 @@
 \usepackage{tabularx}
 \usepackage{dcolumn}
 \usepackage{booktabs}
+\usepackage{scrextend} % for \footref
 \usepackage{hyperref}
 \usepackage[nameinlink,capitalize]{cleveref}
 \usepackage{siunitx}
@@ -28,6 +29,9 @@
 
 % custom commands
 \DeclareMathOperator{\Tanh}{\mathbf{tanh}}
+
+% use dcolumn
+\newcolumntype{d}{D{.}{.}{-1}}
 
 \title{Essential Reservoir Computing}
 \author{Aaron Griffith}

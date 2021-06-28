@@ -2,21 +2,21 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="8cm"
    height="6cm"
    viewBox="0 0 283.46457 212.59842"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="failure.svg">
+   inkscape:version="1.1 (c4e8f9e, 2021-05-24)"
+   sodipodi:docname="epsilon-failure.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs4">
     <marker
@@ -240,17 +240,18 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8"
-     inkscape:cx="154.07557"
-     inkscape:cy="110.43764"
+     inkscape:cx="135.53571"
+     inkscape:cy="110.53571"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="cm"
-     inkscape:window-width="1680"
+     inkscape:window-width="1312"
      inkscape:window-height="947"
      inkscape:window-x="0"
-     inkscape:window-y="1"
-     inkscape:window-maximized="1" />
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:pagecheckerboard="0" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -259,7 +260,6 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -289,7 +289,7 @@
        y="852.60461" />
     <flowRoot
        transform="translate(113.15196,723.57639)"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="flowRoot9800"
        xml:space="preserve"><flowRegion
          style="stroke-linecap:butt;stroke-linejoin:round"
@@ -300,10 +300,11 @@
            height="82.832512"
            width="161.11932"
            id="rect9804" /></flowRegion><flowPara
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-linecap:butt;stroke-linejoin:round"
-         id="flowPara9806"><flowSpan
-           id="flowSpan9808"
-           style="font-size:64.99999762%;baseline-shift:sub;stroke-linecap:butt;stroke-linejoin:round" /></flowPara></flowRoot>    <g
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-linecap:butt;stroke-linejoin:round"
+         id="flowPara9806"> <flowSpan
+   id="flowSpan9808"
+   style="font-size:65%;baseline-shift:sub;stroke-linecap:butt;stroke-linejoin:round" /></flowPara></flowRoot>
+    <g
        style="stroke-linecap:butt;stroke-linejoin:round"
        id="patch_1"
        transform="matrix(0.80572304,0,0,0.80572304,-36.330701,836.23847)">
@@ -795,7 +796,7 @@
     <flowRoot
        xml:space="preserve"
        id="flowRoot5456"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        transform="translate(-42.142857,838.6924)"><flowRegion
          id="flowRegion5458"
          style="stroke-linecap:butt;stroke-linejoin:round"><rect
@@ -805,18 +806,19 @@
            x="79.64286"
            y="160.81271"
            style="stroke-linecap:butt;stroke-linejoin:round" /></flowRegion><flowPara
-         style="font-size:11.25px;stroke-linecap:butt;stroke-linejoin:round"
+         style="font-size:11.25px;line-height:1.25;stroke-linecap:butt;stroke-linejoin:round"
          id="flowPara5464"><flowSpan
-   style="-inkscape-font-specification:'sans-serif Italic';font-family:sans-serif;font-weight:normal;font-style:italic;font-stretch:normal;font-variant:normal"
+   style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic'"
    id="flowSpan5484">ε</flowSpan><flowSpan
-   style="font-size:64.99999762%;baseline-shift:sub;stroke-linecap:butt;stroke-linejoin:round;-inkscape-font-specification:'sans-serif Italic';font-family:sans-serif;font-weight:normal;font-style:italic;font-stretch:normal;font-variant:normal"
+   style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:65%;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';baseline-shift:sub;stroke-linecap:butt;stroke-linejoin:round"
    id="flowSpan5470">1</flowSpan> = 0.023</flowPara><flowPara
-         style="font-size:11.25px;stroke-linecap:butt;stroke-linejoin:round"
+         style="font-size:11.25px;line-height:1.25;stroke-linecap:butt;stroke-linejoin:round"
          id="flowPara5466"><flowSpan
-   style="-inkscape-font-specification:'sans-serif Italic';font-family:sans-serif;font-weight:normal;font-style:italic;font-stretch:normal;font-variant:normal"
-   id="flowSpan5492">ε</flowSpan>  = 0.30</flowPara></flowRoot>    <flowRoot
+   style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic'"
+   id="flowSpan5492">ε</flowSpan>  = 0.30</flowPara></flowRoot>
+    <flowRoot
        transform="translate(101.42858,838.6924)"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="flowRoot5472"
        xml:space="preserve"><flowRegion
          style="stroke-linecap:butt;stroke-linejoin:round"
@@ -828,13 +830,36 @@
            width="171.07143"
            id="rect5476" /></flowRegion><flowPara
          id="flowPara5478"
-         style="font-size:11.25px;stroke-linecap:butt;stroke-linejoin:round"><flowSpan
-   style="-inkscape-font-specification:'sans-serif Italic';font-family:sans-serif;font-weight:normal;font-style:italic;font-stretch:normal;font-variant:normal"
+         style="font-size:11.25px;line-height:1.25;stroke-linecap:butt;stroke-linejoin:round"><flowSpan
+   style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic'"
    id="flowSpan5494">ε</flowSpan><flowSpan
    id="flowSpan5480"
-   style="font-size:64.99999762%;baseline-shift:sub;stroke-linecap:butt;stroke-linejoin:round;-inkscape-font-specification:'sans-serif Italic';font-family:sans-serif;font-weight:normal;font-style:italic;font-stretch:normal;font-variant:normal">1</flowSpan> = 0.0072</flowPara><flowPara
+   style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:65%;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';baseline-shift:sub;stroke-linecap:butt;stroke-linejoin:round">1</flowSpan> = 0.0072</flowPara><flowPara
          id="flowPara5482"
-         style="font-size:11.25px;stroke-linecap:butt;stroke-linejoin:round"><flowSpan
-   style="-inkscape-font-specification:'sans-serif Italic';font-family:sans-serif;font-weight:normal;font-style:italic;font-stretch:normal;font-variant:normal"
-   id="flowSpan5498">ε</flowSpan>  = 0.11</flowPara></flowRoot>  </g>
+         style="font-size:11.25px;line-height:1.25;stroke-linecap:butt;stroke-linejoin:round"><flowSpan
+   style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic'"
+   id="flowSpan5498">ε</flowSpan>  = 0.11</flowPara></flowRoot>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:13.75px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.9375;stroke-linecap:butt;stroke-linejoin:round"
+       x="180.62767"
+       y="1024.6915"
+       id="text3750"><tspan
+         sodipodi:role="line"
+         id="tspan3748"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.75px;font-family:'CMU Sans Serif';-inkscape-font-specification:'CMU Sans Serif';stroke-width:0.9375"
+         x="180.62767"
+         y="1024.6915">~</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:13.75px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.9375;stroke-linecap:butt;stroke-linejoin:round"
+       x="37.3241"
+       y="1024.6917"
+       id="text3750-9"><tspan
+         sodipodi:role="line"
+         id="tspan3748-9"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.75px;font-family:'CMU Sans Serif';-inkscape-font-specification:'CMU Sans Serif';stroke-width:0.9375"
+         x="37.3241"
+         y="1024.6917">~</tspan></text>
+  </g>
 </svg>

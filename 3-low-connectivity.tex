@@ -139,7 +139,7 @@ regenerate any networks with more than a single connected component.
 
 \begin{figure}
   \includegraphics[width=\textwidth]{figures/topology}
-  \caption{The five reservoir topologies tested. Only internal
+  \caption{The five reservoir structures tested. Only internal
     reservoir connections are pictured. Connections to the reservoir
     computer input, or to the output layer are not shown. (a) A
     general, fixed in-degree network, here pictured with $N=7$ and
@@ -258,14 +258,15 @@ example input systems: Lorenz '63 (\cref{sec:lorenz}), R{\"{o}}ssler
 (\cref{sec:dscroll}).
 
 For each input system and for each network structure, the Bayesian
-algorithm performs random exploration for 50 iterations, and then
-optimization for 50 iterations. At each iteration of the algorithm,
-the optimizer constructs a single random instantiation of an ESN with
-the chosen metaparameters, trains it, and measures its forecasting
-performance with the metric $\tilde{\epsilon}$ defined in
-\cref{eq:nrmse-avg}. Since the exploration phase of the optimization
-is random, I repeat this entire process 20 times to estimate the
-variance in the performance of reservoirs optimized by this method.
+algorithm performs random exploration for $50$ iterations, and then
+optimization for $50$ iterations, resulting in $100$ iterations in
+total. At each iteration of the algorithm, the optimizer constructs a
+single random instantiation of an ESN with the chosen metaparameters,
+trains it, and measures its forecasting performance with the metric
+$\tilde{\epsilon}$ defined in \cref{eq:nrmse-avg}. Since the
+exploration phase of the optimization is random, I repeat this entire
+process 20 times to estimate the variance in the performance of
+reservoirs optimized by this method.
 
 To ensure that results are comparable across all three systems, I
 normalize their components to have $0$ mean and unit variance. In
@@ -339,17 +340,284 @@ the optimized reservoirs despite its obvious failure to learn the
 Lorenz attractor.
 
 \section{Results}
-% detailed results for lorenz, violin plots, attractors
-% for other systems
+
+First, I run all five reservoir structures through 100 iterations of
+the Bayesian algorithm using the Lorenz system as input, and record
+the best-performance RC for each structure according to the metric
+$\tilde{\epsilon}$. These reservoirs, and the hyperparameters that
+generated them, are reported in \cref{tab:lowk-lorenz-results}. I
+estimate the errors on these with the standard deviation of
+$\tilde{\epsilon}$ after repeating the optimization process 20 times.
+
+\begin{table}
+  \caption{Best reservoir computers of each reservoir structure, after 100
+    iterations of the Bayesian optimization algorithm using the Lorenz
+    system as input.  The hyperparameters chosen by the algorithm are
+    shown on the right. The simpler structures (b) -- (e) all perform
+    nearly as well as the general structure (a).}
+  \begin{tabularx}{\linewidth}{l l@{\extracolsep{\fill}} l d d d d}
+    & & \multicolumn{5}{l}{Lorenz} \\
+    & Structure & $\tilde{\epsilon}$ & \multicolumn{1}{c}{$\gamma$} & \multicolumn{1}{c}{$\sigma$} & \multicolumn{1}{c}{$\rho_\text{in}$} & \multicolumn{1}{c}{$\rho_r$} \\
+    \hline
+    (a) & Any $k$ \footnote{After optimization, $k = 3$.} & 0.022 $\pm$ 0.004 & 7.7 & 0.81 & 0.37 & 0.41 \\
+    (b) & $k = 1$ with cycle & 0.024 $\pm$ 0.005 & 10.9 & 0.44 & 0.30 & 0.30 \\
+    (c) & $k = 1$ no cycle & 0.028 $\pm$ 0.005 & 7.2 & 0.78 & 0.30 & 0.30 \footnote{\label{fn:lowk-rhor}$\rho_r$ measured before cycle is cut. Afterwards, $\rho_r = 0.$} \\
+    (d) & cycle & 0.023 $\pm$ 0.008 & 7.9 & 0.17 & 0.58 & 0.30 \\
+    (e) & line & 0.024 $\pm$ 0.003 & 10.6 & 0.79 & 0.30 & 0.45 \footref{fn:lowk-rhor} \\
+  \end{tabularx}
+  \label{tab:lowk-lorenz-results}
+\end{table}
+
+When optimized, all reservoir structures perform well. In particular,
+the simpler structures all perform almost as well as the general-$k$
+structure. They often lie within one, or at most two standard
+deviations from structure (a). This is despite the fact that
+structures (c) and (e) both have $\rho_r=0$ and no recurrent
+connections within the network. The other structures have
+$\rho_r\ll1$.  Previous work has already demonstrated that ESNs with
+low or zero spectral radius can still
+function.\cite{pathak2017,rodan2011} These results act as additional
+counterexamples to the heuristic that ESNs should have $\rho_r \approx
+1$.\cite{lukosevicius2012}
+
+However, these best-observed ESNs are not representative of a
+typical ESN.\@ I use the hyperparameters to guide the random input
+connections and connections within the network, and so even once the
+hyperparameters are fixed, constructing the network is a random
+process. Not all networks with a fixed structure type and hyperparameters
+will perform the same.
+
+To explore this variation, I generate and evaluate $200$ networks of
+each structure on the Lorenz system, using the optimized
+hyperparameters in \cref{tab:lowk-lorenz-results}. For all five
+structures, as the measured $\tilde{\epsilon}$ increases, the quality
+of the reproduced attractor decreases gradually. On manual inspection
+of the attractors, the reason for this decrease can be divided into
+three qualitative regions. For $\tilde{\epsilon} < 0.3$, the RCs
+reproduce the Lorenz attractor consistently. Failures still rarely
+occur, but they always reproduce part of the attractor before falling
+into a fixed point or periodic orbit. In this region, small
+differences between the true attractor and the reproduced attractor
+contribute more to $\tilde{\epsilon}$ than outright failure. For $0.3
+< \tilde{\epsilon} < 1.0$, RCs always fail to reproduce the attractor,
+though they will still always reproduce a portion of it before
+failing. Examples of these failures are provided in
+\cref{fig:epsilon-failure}. Above $\tilde{\epsilon} > 1.0$, these
+failures become catastrophic, and no longer resemble the Lorenz
+attractor at all. A more quantitative description of these regions is
+one line of possible future research.
+
+Though the optimized best-performing networks of
+each structure show very little performance difference, the differences
+between them become more apparent when we compare the probability
+distribution of $\tilde{\epsilon}$ for each topology. These
+distributions are shown in \cref{fig:epsilon-distribution}.
+
+\begin{figure}
+  \includegraphics[width=0.6\textwidth]{figures/epsilon-distribution}
+  \caption{Performance for each network structure, evaluated for the
+    Lorenz system at the hyperparameters listed in
+    \cref{tab:lowk-lorenz-results}. Each is visualized as a Gaussian
+    kernel density estimation in $\log_{10} \tilde{\epsilon}$ with a bandwidth
+    of 0.35,\cite{scott1992} which can be interpreted as a probability
+    distribution. Using a narrower bandwidth does not reveal
+    additional features. A vertical line marks the median.  Note that
+    structures (b) -- (e) have very long tails, and can produce
+    networks that perform very poorly in comparison to (a). However,
+    all five have the capability to produce well-performing
+    networks.}%
+  \label{fig:epsilon-distribution}
+\end{figure}
+
+A well-performing network with arbitrary $k$ (a) is a much more
+likely outcome than a well-performing network with a single cycle
+(d). However, the performance of arbitrary $k$ networks (a) is very
+similar to that of tree-like networks (c). Though (c) has a longer
+tail on the high end, the simpler structure of the reservoir may be
+appealing for hardware RCs.
+
+The distribution of performance for each structure can be a deciding
+factor if network construction and evaluation is expensive, as it
+might be in hardware. In software, though, I find the
+best-performing networks in \cref{tab:lowk-lorenz-results} after only $100$
+trials. A hardware design can still benefit from the simpler
+structures (b) -- (e) despite their very wide performance distributions
+if the creation of the evaluation of the design can be automated to
+test many candidate reservoirs, as on an FPGA.\cite{canaday2018}
+
+There may also be a benefit in software. The simpler structures are
+represented by weight matrices $W_r$ in very simple forms. Structure
+(c) can always be represented as a strictly lower-diagonal matrix, and
+(d) -- (e) can be represented with non-zero entries only directly below
+the main diagonal. Software simulations can take advantage of this structure to
+speed up integration of \cref{eq:esn}.
+
+To explore whether these structures remain equally effective at tasks
+beyond forecasting the Lorenz system, I run all five network
+structures through 100 iterations of the Bayesian algorithm for both
+the R{\"{o}}ssler and the double-scroll systems. As with the Lorenz
+system, I estimate the errors on these results by repeating the
+process 20 times each. These results are reported in
+\cref{tab:lowk-resultsplus}.
+
+\begin{table}
+  \caption{Result of optimizing reservoirs with the
+      Bayesian algorithm over 100 iterations, on both the
+      R{\"{o}}ssler system and the double-scroll system. All five
+      structures can perform equally well at both systems.}
+  \begin{tabularx}{\linewidth}{l l@{\extracolsep{\fill}} l l}
+    & & \multicolumn{1}{l}{Double Scroll} & \multicolumn{1}{l}{R{\"{o}}ssler} \\
+    & Structure & $\tilde{\epsilon}$ & $\tilde{\epsilon}$ \\
+    \hline
+    (a) & Any $k$ & 0.029 $\pm$ 0.006 & 0.017 $\pm$ 0.005 \\
+    (b) & $k = 1$ with cycle & 0.033 $\pm$ 0.007 & 0.020 $\pm$ 0.007 \\
+    (c) & $k = 1$ no cycle & 0.033 $\pm$ 0.008 & 0.018 $\pm$ 0.006 \\
+    (d) & cycle & 0.033 $\pm$ 0.007 & 0.018 $\pm$ 0.006 \\
+    (e) & line & 0.037 $\pm$ 0.01 & 0.019 $\pm$ 0.015
+  \end{tabularx}
+  \label{tab:lowk-resultsplus}
+\end{table}
+
+The results for the double-scroll and R{\"{o}}ssler systems agree well
+with those for Lorenz. All five structures optimize reliably with the
+Bayesian algorithm, and all perform similarly when
+optimized. Optimizing a network to reproduce either system will almost
+always work after only 100 iterations, regardless of networks
+structure.
+
+\begin{figure*}
+  \includegraphics[width=\textwidth]{figures/lowk-attractors}
+  \caption{Lorenz attractor plots in the $x$/$z$ plane for long-term
+    free-running predictions for each network structure in
+    \cref{tab:lowk-lorenz-results}. Compare with true Lorenz attractor
+    in \cref{fig:lorenz}, and the failed reservoirs in
+    \cref{fig:epsilon-failure}.}%
+  \label{fig:lowk-attractors}
+\end{figure*}
+
+Finally, for each structure I produced a free-running prediction of
+the Lorenz system for $100$ time units using the best-performing RC.\@
+I use these predictions to produce an attractor as shown in
+\cref{fig:lowk-attractors}. All five optimized ESNs reproduce the
+Lorenz attractor well. Though comparing these plots by eye is not
+quantitative, I find them qualitatively useful: an RC that fails to
+reproduce the Lorenz attractor by eye is unlikely to have a low
+$\tilde{\epsilon}$ compared to one that does, but visual inspection of
+the reproduced attractor can catch rare catastrophic failures that are
+not reflected in $\tilde{\epsilon}$.
 
 \section{Cross-task Performance}
-% optimized Lorenz used on double-scroll
+
+One advantage to RCs is that a single reservoir can be re-used on many
+different tasks by re-training $W_{\text{out}}$. To evaluate whether
+this is possible with these optimized networks, I take the 20 networks
+optimized for the Lorenz system and re-train $W_{\text{out}}$ for each
+to instead reproduce the double-scroll circuit system. Every other
+part of the RC is left unchanged. I then evaluate how accurate this
+prediction is using the metric $\tilde{\epsilon}$. These results are
+summarized in \cref{tab:lowk-resultsgen}.
+
+\begin{table}
+  \caption{Result of re-using reservoirs optimized for
+      Lorenz prediction to perform double-scroll prediction. The
+      minimum error encountered across all 20 reservoirs of each
+      topology is reported as $\tilde{\epsilon}_{\text{min}}$.}
+  \begin{tabularx}{\linewidth}{l l@{\extracolsep{\fill}} l l}
+    & & \multicolumn{2}{l}{Double Scroll} \\
+    & Topology & $\tilde{\epsilon}$ & $\tilde{\epsilon}_\text{min}$ \\
+    \hline
+    (a) & Any $k$ & 0.43 $\pm$ 1.2 & 0.028\\
+    (b) & $k = 1$ with cycle & 0.30 $\pm$ 0.5 & 0.048 \\
+    (c) & $k = 1$ no cycle & 0.37 $\pm$ 0.8 & 0.032 \\
+    (d) & cycle & 0.17 $\pm$ 0.2 & 0.056 \\
+    (e) & line & 0.22 $\pm$ 0.3 & 0.058
+  \end{tabularx}
+  \label{tab:lowk-resultsgen}
+\end{table}
+
+In general, these reservoirs perform poorly on this new task. However,
+there is extremely high variation. Even though they were optimized to
+perform Lorenz forecasting, many of these reservoirs are still able to
+reproduce the double-scroll attractor. Moreover, the best performers
+in each category approach the performance of reservoirs optimized
+specifically for the double-scroll system. This indicates that it is
+possible to find a single reservoir in any of these topologies that
+works well on more than one system. The Bayesian optimization
+algorithm may be able to find these reservoirs more reliably if the
+metric $\tilde{\epsilon}$ is modified to reward RCs that perform well
+on many systems.
 
 \section{Conclusion}
-% optimization is useful, and can yield surprising results
-% \tilde{\epsilon} is good
-% rho_r = 0, k=1 are useful (weird!)
-% but: they are rarer. This might be useful
-% NARX note: also look forward to next chapter. what unifies these?
-% line reservoir is almost just some time delay taps
-% can this generalize to many tasks? can it make hardware simpler?
+
+I find that Bayesian optimization of RC hyperparameters is a useful
+tool for creating high-performance ESNs quickly. I also find
+that allowing the optimizer to explore areas of the parameter space
+that are typically excluded in other optimization studies can lead to
+interesting and effective ESN designs such as those presented
+here.
+
+For this procedure to be effective, I find that evaluating the RC
+performance at many points along the attractor and averaging, rather
+than at a single point, encourages the optimization algorithm to find
+networks that reproduce the climate of the input system. Using this
+evaluation method helps direct the optimizer away from reservoirs that
+perform good short-term forecasting at only one point on the input
+system attractor.
+
+One surprising outcome of our optimization procedure is finding
+reservoirs that perform well even with no recurrent connections and
+$\rho_r=0$.  Though some reservoirs of this kind have been explored
+previously and shown to work,\cite{pathak2017,rodan2011} the
+heuristics remain common in reservoir design. I present additional
+concrete examples that provide evidence these heuristics are not
+unbreakable rules.
+
+In greater detail, I find reservoir networks with very low internal
+connectivity that perform at least as well as their
+higher-connectivity counterparts. A network with only a single
+internal cycle, or even no cycle at all, can perform as well as those
+with many recurrent cycles. These simpler structures manifest as
+simpler weight matrices, which can result in faster integration in
+software. In a hardware environment where connections between nodes
+have a cost, or recurrence is difficult to implement, these network
+structures may also have a direct benefit.
+
+Though the best of these low-connectivity networks perform as well
+as the more complicated reservoirs, they also tend to perform worse on
+average. However, searching for the best-performing instance of these
+reservoirs can be done in few trials, and may be feasible for hardware
+reservoirs that can be constructed and evaluated in an automated way.
+
+During this work, I have discovered many interesting lines of future
+research. First, the metric $\tilde{\epsilon}$ can be evaluated by
+comparing the output of the reservoir predictions to the true system
+attractor using a new metric for attractor overlap.\cite{ishar2019}
+This overlap metric can also be used to quantify the qualitative
+observations of different failure modes in regions of the
+$\tilde{\epsilon}$ metric. Second, these results show that these very
+low connectivity reservoirs perform well in the narrow context of
+software-based, chaotic system forecasting. Future work can explore
+whether these results hold for other reservoir computing tasks such as
+classification, and whether it is possible to find reservoirs that
+perform well on a variety of tasks simultaneously by modifying the
+metric $\tilde{\epsilon}$ to encourage generalization. Third, these
+results may also generalize to RCs with hardware networks, where the
+simpler reservoir designs would allow for more efficient and faster
+operating hardware RCs.
+
+At the time the work in this chapter was conducted, there were known
+results that prove that a linear network architecture with
+time-independent nodes, the discrete-time NARX networks, can simulate
+fully-connected networks.\cite{siegelmann1997} A similar proof for RCs
+would explain why there is no difference in the best-performing
+reservoirs in each structure type. The discovery that a line network
+(e) can perform as well as a general-$k$ network suggests that the
+network's role in the RC may only be to produce a variety of time
+delays for the output layer to draw on.
+
+In the time since, such a proof has been discovered. In the next
+chapter, I will introduce non-linear vector autoregressions (NVARs),
+an existing machine learning tool that is proven to be mathematically
+equivalent to ESNs under specific conditions, and discuss how this
+relationship between NVARs and RCs has advanced the understanding and
+application of both.
