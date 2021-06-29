@@ -1,2 +1,43 @@
 \chapter{RCs without Reservoirs: Non-linear Vector Autoregression}\label{ch:nvar}
 
+% intro: bollt linear rcs -> var(inf)
+% quadratic -> nvar
+
+\section{Solutions to Linear ESNs}
+
+% solve ESN in prediction (discrete)
+% solutions are complex exponentials
+% no way to sum N=100 complex exponentials and reproduce lorenz, for example
+% so: linear ESNs are limited. but mathematically nice
+
+% expand ESN in inference
+% note input u is finite, in practice
+% boom: VAR(k)
+% note discovered by eric bollt
+
+\section{Linear Vector Autoregressions (VARs)}
+
+% define VAR(k), figure
+% note that for long predictions, ESN is effectively equivalent to VAR(inf)
+% however: VAR literature says VAR(k) approximates VAR(inf)
+% emphasize simple
+% still: equivalent to linear ESN, know linear ESN can't do what nonlinear can
+
+\section{Non-linear Vector Autoregressions (NVARs)}
+
+% introduce nonlinearity in g, not f
+% how does this fall out for quadratic g? (due to bollt)
+% define NVAR(k), figure
+% still simple, and as will be demonstrated, *can* reproduce attractors
+
+\section{Practical Considerations}
+
+% VAR/NVAR(k) approximates VAR/NVAR(inf), but how well? How many k do we need?
+% NVAR proven for quadratic, but quadratic is insufficient (sym). what else?
+% also, monomial features grow as O(k^n), which can get very bad. how little n?
+% however, *if* all of that works out, NVAR dramatically fewer knobs than ESN
+
+\section{Summary}
+
+% summarize VAR, summarize NVAR, note possible problems addressed in next ch.
+% note how *simple* it all is, in comparison
