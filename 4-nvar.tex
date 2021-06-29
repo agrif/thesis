@@ -1,19 +1,93 @@
 \chapter{RCs without Reservoirs: Non-linear Vector Autoregression}\label{ch:nvar}
 
-% intro: bollt linear rcs -> var(inf)
-% quadratic -> nvar
+In 2021, Erik Bollt proved\cite{bollt2021} that a completely linear
+ESN is mathematically equivalent to an existing tool known as a vector
+autoregression, or VAR. He subsequently proved that an ESN with a
+specific output non-linearity is likewise equivalent to a specific
+non-linear VAR. In this chapter, I provide a brief outline of this
+equivalence proof, as well as a description of the VAR and NVAR
+methods.
+
+Although output-non-linear ESNs and NVARs are mathematically
+equivalent, the conditions of their equivalence raise some practical
+concerns when it comes to implementation. In this chapter will discuss
+these concerns, as well as the relative merits of the ESN and NVAR
+approaches.
+
+In \cref{ch:nvar-application} I will build on the information provided
+here to demonstrate the NVAR approach in practical applications, and
+quell concerns about the applicability of Bollt's proof.
 
 \section{Solutions to Linear ESNs}
 
-% solve ESN in prediction (discrete)
-% solutions are complex exponentials
-% no way to sum N=100 complex exponentials and reproduce lorenz, for example
-% so: linear ESNs are limited. but mathematically nice
+A fully linear ESN, with both the activation function $f$ and the
+read-out function $\bm{g}$ set to the identity function, has very
+simple solutions. As an example, I will take the discrete-time linear
+ESN equation in prediction mode from \cref{tab:esn}~(d),
+\begin{align}
+  \bm{r}(t + \Delta t) &= (1 - \gamma \Delta t) \bm{r}(t) + \gamma \Delta t \left( W_r\;\bm{r}(t) + W_\text{in}\;W_\text{out}\;\bm{r}(t)\right), \label{eq:nvar-esn-forecast} \\
+  \bm{y}(t) &= W_\text{out}\;\bm{r}(t).
+\end{align}
+The linear coefficients of $\bm{r}(t)$ can be collected into a single matrix
+\begin{equation}
+  W \equiv (1 - \gamma \Delta t) I + \gamma \Delta t \left( W_r + W_\text{in}\;W_\text{out}\right),
+\end{equation}
+simplifying the \cref{eq:nvar-esn-forecast} to
+\begin{equation}
+  \bm{r}(t + \Delta t) = W\;\bm{r}(t).
+\end{equation}
+Almost all square matrices of complex numbers are diagonalizable. If
+$W$ is an $N \times N$ matrix, diagonalizing $W$ yields $N$
+independent time evolution equations $r_i(t + \Delta t) = w_i\;
+r_i(t)$. Solutions to this equation are very simple,
+\begin{equation}
+  r_i(k \Delta t) = w_i^k\; r_i(0).
+\end{equation}
 
-% expand ESN in inference
-% note input u is finite, in practice
-% boom: VAR(k)
-% note discovered by eric bollt
+This means the dynamics of the ESN amount to discrete-time complex
+waves, possibly with an exponential growth or decay over time. This is
+all the RC output layer has to draw from to construct the output
+$\bm{y}(t)$. For the forecasting task, a sum of sine waves of
+different frequencies can perform adequately well for short-term
+prediction, as this effectively amounts to a discrete Fourier
+approximation. However, for long term attractor reconstruction and the
+reproduction of global properties of the input system, this linear ESN
+\emph{must} eventually fail on anything but the simplest input
+system. The most direct demonstration of this failure is that this
+linear ESN cannot predict any fixed point of the input system except
+$\bm{y}(t) = 0$.
+
+To have any hope of reconstructing the underlying system attractor, as
+demonstrated in \cref{ch:low-connectivity}, an ESN must have either a
+non-linear activation function $f$ or a non-linear read-out
+$\bm{g}$. Still, the completely linear ESN is mathematically easy to
+work with, and indeed the RC/NVAR equivalence proof begins by looking
+at the behavior of a discrete-time linear ESN in inference mode.
+
+From \cref{tab:esn}~(c),
+\begin{align}
+  \bm{r}(t + \Delta t) &= (1 - \gamma \Delta t) \bm{r}(t) + \gamma \Delta t \left( W_r\;\bm{r}(t) + W_\text{in}\;\bm{u}(t) \right), \label{eq:nvar-esn} \\
+  \bm{y}(t) &= W_\text{out}\;\bm{r}(t).
+\end{align}
+The coefficients of $\bm{r}(t)$ and $\bm{u}(t)$ can be collected into two matrices,
+\begin{align}
+  A &\equiv (1 - \gamma \Delta t) I + \gamma \Delta t W_r, \\
+  B &\equiv \gamma \Delta t W_\text{in}.
+\end{align}
+\Cref{eq:nvar-esn} then simplifies to
+\begin{equation}
+  \bm{r}(t + \Delta t) = B\;\bm{u}(t) + A\;\bm{r}(t).
+\end{equation}
+This equation is recursive; expanding it out into the past yields
+\begin{align}
+  \bm{r}(t + \Delta t) &= B\;\bm{u}(t) + AB\;\bm{u}(t - \Delta t) + A^2\;\bm{r}(t), \\
+  \bm{r}(t + \Delta t) &= \sum_{j = 0}^\infty A^j B \bm{u}(t - j \Delta t). \label{eq:esn-var-mat}
+\end{align}
+
+\Cref{eq:esn-var-mat} states that the value of $\bm{r}(t + \Delta t)$
+is constructed from a linear combination of time-delay taps of the
+input $\bm{u}(t)$, extending infinitely into the past. This
+combination is known as a vector auto-regression.
 
 \section{Linear Vector Autoregressions (VARs)}
 
