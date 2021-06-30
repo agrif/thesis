@@ -86,16 +86,115 @@ This equation is recursive; expanding it out into the past yields
 
 \Cref{eq:esn-var-mat} states that the value of $\bm{r}(t + \Delta t)$
 is constructed from a linear combination of time-delay taps of the
-input $\bm{u}(t)$, extending infinitely into the past. This
-combination is known as a vector auto-regression.
+input $\bm{u}(t)$, extending infinitely into the past. In the
+forecasting case, when $\bm{u}(t)$ is replaced with $\bm{y}(t)$, this
+means that the output $\bm{y}(t)$ is a linear combination of
+time-delay taps of itself. This is known as a vector
+autoregression.
 
 \section{Linear Vector Autoregressions (VARs)}
 
-% define VAR(k), figure
-% note that for long predictions, ESN is effectively equivalent to VAR(inf)
-% however: VAR literature says VAR(k) approximates VAR(inf)
-% emphasize simple
-% still: equivalent to linear ESN, know linear ESN can't do what nonlinear can
+In most cases, the term \emph{vector autoregression} specifically
+means a method of producing an output $\bm{y}(t)$ from a linear
+combination of past outputs. However, I will generalize this slightly
+in order to mirror the reservoir computer model introduced in
+\cref{ch:reservoir-computing}.
+
+In this thesis, a vector autoregression (VAR) is a method of
+transforming a discrete-time input signal $\bm{u}(t)$ into a
+discrete-time output signal $\bm{y}(t)$ from a linear combination of
+time-delay taps. Given a list of tap delay steps $\tau_i$, I construct
+a tap vector $\bm{x}(t)$ via
+\begin{equation}
+  \label{eq:var-x}
+  \bm{x}(t + \Delta t) = [\bm{u}(t - \tau_1 \Delta t), \bm{u}(t - \tau_2 \Delta t), \dots, \bm{u}(t - \tau_k \Delta t)],
+\end{equation}
+where the square brackets are understood to mean vector
+concatenation. That is, if the input $\bm{u}(t)$ has dimension $d$,
+and if there are $k$ taps, then the vector $\bm{x}(t)$ has dimension
+$dk$. Most commonly, $\tau_1 = 0$, which ensures that the VAR has access to the most recent information from $\bm{u}(t)$ when producing an output.
+
+\begin{figure}
+  \includegraphics{figures/var-infer}
+  \caption{Summary of the VAR method. Many time-delay taps $\tau_i$ of
+    the signal $\bm{u}(t)$ (top, red) is collected into the tap vector
+    $\bm{x}(t)$ (middle, blue). Here, there are three taps $\tau_1=0$,
+    $\tau_2=2$, and $\tau_3=4$. These taps are then combined linearly
+    by the output matrix $W_\text{out}$ to produce the next value of
+    the VAR's output $\bm{y}(t)$ (bottom, green). To transform a whole
+    time series input, this VAR process slides along the time axis
+    from left to right.}
+  \label{fig:var-infer}
+\end{figure}
+
+The output of the VAR is a linear transformation of this tap vector,
+\begin{equation}
+  \label{eq:var-y}
+  \bm{y}(t + \Delta t) = W_\text{out}\;\bm{x}(t + \Delta t).
+\end{equation}
+This transformation process, from input to output, is summarized in
+\cref{fig:var-infer}. Note the similarity to the RC method: the input
+signal $\bm{u}(t)$ drives an internal state $\bm{x}(t)$ / $\bm{r}(t)$,
+which is then linearly transformed into the output
+$\bm{y}(t)$. However, the internal state $\bm{x}(t)$ of the VAR is
+much simpler than that of most reservoirs, since it is constructed
+directly from the input.
+
+Once the taps $\tau_i$ are selected, the VAR can be trained in much
+the same way as an RC. The VAR is fed an example input
+$\bm{u}_\text{train}(t)$, which produces an example tap vector
+$\bm{x}_\text{train}(t)$ via \cref{eq:var-x}. Finally, a $W_\text{out}$
+that best maps this $\bm{x}_\text{train}(t)$ onto the example output
+$\bm{y}_\text{train}(t)$ can be found via ridge regression, exactly as
+in the RC case.
+
+VARs can also be used for forecasting as well. Analogously to the RC
+case, the VAR used for forecasting can be trained to reproduce the
+example input as its output. Since the VAR output $\bm{y}(t + \Delta
+t)$ depends only on $\bm{u}(t)$ at time $t$ and earlier, this amounts
+to one step ahead prediction. Once trained, the VAR can do autonomous
+prediction by replacing the input $\bm{u}(t)$ with the output
+$\bm{y}(t)$ in \cref{eq:var-x}.
+
+For practical reasons, in this thesis forecasting VARs have a modified
+output equation
+\begin{equation}
+  \bm{y}(t + \Delta t) = \bm{u}(t) + W_\text{out}\;\bm{x}(t + \Delta t).
+\end{equation}
+This effectively changes the VAR from one step ahead prediction to
+predicting the difference between the last value of the signal and the
+next, in analogy to a discrete time integrator. Without this change,
+the components of $W_\text{out}$ corresponding to $\bm{u}(t)$ would be
+larger than the others. Since the ridge regression used to find
+$W_\text{out}$ has a single regalurization parameter $\alpha$, it
+works best when all components of $W_\text{out}$ have about the same
+expected scale.
+
+Once trained, either as a transformation or for prediction, a VAR can
+be tested in the same ways as an RC.
+
+Working with a VAR, by training it and using it, is very similar to
+working with an RC. The most important difference is that using a VAR
+completely sidesteps the issue of choosing an internal
+reservoir. Building an ESN reservoir is a complicated process that
+starts with the metaparameters listed in \cref{tab:esn-metaparameters}
+and ends with a random realization of a network, usually of 100 nodes
+or more. In contrast, building a VAR amounts to selecting which taps
+$\tau_i$ to use, and how many.
+
+However, the linear ESN solution in \cref{eq:esn-var-mat} is only
+completely equivalent to a VAR with an infinite number of time delay
+taps. VARs with a finite number of taps $k$ will approximate a VAR
+with infitite taps under the right conditions as $k \rightarrow
+\infty$\cite{bollt2021}, but if VARs are to be used as a replacement
+for RCs, it is critical to know how good this approximation is in
+practice. If an VAR requires thousands of taps to work, it may still
+be simpler just to use an ESN.
+
+Finally, these linear VARs suffer from the same drawbacks as the
+linear ESN. Any practical replacement for an ESN would have to
+reproduce the attractors of the systems they are trained on, as in
+\cref{ch:low-connectivity}, and to do that, they need a non-linearity.
 
 \section{Non-linear Vector Autoregressions (NVARs)}
 
