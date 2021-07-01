@@ -198,19 +198,174 @@ reproduce the attractors of the systems they are trained on, as in
 
 \section{Non-linear Vector Autoregressions (NVARs)}
 
-% introduce nonlinearity in g, not f
-% how does this fall out for quadratic g? (due to bollt)
-% define NVAR(k), figure
-% still simple, and as will be demonstrated, *can* reproduce attractors
+The ESN model has two possible sources of non-linearity: the
+activation function $f$ and the read-out function $\bm{g}$. Most
+commonly, including in \cref{ch:low-connectivity}, $f =
+\tanh$. However, a non-linear $f$ is mathematically difficult to work
+with, as it lies in the middle of the ESNs internal state equation. In
+contrast, the read-out function $\bm{g}$ sits only on the output
+layer. Consider the totally linear ESN described in
+\cref{eq:esn-var-mat}, modified to have a non-linear read-out function
+\begin{equation}
+  g_i(\bm{r}) = \begin{cases}
+    r_i & \text{if } i \leq N, \\
+    r_{i - N}^2 & \text{if } N < i \leq 2N.
+  \end{cases}
+  \label{eq:esn-quadratic-out}
+\end{equation}
+where $N$ is the number of nodes in the ESN.  That is,
+$\bm{g}(\bm{r})$ contains all of the node values, as well as the
+square of all the node values. This is similar to the read-out
+function used in \cref{ch:low-connectivity}, except that it makes no
+attempt to keep the same number of components in the read-out. By
+\cref{eq:esn-var-mat}, each node value is a linear combination of
+time-delay taps of $\bm{u}(t)$, and so the square of a node value will
+contain only quadratic terms of the form $u_i(t-k\Delta
+t)u_j(t-l\Delta t)$.
+
+Putting this together, the ESNs output $\bm{y}(t)$ can written in
+terms of the time-delay tap vector $\bm{x}(t)$ in \cref{eq:var-x},
+using an infinite number of taps $\tau_i = i - 1$,
+\begin{equation}
+  \bm{y}(t + \Delta t) = W_\text{out}\;\bm{g}_\text{n}\left(\bm{x}(t + \Delta t)\right).
+\end{equation}
+where the non-linear function $\bm{g}_\text{n}(\bm{x})$ has all
+components of $\bm{x}$ as well as all quadratic pairs of those components,
+\begin{equation}
+  \label{eq:quadratic-nvar}
+  \bm{g}_\text{n}(\bm{x}) = [x_1, x_2, \dots, \; x_1 x_1, x_1 x_2, \dots, \; x_2, x_2, \dots].
+\end{equation}
+
+This construction, a VAR that wraps the delay tap vector in a
+non-linear function $\bm{g}_\text{N}$ before the building the linear
+combination for the output, is known as a non-linear VAR (NVAR), and
+this concludes a sketch of Bollt's proof that a linear ESN with
+quadratic read-out is mathematically equivalent to an NVAR with
+infinite taps\cite{bollt2021}. Because the read-out function appears
+only on the output, it is not difficult to change the nature of the
+non-linear read-out $\bm{g}$ and derive the corresponding NVAR
+$\bm{g}_\text{N}$.
+
+It is important to note at this point that the ESN's output weights
+$W_\text{out}$ and read-out $\bm{g}$ are \emph{not} the same as the
+equivalent NVAR's output weights $W_\text{out}$ and non-linearity
+$\bm{g}_\text{out}$. The ESN's $\bm{g}$ produces squares of node
+values, while the NVAR's $\bm{g}_\text{n}$ produces all linear and
+quadratic terms it is possible to construct from the tap vector
+$\bm{x}$. In a practical application with a finite tap vector, this
+means that if $\bm{x}$ has $k$ taps, then $\bm{g}_\text{n}$ will have
+$k + k(k+1)/2$ components. This quadratic dependence on $k$ can
+rapidly cause the ridge regression to find $W_\text{out}$ to be very
+expensive.
+
+Putting all the pieces together, the NVAR method for transforming an
+input $\bm{u}(t)$ into an output $\bm{y}(t)$ is described by
+\begin{align}
+  \label{eq:nvar}
+  \bm{x}(t + \Delta t) &= [\bm{u}(t - \tau_1 \Delta t), \bm{u}(t - \tau_2 \Delta t), \dots, \bm{u}(t - \tau_k \Delta t)], \\
+  \label{eq:nvar-out}
+  \bm{y}(t + \Delta t) &= W_\text{out}\;\bm{g}_\text{n}\left(\bm{x}(t + \Delta t)\right).
+\end{align}
+For forecasting tasks, the output \cref{eq:nvar-out} is relaced with
+\begin{equation}
+  \label{eq:nvar-out-forecast}
+  \bm{y}(t + \Delta t) = \bm{u}(t) + W_\text{out}\;\bm{g}_\text{n}\left(\bm{x}(t + \Delta t)\right).
+\end{equation}
+
+Simply by wrapping the tap vector $\bm{x}$ in a non-linear function
+before the output, the NVAR now has the non-linearity required to have
+any hope of reproducing attractors as well as the non-linear ESNs, and
+in \cref{ch:nvar-application} I will demonstrate that NVARs perform
+quite well in this role.
 
 \section{Practical Considerations}
 
-% VAR/NVAR(k) approximates VAR/NVAR(inf), but how well? How many k do we need?
-% NVAR proven for quadratic, but quadratic is insufficient (sym). what else?
-% also, monomial features grow as O(k^n), which can get very bad. how little n?
-% however, *if* all of that works out, NVAR dramatically fewer knobs than ESN
+The above proof sketches demonstrate that a linear ESN with non-linear
+readout is equivalent to an NVAR with an infinite number of taps. In
+practice, though, this method can only be implemented with a finite
+number of taps. If an NVAR implementation requires thousands of taps
+to work, it is not a realistic replacement for the ESN method.
+
+The number of taps $k$ used is also relevant for the quadratic
+$\bm{g}_\text{n}$ described in \cref{eq:quadratic-nvar}. The output
+dimension of this function, $k + k(k + 1)/2$, is also one of the
+dimensions of the output matrix $W_\text{out}$. As this dimension
+grows, so does the time required to perform ridge regression. This
+quadratic dependence on $k$ also emphasizes the need to keep the
+number of taps low.
+
+On top of this, a quadratic output may not be enough. If a quadratic
+NVAR is trained to do forecasting on a system with total inversion
+symmetry $\bm{u}(t) \rightarrow -\bm{u}(t)$, the quadratic terms in
+the output cannot meaningfully contribute. This reduces the NVAR to a
+linear VAR, with all the forecasting problems that entails. To use an
+NVAR on such a system, the non-linear function $\bm{g}_\text{n}$ must
+be expanded to include higher-order terms. This can be done by
+constructing an ESN and calculating the equivalent NVAR form, but it
+can also be done more directly by simply adding more terms to
+$\bm{g}_\text{n}$. I will explore this in
+\cref{ch:nvar-application}. However, this further emphasizes the
+requirement for a small number of taps, as the number of terms of
+order $n$ grows as $k^n$.
+
+\begin{table}
+  \caption{Summary of NVAR parameters. Compared to the ESN approach in
+    \cref{tab:esn-metaparameters}, the NVAR method is much simpler.}
+  \begin{tabularx}{\linewidth}{rlX}
+    & Parameter & Description \\
+    \hline
+    \rule{0pt}{4ex}
+    $\tau_i$ & Tap Delays & the placement of time-delay taps \\
+    \rule{0pt}{4ex}
+    $\bm{g}_\text{n}$ & Read-out Function & the non-linearity on the output layer \\
+    \rule{0pt}{4ex}
+    $\Delta t$ & Time Step & the discrete time step of both the input $\bm{u}(t)$ and the NVAR itself \\
+    \rule{0pt}{4ex}
+    $\alpha$ & Ridge Parameter & regularization parameter for ridge regression \\
+  \end{tabularx}
+  \label{tab:nvar-parameters}
+\end{table}
+
+If these challenges can be overcome, NVARs are an extremely appealing
+replacement for the ESN approach. ESNs are complicated random networks
+with many poorly-understood metaparameters. In contrast, NVARs have
+only four total parameters, listed in \cref{tab:nvar-parameters}.  In
+addition to being a smaller set of parameters, these parameters are
+simply much more interpretable. It is not straightforward to imagine
+what changing the input connectivity of an ESN will do to performance,
+but changing the taps $\tau_i$ has a direct effect on what information
+is available to the NVAR.
 
 \section{Summary}
 
-% summarize VAR, summarize NVAR, note possible problems addressed in next ch.
-% note how *simple* it all is, in comparison
+VARs and NVARs are, like RCs, a method of transforming an input signal
+into an output signal. They operate on linear combinations of
+time-delay taps of the input. In many ways, their construction and use
+mirrors that of an RC, except that there is no internal dynamic
+reservoir system. This sidesteps a whole host of questions and
+decisions relating to reservoir construction, and dramatically
+simplifies the implementation of VARs and NVARs. However, despite this
+simplicity, they are now known to be mathematically equivalent to a
+certain class of non-linear ESN.
+
+NVARs are an established method, and this equivalence opens the door
+to crosstalk between the NVAR and RC communities. On the RC side,
+researchers gain a dramatically simpler implementation that is known
+to be equivalent, and also gain a chance to apply lessons learned in
+the RC world to the NVAR method. The NVAR approach benefits from the
+use of ridge regression, long used in the RC field, instead of other
+linear fitting methods. However, some questions still remain -- most
+notably, how many time-delay taps are practically necessary, and how
+complicated a non-linear function will most tasks need?
+
+If these questions are resolved, the NVAR approach is an extremely
+attractive alternative to the ESN approach. NVARs do not rely on
+random construction, are simple to implement, and have only a few
+parameters with direct interpretations. If NVARs work well, it becomes
+difficult to recommend ESNs.
+
+In the next chapter, I will apply the NVAR method to the traditional
+RC tasks of system state inference and chaotic system forecasting. In
+the process, I will resolve these remaining questions, and demonstrate
+that NVARs are a practical and very simple replacement for traditional
+ESN approaches.
