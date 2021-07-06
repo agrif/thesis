@@ -4,6 +4,7 @@
 \usepackage{microtype}
 \usepackage{amsmath}
 \usepackage[numbers,sort&compress]{natbib}
+\usepackage{doi}
 \usepackage{graphicx}
 \usepackage{tabularx}
 \usepackage{dcolumn}
@@ -23,8 +24,8 @@
 \usepackage{lipsum}
 
 % style stuff
-\renewcommand\bibname{References}
-\bibliographystyle{ieeetrurl} % FIXME this puts [link] if it can't find a title
+\bibliographystyle{apsrev4-1-custom}
+\addto{\captionsenglish}{\renewcommand{\bibname}{References}}
 \hypersetup{hidelinks}
 
 % custom commands
@@ -72,11 +73,10 @@
   \dateitem{2016-2021}{Graduate Research Associate \\ Department of Physics \\ The Ohio State University}
 
   \begin{publist}
-    \pubitem{D.~Canaday, A.~Griffith, and D.J.~Gauthier, `Rapid Time Series Prediction with a Hardware-Based Reservoir Computer,' \textit{Chaos} \textbf{28}, 123119 (2018).} %https://doi.org/10.1063/1.5048199
-    \pubitem{A.~Griffith, A.~Pomerance, D.J.~Gauthier, `Forecasting Chaotic Systems with Very Low Connectivity Reservoir Computers,' \textit{Chaos} \textbf{29}, 123108 (2019).} % https://doi.org/10.1063/1.5120710
-    % these are on arxiv. FIXME is arxiv ok? ??
-    % symmetry-aware via wendson, if published
-    % NG-RC if published
+    \pubitem{D.~Canaday, A.~Griffith, and D.~J.~Gauthier, ``Rapid time series prediction with a hardware-based reservoir computer,'' \href{https://doi.org/10.1063/1.5048199}{Chaos: An Interdisciplinary Journal of Nonlinear Science \textbf{28}, 123119 (2018)}.}
+    \pubitem{A.~Griffith, A.~Pomerance, and D.~J.~Gauthier, ``Forecasting chaotic systems with very low connectivity reservoir computers,'' \href{https://doi.org/10.1063/1.5120710}{Chaos: An Interdisciplinary Journal of Nonlinear Science \textbf{29}, 123108 (2019)}.}
+    \pubitem{W.~A.~S.~Barbosa, A.~Griffith, G.~E.~Rowlands, L.~C.~G.~Govia, G.~J.~Ribeill, M.-H.~Nguyen, T.~A.~Ohki, and D.~J.~Gauthier, ``Symmetry-aware reservoir computing,'' \href{https://arxiv.org/abs/2102.00310}{(2021), \\ arXiv:2102.00310 [cs.NE]}.}
+    \pubitem{D.~J.~Gauthier, E.~Bollt, A.~Griffith, W.~A.~S.~Barbosa, ``Next generation reservoir computing,'' \href{https://arxiv.org/abs/2106.07688}{(2021), arXiv:2106.07688 [cs.LG]}.}
   \end{publist}
 
   \begin{fieldsstudy}
@@ -104,7 +104,7 @@
 \include{6-conclusion}
 
 \backmatter
-%\nocite{*} % FIXME Display all refs
+%\nocite{*}
 \bibliography{thesis}
 
 \appendix
