@@ -16,13 +16,13 @@ for example RC tasks. For reference, they are included here.
 The Lorenz '63 chaotic system is described by
 \begin{equation}
   \begin{aligned}
-    \dot{x} &= 10 \left(y - x\right), \\
-    \dot{y} &= x \left(28 - z\right) - y, \\
-    \dot{z} &= x\,y - \frac{8}{3} z,
+    \dot{x} &= \sigma \left(y - x\right), \\
+    \dot{y} &= x \left(\rho - z\right) - y, \\
+    \dot{z} &= x\,y - \beta z,
   \end{aligned}
   \label{eq:lorenz}
 \end{equation}
-with standard parameters.\cite{lorenz1963} The attractor of this
+with standard parameters $\sigma = 10$, $\rho = 28$, and $\beta = 8/3$.\cite{lorenz1963} The attractor of this
 system can be visualized easily in two dimensions by projecting the
 three-dimensional trajectory of the system onto a plane. I show the
 attractor in the $x$/$z$ plane in \cref{fig:lorenz}.

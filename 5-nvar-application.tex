@@ -50,7 +50,7 @@ $W_\text{out}$ to fit a constant offset, which is useful here as the
 $z$ component has a non-zero mean.
 
 For this task, with $4$ taps and two input dimensions $x$ and $y$, the
-output of $\bm{g}_\text{out}$ has $45$ components, and the linear
+output of $\bm{g}_\text{n}$ has $1 + 8 + 36 = 45$ components, and the linear
 output matrix $W_\text{out}$ has dimension $1 \times 45$.
 
 \begin{figure}
@@ -85,7 +85,7 @@ single training and testing trial is shown in
 For this task, we will use an NVAR in forecasting mode to do system
 forecasting for Lorenz '63. That is, we train the NVAR to use all
 three state variables $x$, $y$, and $z$ to perform next-step-ahead
-prediction of the Lorenz system. Unlike for the inference task, once
+prediction of the Lorenz system in \cref{eq:lorenz}. Unlike for the inference task, once
 the NVAR is in forecast mode it no longer has an external driving
 input and runs autonomously. As a result, the choice of time step
 $\Delta t$ has a stronger effect on forecasting than inference. Too
@@ -94,7 +94,7 @@ innacuracy. Here, we use a time step of $\Delta t = 0.025$.
 
 Again we use the quadratic non-linearity with constant term described
 in \cref{eq:quadratic-nvar-const}. In this case, the non-linear output
-of $\bm{g}_\text{out}$ has $28$ components, and so $W_\text{out}$ has
+of $\bm{g}_\text{n}$ has $1 + 6 + 21 = 28$ components, and so $W_\text{out}$ has
 dimension $3 \times 28$.
 
 For the forecasting task we use only $2$ taps, $\tau_0 = 0$ and
@@ -106,12 +106,18 @@ Again, we train this NVAR on $10$ different examples of the Lorenz '63
 system, each time training on $10$ units of time. We then evaluate the
 NVAR by performing an autonomous forecast for one Lyapunov period to
 calculate a NRMSE $\epsilon_1$, as in \cref{eq:nrmse}, and then
-average this over the $10$ trials to produce $\tilde{epsilon}$ in
+average this over the $10$ trials to produce $\tilde{\epsilon}$ in
 \cref{eq:nrmse-avg}.
 
 \begin{figure}
   \includegraphics[width=\textwidth]{figures/nvar-predict-lorenz}
-  \caption{The true Lorenz attractor (a) and NVAR predicted attractor (b) for a single training trial. (b) -- (d) True Lorenz system (blue) during training overlaid with NVAR output (red) calculated after training is complete. (f) -- (h) True (blue) and NVAR forecasted output (red).}
+  \caption{The true Lorenz attractor (a) and NVAR predicted attractor
+    (b) for a single training trial. (b) -- (d) True Lorenz system
+    (blue) during training overlaid with NVAR output (red) calculated
+    after training is complete. (f) -- (h) True (blue) and NVAR
+    forecasted output (red). The NVAR shows good agreement with the
+    true system as far as $5$ Lyapunov periods in to the autonomous
+    forecast.}
   \label{fig:nvar-predict-lorenz}
 \end{figure}
 
@@ -119,13 +125,16 @@ The performance of this NVAR during a single training trial is shown
 in \cref{fig:nvar-predict-lorenz}. A long autonomous forecast from the
 NVAR produces an attractor that shows qualitative agreement with the
 true Lorenz attractor, and produces a NRMSE over one Lyapunov period
-of $2.32\pm0.51\times10^{-3}$, about ten times better than the ESNs
-described in \cref{tab:lowk-lorenz-results}. This NVAR performs better
-than the ESNs despite the fact that they are simpler to describe and
-implement, do not require lengthy optimization, and train at least an
-order of magnitude faster. The training data used for the NVAR is also
-very light: only $10$ units of time, corresponding to $400$ points at
-this time step, is sufficient to train the NVAR this well.
+of $2.32\pm0.51\times10^{-3}$ with $\alpha = 2.5\times10^{-6}$, about
+ten times better than the ESNs described in
+\cref{tab:lowk-lorenz-results}. This NVAR performs better than the
+ESNs despite the fact that they are simpler to describe and implement,
+do not require lengthy optimization, and train at least an order of
+magnitude faster. The training data used for the NVAR is also very
+light: only $10$ units of time, corresponding to $400$ points at this
+time step, is sufficient to train the NVAR this well.
+
+\subsection{$z$ Return Map}
 
 The $z$ variable of the Lorenz '63 system has a functional relation
 between successive local maxima. This is demonstrated visually by
@@ -178,22 +187,167 @@ As with the attractor comparison, a quantitative measure of return map
 similarity would be a strong candidate for replacing the flawed NRMSE
 measure.
 
-% fixed points discussion
-% wout discussion
+\subsection{Fixed Points}
+
+For a more quantitative measure of how well the NVAR learns the
+dynamics of the Lorenz system, we calculate the fixed points of the
+trained NVAR and then find their distance to the true Lorenz fixed
+points. By setting the derivatives in \cref{eq:lorenz} to zero, we
+find three fixed points of the Lorenz system located at
+\begin{align}
+  [x, y, z] &= [0, 0, 0], \\
+            &= [\pm \sqrt{\beta(\rho - 1)}, \pm \sqrt{\beta(\rho - 1)}, (\rho - 1)].
+\end{align}
+
+% fsolve, 'hybr' method, "Powell hybrid method"
+% More, Jorge J., Burton S. Garbow, and Kenneth E. Hillstrom. 1980. User Guide for MINPACK-1.
+To find the fixed points of the NVAR system, we perform a trial
+single-step forecast with a constant past history, and use a
+root-finding algorithm to find the specific values of past history
+that result in an unchanged forecast. This root-finding algorithm is
+used three times, using the three true Lorenz fixed points as initial
+guesses.
+
+To allow easy comparison of the accuracy of these fixed points with
+other systems, we calculate the distance between this fixed points in
+a uniformly scaled space where the Lorenz63 system has unit
+variance. For our trained NVAR, the distance from the zero fixed point
+is $1.2\pm1.4\times10^{-3}$, and the distances between the predicted
+and true positive and negative fixed points are
+$11.6\pm3.0\times10^{-4}$ and $7.4\pm1.5\times10^{-4}$, respectively.
+
+The NVAR shows good agreement on the zero fixed point, as the variance
+caused by different training windows overlaps with the true
+location. The other two fixed points are consistently offset from the
+truth. However, in all three cases, the fixed points lie within
+approximately $0.1\%$ of the true location, despite the fact that the
+training data does not any of these points.
+
+\subsection{Output Weights}
+
+Our particular choice of non-linearity $\bm{g}_\text{n}$ for this task
+completely includes all terms on the right hand side of the Lorenz
+system in \cref{eq:lorenz}. That is, the Lorenz system is described by
+a polynomial of degree $2$, and our choice of $\bm{g}_\text{n}$ allows
+the NVAR to describe \emph{any} polynomial of degree $2$. This raises
+a legitimate question: is the NVAR simply performing so well because
+it was equipped ahead of time with the perfect tools?
 
 \begin{figure}
+  % FIXME fix labels \Delta t also 1 (also (a) not a) for other plots)
   \includegraphics{figures/nvar-predict-lorenz-wout}
-  \caption{FIXME caption.}
+  \caption{Weights in the matrix $W_\text{out}$ for the NVAR trained
+    for Lorenz system forecasting. Terms that appear directly in the
+    Lorenz system (\cref{eq:lorenz}) are in red. There does not appear
+    to be any correlation between a large weight in the NVAR output,
+    and presence in the Lorenz equations.}
   \label{fig:nvar-predict-lorenz-wout}
 \end{figure}
 
+One way to allay these concerns is to look at other non-polynomial
+systems, as in the next few sections. However, even with the Lorenz
+system we see that this is not the case by inspecting the trained
+weight matrix $W_\text{out}$ in
+\cref{fig:nvar-predict-lorenz-wout}. We see significant contributions
+in the output from terms not present in the Lorenz equations. From
+this we derive an interpretation: a trained NVAR is finding the best
+possible one-step-ahead integrator it can find, given the example
+input and the available terms in $\bm{g}_\text{n}$. When the time step
+is large enough, a strictly linear prediction becomes more and more
+inaccurate, and so the NVAR relies on the non-linear and time-delayed
+terms to make up the difference.
+
 \section{Forecasting the Double-Scroll Circuit}
+
+For this task, we will use an NVAR in forecasting mode to use all
+three state variables $V_1$, $V_2$, and $I$ of the double-scroll
+circuit described by \cref{eq:dscroll}. We use the same tap
+delays $\tau_0 = 0$, $\tau_1 = 1$ as the Lorenz case, but we modify
+our choice of non-linearity.
+
+Unlike the Lorenz system, the double-scroll circuit cannot be
+described by a polynomial of degree $2$. Indeed, the double-scroll
+equations are completely odd, and have full inversion
+symmetry. As a result, even terms in the non-linear function
+$\bm{g}_\text{n}$ are not useful to the NVAR. In light of this, we use
+a non-linear function that includes all linear terms of the tap vector
+$\bm{x}$ as well as all terms with degree $3$. That is,
+\begin{equation}
+  \bm{g}_\text{n}(\bm{x}) = [x_1, x_2, \dots, \; x_1 x_1 x_1, x_1 x_1 x_2, \dots].
+\end{equation}
+With $2$ taps and $3$ input dimensions, the output of
+$\bm{g}_\text{n}$ has $6 + 56 = 62$ components, and so $W_\text{out}$
+has dimension $3 \times 62$.
+
+The Lyapunov time of the double-scroll circuit is roughly $10$ times
+longer than that of the Lorenz system. To ensure a fair comparison, we
+extend the training time of the NVAR from $10$ to $100$ units to keep
+the number of Lyapunov times covered by the training similar for both
+cases. We also set $\Delta t = 0.25$, to ensure that both the Lorenz
+and double-scroll cases use $400$ data points during training.
 
 \begin{figure}
   \includegraphics[width=\textwidth]{figures/nvar-predict-dscroll}
-  \caption{FIXME caption.}
+  \caption{The true double-scroll attractor (a) and NVAR predicted
+    attractor (b) for a single training trial. (b) -- (d) True
+    double-scroll system (blue) during training overlaid with NVAR
+    output (red) calculated after training is complete. (f) -- (h)
+    True (blue) and NVAR forecasted output (red). Again, the NVAR
+    shows good agreement with the true system as far as $5$ Lyapunov
+    periods.}
   \label{fig:nvar-predict-dscroll}
 \end{figure}
+
+Other than these modifications, our method for using the NVAR to
+forecast the dynamics of this system proceed exactly as for the Lorenz
+system, training the NVAR on $10$ different examples of the
+double-scroll circuit and then evaluating the NRMSE for one Lyapunov
+period each. The performance of this NVAR during a single training
+trial is shown in \cref{fig:nvar-predict-dscroll}.
+
+Once again, a long autonomous forecast shows the NVAR can reproduce
+the shape of the double-scroll attractor, and over one Lyapunov period
+has an NRMSE of $7.8\pm1.7\times10^{-3}$ with $\alpha =
+1.0\times10^{-3}$, about a factor of three better than the ESNs
+described in \cref{tab:lowk-resultsplus}.
+
+\subsection{Fixed Points}
+
+Again, we look for the fixed points of this trained NVAR and find
+their distance to the true fixed points of the double-scroll circuit,
+in a space uniformly scaled so that the double-scroll circuit has unit
+variance. Setting the derivatives in \cref{eq:dscroll} to $0$
+and solving yields the transcendental equation
+\begin{equation}
+  0 = \frac{V_1}{R_2}(R_1 - R_2 - R_4) + 2 R_1 I_r \sinh\left(\alpha V_1 \left(1 - \frac{R_4}{R_1}\right)\right).
+\end{equation}
+For the parameters we use, this yields three solutions for $V_1$. If
+$V_1$ is the positive solution, this corresponds to three fixed points
+at
+\begin{align}
+  [V_1, V_2, I] &= [0, 0, 0], \\
+                &= [V_1, \pm V_1 R_4 / R_1, \pm V_1 / R_1].
+\end{align}
+
+Since our choice of $\bm{g}_\text{n}$ has only odd polynomial powers
+and no constant term, it is symmetric about the origin and predicts
+the zero fixed point exactly. The distance from the true positive
+fixed point is $2.7\pm0.3\times10^{-3}$. Due to the inversion
+symmetry, the negative fixed point is precisely the same
+distance. Although the variance from repeated trials does not overlap
+the true fixed points, they do lie within $0.3\%$ of the truth.
+
+This NVAR performs well at short-term forecasting and fixed point
+prediction, despite not having access to the infinite number of
+polynomial terms in the expansion of the double-scroll equations. This
+demonstrates a possible practical approach to NVAR design: keep adding
+higher polynomial terms to the non-linear function $\bm{g}_\text{n}$
+until performance is acceptable. However, for NVARs that require many
+taps or operate on high-dimensional inputs, this very quickly leads to
+an explosion in the number of weights trained in $W_\text{out}$, and
+consequently a huge increase in training time. In the next section, I
+will explore another method to access the higher-order polynomial
+terms without a large increase in the number of weights.
 
 \section{Forecasting Mackey-Glass}
 
