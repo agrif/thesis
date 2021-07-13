@@ -1,2 +1,59 @@
 \chapter{Conclusion}\label{ch:conclusion}
 
+In this thesis, I have challenged common RC design rules, and
+demonstrated increasingly simple RCs that break these rules and still
+perform well.
+
+In \cref{ch:low-connectivity}, I demonstrated ESN-based RCs with five
+classes of simple internal connectivity that all perform well on the
+system forecasting task. Despite the fact that recurrence is a common
+requirement in ESN design, two of these classes of connectivity have
+\emph{no recurrence}, but continue to perform. A network with only a
+single internal cycle, or no cycles at all, can perform as well as a
+network with many recurrent cycles. These simpler reservoir structures
+may benefit hardware-based RCs, where every internal connection has an
+associated cost.
+
+This work revealed some new lines of possible future
+research. Primarily, the $\tilde{\epsilon}$ metric is a more valuable
+measure than $\epsilon_1$ of how well the ESN reproduces the climate
+of the system, but ultimately still fails to measure attractor
+similarity directly. The development of such a metric would be very
+important to the field, as it begins to consider how well an RC
+reproduces climate in addition to short-term forecasting.
+
+One of the simple connectivity classes I explored was a simple line
+network. The fact that this line network can perform as well as a
+full-connectivity network indicates that perhaps the reservoir's role
+is to produce a variety of time delays for the RC output layer to draw
+on. In \cref{ch:nvar}, I summarize the NVAR method, which parallels
+the RC method but instead takes time-delay taps of the input directly
+rather than relying on a reservoir. I also sketch a new proof in the
+field of reservoir computing that shows a certain type of
+output-non-linear ESN is equivalent to an infinite-tap NVAR.
+
+In \cref{ch:nvar-application} I build on this proof with my
+collaborators to implement NVARs that solve the traditional RC tasks
+of system state inference and system forecasting. Together we show
+that the NVAR can solve these tasks with only a few, finite taps, and
+that the specific non-linearity used in the proof can be modified an
+extended in obvious ways to expand the number of problems it can
+solve. This opens the door to an entire expanding tree of interesting
+research. Now any task previously solved in an RC context can be
+attempted in an NVAR context, and the success or failure of the NVAR
+at solving a given problem will contribute meaningfully to both the
+NVAR and RC fields.
+
+Applying the NVAR approach to Mackey-Glass system forecasting reveals
+possibly the most important avenue for future research. Cubic terms
+are not sufficient for all problems, but adding higher-order monomials
+directly to the NVAR leads to an exponential explosion in training
+time. Future research will need to resolve this by including these
+higher-order terms without exhaustively including all monomials, and
+may possibly make use of non-linear functions with infinite power
+series.
+
+The NVAR is a reservoir computer pruned down to its most essential
+components, and now that we know it is possible build a reservoir computer
+without a reservoir \emph{at all}, I am excited to see what new
+directions the RC field moves towards.

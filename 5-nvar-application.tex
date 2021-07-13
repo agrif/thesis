@@ -112,7 +112,7 @@ average this over the $10$ trials to produce $\tilde{\epsilon}$ in
 \begin{figure}
   \includegraphics[width=\textwidth]{figures/nvar-predict-lorenz}
   \caption{The true Lorenz attractor (a) and NVAR predicted attractor
-    (b) for a single training trial. (b) -- (d) True Lorenz system
+    (e) for a single training trial. (b) -- (d) True Lorenz system
     (blue) during training overlaid with NVAR output (red) calculated
     after training is complete. (f) -- (h) True (blue) and NVAR
     forecasted output (red). The NVAR shows good agreement with the
@@ -289,7 +289,7 @@ and double-scroll cases use $400$ data points during training.
 \begin{figure}
   \includegraphics[width=\textwidth]{figures/nvar-predict-dscroll}
   \caption{The true double-scroll attractor (a) and NVAR predicted
-    attractor (b) for a single training trial. (b) -- (d) True
+    attractor (e) for a single training trial. (b) -- (d) True
     double-scroll system (blue) during training overlaid with NVAR
     output (red) calculated after training is complete. (f) -- (h)
     True (blue) and NVAR forecasted output (red). Again, the NVAR
@@ -341,18 +341,115 @@ This NVAR performs well at short-term forecasting and fixed point
 prediction, despite not having access to the infinite number of
 polynomial terms in the expansion of the double-scroll equations. This
 demonstrates a possible practical approach to NVAR design: keep adding
-higher polynomial terms to the non-linear function $\bm{g}_\text{n}$
-until performance is acceptable. However, for NVARs that require many
-taps or operate on high-dimensional inputs, this very quickly leads to
-an explosion in the number of weights trained in $W_\text{out}$, and
-consequently a huge increase in training time. In the next section, I
-will explore another method to access the higher-order polynomial
-terms without a large increase in the number of weights.
+delay taps and higher polynomial terms to the non-linear function
+$\bm{g}_\text{n}$ until performance is acceptable. However, for NVARs
+that require many taps or operate on high-dimensional inputs, this
+very quickly leads to an explosion in the number of weights trained in
+$W_\text{out}$, and consequently a huge increase in training time. In
+the next section, I will explore how careful use of tap spacing can
+keep the number of taps required low.
 
 \section{Forecasting Mackey-Glass}
 
+% FIXME how integrated
+
+For this task, we will again use an NVAR in forecasting mode, this
+time using the single Mackey-Glass state variable $u$ (in
+\cref{eq:mackey-glass}) as input, with $\Delta t = 0.2$. For this
+system, using two adjacent taps for the NVAR as in the previous
+examples is insufficient, as the Mackey-Glass system behavior depends
+strongly on both the value of $u(t)$ as well as $u(t - 17)$. One way
+to access this value in the NVAR is to add taps until they reach $t =
+17$, resulting in $85$ total taps. Even with a quadratic output, this
+requires training a $W_\text{out}$ with dimension $1 \times
+3741$. This cost can be avoided by increasing the time step $\Delta
+t$, thus reducing the total number of taps, but this solution comes
+with the cost of a much more granular prediction.
+
+Another way to access the value at $u(t-17)$ is to use only two taps,
+placed at $\tau_0 = 0$ and $\tau_1 = 17 / \Delta t$, which is the
+method we use here. We also use a non-linear function
+$\bm{g}_\text{n}$ that includes the constant, linear, quadratic, and
+cubic terms constructed from the tap vector $\bm{x}$. With $2$ taps
+and $1$ input dimension, the output of $\bm{g}_\text{n}$ has $1 + 2 +
+3 + 4 = 10$ components, and so $W_\text{out}$ has dimension $1 \times
+10$.
+
+The Lyapunov time of the Mackey-Glass system is roughly $100$ times
+longer than that of the Lorenz system. However, we find that a
+relatively fine step size $\Delta t = 0.2$ is required for the NVAR to
+learn the system. We train this NVAR for $1000$ units of time,
+corresponding to $5000$ data points total. Though this is many more
+discrete data points, it covers about $10$ Lyapunov times, comparable
+to the training time used for the other systems.
+
+This NVAR is much more data hungry than the previous examples,
+requiring more training data to produce an acceptable result. This may
+be due to the wide tap spacing: values at $u(t - 17)$ are less
+correlated to $u(t)$, while $u(t - \Delta t)$ is more correlated, and
+so the NVAR needs more data to see every relevant combination of
+values at the taps.
+
 \begin{figure}
   \includegraphics[width=\textwidth]{figures/nvar-predict-mackey-glass}
-  \caption{FIXME caption.}
+  \caption{The true Mackey-Glass attractor (a) and NVAR predicted
+    attractor (c) for a single training trial. (b) True Mackey-Glass
+    system during training overlaid with NVAR output (red) calculated
+    after training is complete. (d) True (blue) and NVAR forecasted
+    output (red). Here, the NVAR shows good agreement with the true
+    system as far as $2$ Lyapunov periods.}
   \label{fig:nvar-predict-mackey-glass}
 \end{figure}
+
+Other than these modifications, the methodology for training and
+evaluating the NVAR is exactly as for the other two systems. The
+performance of this NVAR during a single training trial is shown in
+\cref{fig:nvar-predict-mackey-glass}. Over one Lyapunov period, this
+NVAR has a NRMSE of $1.4\pm0.2\times10^{-1}$ with $\alpha =
+9\times10^{-2}$.
+
+The long autonomous forecast of the NVAR shares important features
+with the true attractor, most notably the gap between the
+bands. However, it does not reproduce the shape of the heel in the
+upper-left corner very well, and this is reflected in the high NRMSE.
+
+% FIXME cite kernel trick
+
+The shape of this heel can be better reproduced by including
+higher-order terms in the non-linear function
+$\bm{g}_\text{out}$. However, it is not possible to do this with
+monomial terms as we have been doing without dramatically increasing
+the training time of $W_\text{out}$. It may be possible to instead add
+non-linear terms to $\bm{g}_\text{out}$ with an infinite power series,
+such as $e^{x_ix_j}$ or $\sinh{x_i}\cosh{x_j}$. This would provide
+access to high-order non-linearity without a huge increase in training
+time. This is one important avenue for future research, and this
+Mackey-Glass forecasting example demonstrates that cubic terms are not
+completely sufficient for accurate forecasts. Nonetheless, the cubic
+NVAR used here shows promising performance from a simple model.
+
+% FIXME fixed point?
+
+\section{Conclusion}
+
+In this chapter, I have demonstrated the NVAR approach on two classic
+RC problems: state inference and system forecasting. I have shown that
+NVARs can solve these problems as well, or in many cases better, than
+the RC approach, despite the simplicity of the NVAR method. At the
+same time, I have resolved the remaining questions raised in
+\cref{ch:nvar}: NVARs remain useful even with only a handful of
+time-delay taps, and a simple extension of the non-linear function
+$\bm{g}_\text{n}$ to include higher-order monomial terms is sufficient
+in many cases.
+
+The Mackey-Glass forecasting task sits at the very edge of this simple
+technique. It shows that a low number of time-delay taps remains
+sufficient even in systems with long, built-in time delays. However,
+it also demonstrates that a cubic non-linearity is not sufficient to
+reproduce the precise shape of the Mackey-Glass attractor. To move
+forward with the NVAR technique, the non-linear function
+$\bm{g}_\text{n}$ will need to include much higher-order terms, and it
+will need to do so without the exponential increase in training time
+associated with adding more monomial terms to the output.
+
+% FIXME kernel trick here too
