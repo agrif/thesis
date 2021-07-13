@@ -62,21 +62,51 @@
 \frontmatter
 
 \begin{abstract}
-  % FIXME abstract
-  An abstract goes here. It should be less than \textbf{500 words}.
+  % abstract: 500 words or less
+
+  \emph{Reservoir computing} (RC) is a machine learning method
+  especially well suited to solving physical problems, by using an
+  internal dynamic system known as a 'reservoir'. Many systems are
+  suitable for use as an internal reservoir. A common choice is an
+  \emph{echo state network} (ESN), a network with recurrent
+  connections that gives the RC a memory which it uses to efficiently
+  solve many time-domain problems such as forecasting chaotic systems
+  and hidden state inference. However, constructing an ESN involves a
+  large number of poorly-understood metaparameters, and the properties
+  that an ESN must have to solve these tasks well are largely unknown.
+
+  In this thesis, I explore what parts of an RC are absolutely
+  necessary. I build ESNs that perform well at system forecasting
+  despite an extremely simple internal network structure, without any
+  recurrent connections at all, breaking one of the most common rules
+  of ESN design. These simple reservoirs indicate that the role of the
+  reservoir in the RC is only to remember a finite number of
+  time-delays of the RCs input, and while a complicated network can
+  achieve this, in many cases a simple one achieves this as well.
+
+  I then build upon a recent proof of the equivalence between a
+  specific ESN construction and the non-linear vector autoregression
+  (NVAR) method with my collaborators. The NVAR is an RC boiled down
+  to its most essential components, taking the necessary time-delay
+  taps directly rather than relying on an internal dynamic
+  reservoir. I demonstrate these RCs-without-reservoirs on a variety
+  of classical RC problems, showing that in many cases an NVAR will
+  perform as well or better than an RC despite the much simpler
+  method. I then conclude with an example problem that highlights a
+  remaining unsolved issue in the application of NVARs, and then look
+  to a possible future where NVARs may supplant RCs.
 \end{abstract}
 
-\dedication{For my parents Gregory and Mary Lea, and my brother Nathan.}
+\dedication{For my brother Nathan, and my parents Gregory and Mary Lea.}
 
 \begin{acknowledgments}
   This work would not have been possible without the committed support
-  of my advisor, Daniel J. Gauthier, or my insightful collaborators,
-  including Wendson A.~S. Barbosa, Erik Bollt, Daniel Canaday, and Andrew
-  Pomerance.
+  of my advisor, Daniel~J.~Gauthier, or my insightful collaborators,
+  including Wendson~A.~S.~Barbosa, Erik~Bollt, Daniel~Canaday, and Andrew~Pomerance.
 
   In addition, many discussions over the years have
   re-contextualized my understanding of reservoir computers. I would
-  specifically like to thank Michelle Girvan, Edward Ott, and Brian Hunt.
+  specifically like to thank Michelle~Girvan, Brian~Hunt, and Edward~Ott.
 \end{acknowledgments}
 
 \begin{vita}
@@ -87,8 +117,8 @@
   \begin{publist}
     \pubitem{D.~Canaday, A.~Griffith, and D.~J.~Gauthier, ``Rapid time series prediction with a hardware-based reservoir computer,'' \href{https://doi.org/10.1063/1.5048199}{Chaos: An Interdisciplinary Journal of Nonlinear Science \textbf{28}, 123119 (2018)}.}
     \pubitem{A.~Griffith, A.~Pomerance, and D.~J.~Gauthier, ``Forecasting chaotic systems with very low connectivity reservoir computers,'' \href{https://doi.org/10.1063/1.5120710}{Chaos: An Interdisciplinary Journal of Nonlinear Science \textbf{29}, 123108 (2019)}.}
-    \pubitem{W.~A.~S.~Barbosa, A.~Griffith, G.~E.~Rowlands, L.~C.~G.~Govia, G.~J.~Ribeill, M.-H.~Nguyen, T.~A.~Ohki, and D.~J.~Gauthier, ``Symmetry-aware reservoir computing,'' \href{https://arxiv.org/abs/2102.00310}{(2021), \\ arXiv:2102.00310 [cs.NE]}.}
-    \pubitem{D.~J.~Gauthier, E.~Bollt, A.~Griffith, W.~A.~S.~Barbosa, ``Next generation reservoir computing,'' \href{https://arxiv.org/abs/2106.07688}{(2021), arXiv:2106.07688 [cs.LG]}.}
+    %\pubitem{W.~A.~S.~Barbosa, A.~Griffith, G.~E.~Rowlands, L.~C.~G.~Govia, G.~J.~Ribeill, M.-H.~Nguyen, T.~A.~Ohki, and D.~J.~Gauthier, ``Symmetry-aware reservoir computing,'' \href{https://arxiv.org/abs/2102.00310}{(2021), \\ arXiv:2102.00310 [cs.NE]}.}
+    %\pubitem{D.~J.~Gauthier, E.~Bollt, A.~Griffith, W.~A.~S.~Barbosa, ``Next generation reservoir computing,'' \href{https://arxiv.org/abs/2106.07688}{(2021), arXiv:2106.07688 [cs.LG]}.}
   \end{publist}
 
   \begin{fieldsstudy}
