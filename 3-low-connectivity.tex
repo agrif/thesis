@@ -1,13 +1,13 @@
 \chapter{Low-Connectivity Reservoirs}\label{ch:low-connectivity}
 
-The choice of ESN metaparameters that best fits a given task is
+The choice of ESN meta-parameters that best fits a given task is
 difficult to identify. In the absence of strong guiding rules, a
 practical approach is to treat it as an optimization problem. In this
 chapter, I explore using ESNs on the chaotic system forecasting task,
 for the Lorenz '63 system, the R{\"{o}}ssler system, and the
 double-scroll circuit system described in \cref{ch:systems}. This
 exploration is guided by optimization -- by trying to discover the
-metaparameters that result in the best averaged NRMSE
+meta-parameters that result in the best averaged NRMSE
 $\tilde{\epsilon}$ during forecasting for the given system. This
 exploration leads to a surprising discovery, that even ESNs with
 simple internal structure perform as well as their more complicated
@@ -25,18 +25,18 @@ results in this chapter are all software simulation, the particular
 focus on the $k$ parameter is done with an eye towards hardware
 implementations.
 
-Many techniques have been used previously for ESN metaparameter
+Many techniques have been used previously for ESN meta-parameter
 optimization, such as grid search\cite{rodan2011} and gradient
 descent\cite{jaeger2007}. However, both of these approaches have
 drawbacks. Grid search quickly becomes intractable when the number of
 dimensions grows, and even after fixing the two functional
-metaparameters $f$ and $\bm{g}$, there are 5 dimensions
+meta-parameters $f$ and $\bm{g}$, there are 5 dimensions
 left. Compounding this problem, the ESN construction is a random
 process, and so the resulting measured $\tilde{\epsilon}$ for a given
-set of metaparameters is a random variable. To get a meaningful
-result, each set of metaparameters would need to be tested multiple
+set of meta-parameters is a random variable. To get a meaningful
+result, each set of meta-parameters would need to be tested multiple
 times. For even a coarse grid search, with 10 trials and 10 points per
-metaparameter, this already means one million trial RCs. Gradient
+meta-parameter, this already means one million trial RCs. Gradient
 descent suffers from the randomness of ESN construction as well, for
 the same reasons. It is also unsuitable for use with continuous
 parameters such as $k$.
@@ -48,7 +48,7 @@ example, once the recurrent weight matrix $W_r$ has been constructed,
 the parameter $\rho_r$ can be changed without any random process at
 all. By cleverly factoring out the random parts of ESN construction,
 it becomes possible to use methods like grid search and gradient
-descent without the extra step of mulitple random trials. Ultimately,
+descent without the extra step of multiple random trials. Ultimately,
 however, this is optimizing only a single random instantiation of an
 ESN, and provides little insight into how the fully random ESN will
 perform.
@@ -56,9 +56,9 @@ perform.
 In this chapter, I will be using Bayesian
 optimization\cite{yperman2016,maat2018}, as implemented by the
 \texttt{skopt} Python package\cite{skopt2018}, to explore which
-metaparameters result in the lowest forecasting error
+meta-parameters result in the lowest forecasting error
 $\tilde{\epsilon}$ for the three example systems. Bayesian
-optimization deals well with both noise and integer paramateres like
+optimization deals well with both noise and integer parameters like
 $k$, is more efficient than grid search,\cite{maat2018} and works well
 with minimal tuning.
 
@@ -100,7 +100,7 @@ $\tilde{\epsilon}$ as this involves building, training, and testing
 an RC each time.
 
 \begin{table}
-  \caption{Range of hyperparameters searched using Bayesian optimization.}
+  \caption{Range of meta-parameters searched using Bayesian optimization.}
   \begin{tabular}{lrcl}
     Parameter & min & & max \\
     \hline
@@ -113,11 +113,11 @@ an RC each time.
   \label{tab:bayes-ranges}
 \end{table}
 
-In this chapter, the Bayesian algorithm repeatedbly generates a set of
-hyperparameters to test within the ranges listen in
+In this chapter, the Bayesian algorithm repeatedly generates a set of
+meta-parameters to test within the ranges listen in
 \cref{tab:bayes-ranges}. Larger ranges would require a longer
 optimization time. I selected these ranges to include values that
-existing ESN design heurestics would choose, while also allowing
+existing ESN design heuristics would choose, while also allowing
 exploration outside those ranges without a prohibitively long runtime.
 
 During the optimization process, I discovered that the optimizer was
@@ -252,7 +252,7 @@ input system as it does for the double-scroll circuit.
 Now that I have identified the five networks structures of interest, I
 can use the Bayesian optimization algorithm to identify networks in
 each class that perform well on the system forecasting task. I
-optimize the metaparameters independently for each of the three
+optimize the meta-parameters independently for each of the three
 example input systems: Lorenz '63 (\cref{sec:lorenz}), R{\"{o}}ssler
 (\cref{sec:rossler}), and the double-scroll circuit
 (\cref{sec:dscroll}).
@@ -261,7 +261,7 @@ For each input system and for each network structure, the Bayesian
 algorithm performs random exploration for $50$ iterations, and then
 optimization for $50$ iterations, resulting in $100$ iterations in
 total. At each iteration of the algorithm, the optimizer constructs a
-single random instantiation of an ESN with the chosen metaparameters,
+single random instantiation of an ESN with the chosen meta-parameters,
 trains it, and measures its forecasting performance with the metric
 $\tilde{\epsilon}$ defined in \cref{eq:nrmse-avg}. Since the
 exploration phase of the optimization is random, I repeat this entire
@@ -279,11 +279,11 @@ in \cref{eq:esn-break-sym}, coupled with the chosen input system, via
 the hybrid Runge-Kutta~5(4)\cite{dormand1980} method from $t = 0$ to
 $300$. This produces an ESN response $\bm{r}(t)$. I then divide this interval into three ranges:
 \begin{itemize}
-\item $t = 0$ -- $100$: the warmup period,
+\item $t = 0$ -- $100$: the warm-up period,
 \item $t = 100$ -- $200$: the training period,
 \item $t = 200$ -- $300$: the testing period.
 \end{itemize}
-As discussed in \cref{sec:training}, the warmup period is used to
+As discussed in \cref{sec:training}, the warm-up period is used to
 ensure the later times do not depend on the specific initial
 conditions of the ESN. I divide the rest into a training period, used
 only during training, and a testing period, used later only to
@@ -291,8 +291,8 @@ evaluate the ESN performance.
 
 I then determine $W_\text{out}$ via ridge regression, as in
 \cref{eq:ridge}, where the sum ranges over the training period. The
-ridge parameter $\alpha$ could be included among the metaparameters to
-optimize. However, unlike the other metaparameters, modifying $\alpha$
+ridge parameter $\alpha$ could be included among the meta-parameters to
+optimize. However, unlike the other meta-parameters, modifying $\alpha$
 does not require re-integration and can be optimized with simpler
 methods. I select an $\alpha$ from among $10^{-5}$ to $10^5$ by
 leave-one-out cross-validation. This method also reduces the number of
@@ -344,7 +344,7 @@ Lorenz attractor.
 First, I run all five reservoir structures through 100 iterations of
 the Bayesian algorithm using the Lorenz system as input, and record
 the best-performance RC for each structure according to the metric
-$\tilde{\epsilon}$. These reservoirs, and the hyperparameters that
+$\tilde{\epsilon}$. These reservoirs, and the meta-parameters that
 generated them, are reported in \cref{tab:lowk-lorenz-results}. I
 estimate the errors on these with the standard deviation of
 $\tilde{\epsilon}$ after repeating the optimization process 20 times.
@@ -352,7 +352,7 @@ $\tilde{\epsilon}$ after repeating the optimization process 20 times.
 \begin{table}
   \caption{Best reservoir computers of each reservoir structure, after 100
     iterations of the Bayesian optimization algorithm using the Lorenz
-    system as input.  The hyperparameters chosen by the algorithm are
+    system as input.  The meta-paremeters chosen by the algorithm are
     shown on the right. The simpler structures (b) -- (e) all perform
     nearly as well as the general structure (a).}
   \begin{tabularx}{\linewidth}{l l@{\extracolsep{\fill}} l d d d d}
@@ -381,15 +381,15 @@ counterexamples to the heuristic that ESNs should have $\rho_r \approx
 1$.\cite{lukosevicius2012}
 
 However, these best-observed ESNs are not representative of a
-typical ESN.\@ I use the hyperparameters to guide the random input
+typical ESN.\@ I use the meta-parameters to guide the random input
 connections and connections within the network, and so even once the
-hyperparameters are fixed, constructing the network is a random
-process. Not all networks with a fixed structure type and hyperparameters
+meta-parameters are fixed, constructing the network is a random
+process. Not all networks with a fixed structure type and meta-parameters
 will perform the same.
 
 To explore this variation, I generate and evaluate $200$ networks of
 each structure on the Lorenz system, using the optimized
-hyperparameters in \cref{tab:lowk-lorenz-results}. For all five
+meta-parameters in \cref{tab:lowk-lorenz-results}. For all five
 structures, as the measured $\tilde{\epsilon}$ increases, the quality
 of the reproduced attractor decreases gradually. On manual inspection
 of the attractors, the reason for this decrease can be divided into
@@ -416,7 +416,7 @@ distributions are shown in \cref{fig:epsilon-distribution}.
 \begin{figure}
   \includegraphics[width=0.6\textwidth]{figures/epsilon-distribution}
   \caption{Performance for each network structure, evaluated for the
-    Lorenz system at the hyperparameters listed in
+    Lorenz system at the meta-parameters listed in
     \cref{tab:lowk-lorenz-results}. Each is visualized as a Gaussian
     kernel density estimation in $\log_{10} \tilde{\epsilon}$ with a bandwidth
     of 0.35,\cite{scott1992} which can be interpreted as a probability
@@ -549,7 +549,7 @@ on many systems.
 
 \section{Conclusion}
 
-I find that Bayesian optimization of RC hyperparameters is a useful
+I find that Bayesian optimization of RC meta-parameters is a useful
 tool for creating high-performance ESNs quickly. I also find
 that allowing the optimizer to explore areas of the parameter space
 that are typically excluded in other optimization studies can lead to
@@ -616,7 +616,7 @@ network's role in the RC may only be to produce a variety of time
 delays for the output layer to draw on.
 
 In the time since, such a proof has been discovered. In the next
-chapter, I will introduce non-linear vector autoregressions (NVARs),
+chapter, I will introduce non-linear vector auto-regressions (NVARs),
 an existing machine learning tool that is proven to be mathematically
 equivalent to ESNs under specific conditions, and discuss how this
 relationship between NVARs and RCs has advanced the understanding and

@@ -1,8 +1,8 @@
-\chapter{RCs without Reservoirs: Non-linear Vector Autoregression}\label{ch:nvar}
+\chapter{RCs without Reservoirs: Non-linear Vector Auto-regression}\label{ch:nvar}
 
 In 2021, Erik Bollt proved\cite{bollt2021} that a completely linear
 ESN is mathematically equivalent to an existing tool known as a vector
-autoregression, or VAR. He subsequently proved that an ESN with a
+auto-regression, or VAR. He subsequently proved that an ESN with a
 specific output non-linearity is likewise equivalent to a specific
 non-linear VAR. In this chapter, I provide a brief outline of this
 equivalence proof, as well as a description of the VAR and NVAR
@@ -90,17 +90,17 @@ input $\bm{u}(t)$, extending infinitely into the past. In the
 forecasting case, when $\bm{u}(t)$ is replaced with $\bm{y}(t)$, this
 means that the output $\bm{y}(t)$ is a linear combination of
 time-delay taps of itself. This is known as a vector
-autoregression.
+auto-regression.
 
-\section{Linear Vector Autoregressions (VARs)}
+\section{Linear Vector Auto-regressions (VARs)}
 
-In most cases, the term \emph{vector autoregression} specifically
+In most cases, the term \emph{vector auto-regression} specifically
 means a method of producing an output $\bm{y}(t)$ from a linear
 combination of past outputs. However, I will generalize this slightly
 in order to mirror the reservoir computer model introduced in
 \cref{ch:reservoir-computing}.
 
-In this thesis, a vector autoregression (VAR) is a method of
+In this thesis, a vector auto-regression (VAR) is a method of
 transforming a discrete-time input signal $\bm{u}(t)$ into a
 discrete-time output signal $\bm{y}(t)$ from a linear combination of
 time-delay taps. Given a list of tap delay steps $\tau_i$, I construct
@@ -166,7 +166,7 @@ predicting the difference between the last value of the signal and the
 next, in analogy to a discrete time integrator. Without this change,
 the components of $W_\text{out}$ corresponding to $\bm{u}(t)$ would be
 larger than the others. Since the ridge regression used to find
-$W_\text{out}$ has a single regalurization parameter $\alpha$, it
+$W_\text{out}$ has a single regularization parameter $\alpha$, it
 works best when all components of $W_\text{out}$ have about the same
 expected scale.
 
@@ -177,7 +177,7 @@ Working with a VAR, by training it and using it, is very similar to
 working with an RC. The most important difference is that using a VAR
 completely sidesteps the issue of choosing an internal
 reservoir. Building an ESN reservoir is a complicated process that
-starts with the metaparameters listed in \cref{tab:esn-metaparameters}
+starts with the meta-parameters listed in \cref{tab:esn-metaparameters}
 and ends with a random realization of a network, usually of 100 nodes
 or more. In contrast, building a VAR amounts to selecting which taps
 $\tau_i$ to use, and how many.
@@ -185,7 +185,7 @@ $\tau_i$ to use, and how many.
 However, the linear ESN solution in \cref{eq:esn-var-mat} is only
 completely equivalent to a VAR with an infinite number of time delay
 taps. VARs with a finite number of taps $k$ will approximate a VAR
-with infitite taps under the right conditions as $k \rightarrow
+with infinite taps under the right conditions as $k \rightarrow
 \infty$\cite{bollt2021}, but if VARs are to be used as a replacement
 for RCs, it is critical to know how good this approximation is in
 practice. If an VAR requires thousands of taps to work, it may still
@@ -266,7 +266,7 @@ input $\bm{u}(t)$ into an output $\bm{y}(t)$ is described by
   \label{eq:nvar-out}
   \bm{y}(t + \Delta t) &= W_\text{out}\;\bm{g}_\text{n}\left(\bm{x}(t + \Delta t)\right).
 \end{align}
-For forecasting tasks, the output \cref{eq:nvar-out} is relaced with
+For forecasting tasks, the output \cref{eq:nvar-out} is replaced with
 \begin{equation}
   \label{eq:nvar-out-forecast}
   \bm{y}(t + \Delta t) = \bm{u}(t) + W_\text{out}\;\bm{g}_\text{n}\left(\bm{x}(t + \Delta t)\right).
@@ -328,7 +328,7 @@ order $n$ grows as $k^n$.
 
 If these challenges can be overcome, NVARs are an extremely appealing
 replacement for the ESN approach. ESNs are complicated random networks
-with many poorly-understood metaparameters. In contrast, NVARs have
+with many poorly-understood meta-parameters. In contrast, NVARs have
 only four total parameters, listed in \cref{tab:nvar-parameters}.  In
 addition to being a smaller set of parameters, these parameters are
 simply much more interpretable. It is not straightforward to imagine
@@ -349,7 +349,7 @@ simplicity, they are now known to be mathematically equivalent to a
 certain class of non-linear ESN.
 
 NVARs are an established method, and this equivalence opens the door
-to crosstalk between the NVAR and RC communities. On the RC side,
+to cross-talk between the NVAR and RC communities. On the RC side,
 researchers gain a dramatically simpler implementation that is known
 to be equivalent, and also gain a chance to apply lessons learned in
 the RC world to the NVAR method. The NVAR approach benefits from the

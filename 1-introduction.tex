@@ -62,7 +62,7 @@ these methods perform chaotic system forecasting at a very high rate.
 As a new field, reservoir computing still has many unanswered
 fundamental questions. What qualities should the internal reservoir
 have to create a good RC? A common practice is to use a random network
-as the reservoir, generated from a set of metaparameters. There are a
+as the reservoir, generated from a set of meta-parameters. There are a
 handful of results for some parameters, such as setting the
 \emph{spectral radius} of the network near unity and the need for
 recurrent network connections,\cite{jaeger2001,lukosevicius2012} but
@@ -87,8 +87,8 @@ not have an internal reservoir at all.
 In \cref{ch:reservoir-computing}, I describe the reservoir computing
 method, as well as a common concrete implementation of a RC called an
 echo state network (ESN). I explain how to construct an ESN, the
-metaparameters that govern its construction, and discuss some of the
-limited known results for choosing these metaparameters. Then, I
+meta-parameters that govern its construction, and discuss some of the
+limited known results for choosing these meta-parameters. Then, I
 discuss how the RC is trained, both for autonomous forecasting tasks
 and for inference tasks, as well as how performance quality on these
 tasks is commonly measured. I briefly discuss the known problems with
@@ -96,7 +96,7 @@ this performance measure, and suggest a few alternative methods.
 
 In \cref{ch:low-connectivity}, I apply RCs to the task of chaotic
 system forecasting for three different chaotic systems. I use a
-Bayesian optimization algorithm to tune the metaparameters for the
+Bayesian optimization algorithm to tune the meta-parameters for the
 RCs, and in so doing, discover a class of well-performing RCs with very
 simple internal reservoirs. I identify four classes of reservoir
 networks with simple structure. Two of these classes had been
@@ -108,12 +108,12 @@ trade-offs between these simpler reservoir structures and a
 traditional RC.
 
 In \cref{ch:nvar} I describe a different technique known as
-non-linear vector autoregression (NVAR), which has recently been shown
+non-linear vector auto-regression (NVAR), which has recently been shown
 to be mathematically equivalent to an RC under certain conditions. I
 discuss the construction and training of an NVAR, and how to apply it
-to common RC tasks. Then, I discuss the parallells between the NVAR
+to common RC tasks. Then, I discuss the parallels between the NVAR
 and RC approaches, as well as when the equivalence is known to
-hold. Finally, I discuss the tradeoffs between the two approaches.
+hold. Finally, I discuss the trade-offs between the two approaches.
 
 In \cref{ch:nvar-application}, I build on this equivalence with my
 collaborators to demonstrate NVARs solving two common RC tasks: system

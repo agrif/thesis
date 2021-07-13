@@ -3,7 +3,7 @@
 In this chapter, I will resolve the practical questions raised in
 \cref{ch:nvar}, and demonstrate that NVARs are capable of solving
 traditional RC problems well with very few taps, simple
-nonlinearities, and very little training data. Using the example
+non-linearities, and very little training data. Using the example
 systems from \cref{ch:systems}, I will use NVARs to perform state
 inference and forecasting on the Lorenz '63 system, forecasting on the
 double-scroll circuit, and forecasting on the Mackey-Glass time-delay
@@ -21,14 +21,14 @@ and Mackey-Glass forecasting.
 For this inference task, we provide an NVAR with the $x$ and $y$
 components of the Lorenz '63 system, and train it to infer the third
 $z$ variable. Inference tasks like this are useful in situations where
-some variables of a system are easily measureable, while the rest are
-only measureable with great care or expense. An NVAR or RC can be
+some variables of a system are easily measurable, while the rest are
+only measurable with great care or expense. An NVAR or RC can be
 trained on a short recording of the full state of the system, and then
 used later to infer the difficult variables from the easy ones.
 
-For this task, we use an integration timestep of $\Delta t = 0.05$. To
+For this task, we use an integration time-step of $\Delta t = 0.05$. To
 build an NVAR, we must choose the tap delays $\tau_i$, the
-nonlinearity $\bm{g}_\text{n}$, and ridge parameter $\alpha$. Takens'
+non-linearity $\bm{g}_\text{n}$, and ridge parameter $\alpha$. Takens'
 embedding theorem\cite{takens1981} provides guidance on the expected
 number of taps: as the dimension of the Lorenz attractor is slightly
 larger than $2$, we choose to use $4$ equally spaced taps $\tau_0 =
@@ -58,7 +58,7 @@ output matrix $W_\text{out}$ has dimension $1 \times 45$.
   \caption{(a) -- (c) The Lorenz '63 system (blue) during the NVAR
     training. After the NVAR is trained, it can be re-used on the
     training signal to produce the training output (c, red). (d) --
-    (f) The Loenz '63 system during NVAR testing, with the NVAR
+    (f) The Lorenz '63 system during NVAR testing, with the NVAR
     output. In both cases, the NVAR output (red) lies directly on top
     of the true Lorenz signal (blue).}
   \label{fig:nvar-infer-lorenz}
@@ -90,7 +90,7 @@ the NVAR is in forecast mode it no longer has an external driving
 input and runs autonomously. As a result, the choice of time step
 $\Delta t$ has a stronger effect on forecasting than inference. Too
 small a time step is wasted effort, and too large risks
-innacuracy. Here, we use a time step of $\Delta t = 0.025$.
+inaccuracy. Here, we use a time step of $\Delta t = 0.025$.
 
 Again we use the quadratic non-linearity with constant term described
 in \cref{eq:quadratic-nvar-const}. In this case, the non-linear output

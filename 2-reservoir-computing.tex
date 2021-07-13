@@ -19,7 +19,7 @@ reservoir, then the reservoir's internal state $\bm{r}$ is given by
 \end{equation}
 where $\mathbf{R}$ defines the dynamics of the reservoir.
 
-Thie reservoir is commonly a specific type of system called an
+The reservoir is commonly a specific type of system called an
 \emph{echo state network}, discussed in \cref{sec:esn}, but this is
 not at all a requirement. Effective RCs have been built around
 autonomous Boolean networks~\cite{canaday2018}, optical feedback
@@ -92,7 +92,7 @@ and so is unsuitable for use as training data. Practically, if the
 example data starts at $t = 0$, then all the data before $t <
 t_\text{warmup}$ is discarded, and the approximation in
 \cref{eq:approx-output} need only be true for $t >
-t_\text{warmup}$. The warmup time $t_\text{warmup}$ will depend on the
+t_\text{warmup}$. The warm-up time $t_\text{warmup}$ will depend on the
 specific choice of reservoir in the RC.
 
 The right-hand side of \cref{eq:approx-output} is linear in
@@ -109,7 +109,7 @@ measured at a fixed time step, or integrated at a fixed time step, and
 the sum in \cref{eq:ridge} is understood to be over these fixed time
 steps.
 
-The ridge parameter $\alpha$ is included to prevent overfitting, and
+The ridge parameter $\alpha$ is included to prevent over-fitting, and
 to help the RC generalize from the example input to unknown inputs. In
 practice, this value depends on the scale of the input signal
 $\bm{u}_\text{train}(t)$; for roughly unit-scale inputs, $\alpha$ may be
@@ -126,7 +126,7 @@ backpropogation~\cite{lukosevicius2009}. As a result, training an RC
 is also fast. This opens the door to many interesting applications
 where the ability to retrain the RC to a new system without the aid of
 a supercomputer is desirable. For example, an RC that controls the
-motors on an airborn drone could retrain itself in the event of a
+motors on an airborne drone could retrain itself in the event of a
 mechanical failure.
 
 \section{Forecasting with an RC}\label{sec:forecasting}
@@ -156,10 +156,10 @@ As before, this $W_\text{out}$ is found via ridge regression.
 
 Once trained in this way, the RC can be used for forecasting. First,
 the RC is primed with an input signal $\bm{u}(t)$ to be used as the
-basis for forecasting. This priming step synchorizes the reservoir
+basis for forecasting. This priming step synchronizes the reservoir
 state $\bm{r}(t)$ to the input, and intuitively provides the RC with
 the past history it will draw on to produce the forecast. This is a
-warmup step, similar to that used during training. At the moment
+warm-up step, similar to that used during training. At the moment
 forecasting begins, the approximation \cref{eq:approx-output-input} is
 substituted in to the reservoir equation \cref{eq:reservoir},
 effectively connecting the input of the RC to the output. The RC now
@@ -353,12 +353,12 @@ random instantiation of $W_\text{in}$, and $k$ and $\rho_r$ are enough
 to generate a random instantiation of $W_r$. The relative scales
 $\rho_r$ and $\rho_\text{in}$ determine the importance of the
 recurrent and external inputs, respectively. The entire construction
-is reduced to choosing these \emph{metaparameters}, summarized in
+is reduced to choosing these \emph{meta-parameters}, summarized in
 \cref{tab:esn-metaparameters}.
 
 % FIXME N
 \begin{table}
-  \caption{Summary of echo state network metaparameters. These
+  \caption{Summary of echo state network meta-parameters. These
     parameters must be chosen to produce a random realization of an
     ESN-based RC.}
   \begin{tabularx}{\linewidth}{rlX}
@@ -405,7 +405,7 @@ is particularly important as running an RC often involves
 resetting the internal reservoir, either in simulation or in
 hardware. The fading memory property ensures that the specific initial
 state of the reservoir does not matter, as long as it has a
-sufficiently long warmup time as discussed in \cref{sec:training}.
+sufficiently long warm-up time as discussed in \cref{sec:training}.
 
 One early result for ESNs states that this fading memory property
 cannot hold in an ESN when the spectral radius of the matrix $W_r$ is
@@ -415,7 +415,7 @@ state $\bm{r}(0) = 0$ will quickly become non-zero as soon as the
 input is non-zero, and then will not return to $\bm{r} = 0$ even after
 the input returns to zero.
 
-Likewise, an ESN with $\operatorname{SR}(W_r) \ll 1$ is contractive,
+Likewise, an ESN with $\operatorname{SR}(W_r) \ll 1$ is contracting,
 and will return to $\bm{r} = 0$ rapidly with zero input. These two
 considerations have combined in literature into a recommendation that
 the spectral radius of $W_r$ be near, but not above,
@@ -426,7 +426,7 @@ radius recommendations are not hard and fast rules. Nonetheless, this
 history has cemented spectral radius as the standard measure of scale
 of $W_r$ in ESNs.
 
-Another desirable property of the reservoir is \emph{seperability} and
+Another desirable property of the reservoir is \emph{separability} and
 \emph{continuity of response}. Similar inputs to the reservoir should produce
 similar responses. This is especially important in real-world
 applications, where the input to the RC is likely to be noisy. This
@@ -445,7 +445,7 @@ input. Specifically, the reservoir $\bm{r}(t)$ is in a state of
 generalized synchronization with its input $\bm{u}(t)$ if there is a
 function $\bm{H}$ such that, as $t \rightarrow \infty$, $\bm{r}(t)
 \rightarrow \bm{H}\left(\bm{u}(t)\right)$. This already implies the
-fading memory property. If $\bm{H}$ is continuous, this implies continuity of response, and if $\bm{H}$ is invertable, this implies seperability. An invertable $\bm{H}$ also ensures that
+fading memory property. If $\bm{H}$ is continuous, this implies continuity of response, and if $\bm{H}$ is invertable, this implies separability. An invertable $\bm{H}$ also ensures that
 \begin{equation}
   \bm{u}(t) \approx \bm{H}^{-1}\left(\bm{r}(t)\right).
 \end{equation}
@@ -464,7 +464,7 @@ test it. Nonetheless, this new approach unifies many older principles
 in the field and is one of the most interesting avenues for future
 research.
 
-\section{Evaluating Reserviors}
+\section{Evaluating Reservoirs}
 
 To evaluate the performance of a trained RC, it is common to use an
 example testing input/output signal pair, $\bm{u}_\text{test}(t)$ and
@@ -472,12 +472,12 @@ $\bm{y}_\text{test}(t)$, that differs from the training signal. The
 input $\bm{u}_\text{test}(t)$ is fed in to the trained RC, producing
 the RC output $\bm{y}(t)$, which is then compared to the desired
 output $\bm{y}_\text{test}(t)$. Note that the same concerns with
-reservoir warmup, as discussed in \cref{sec:training}, apply here: the
+reservoir warm-up, as discussed in \cref{sec:training}, apply here: the
 early part of the input test signal is used only to synchronize the
 reservoir, and is not used in the comparison. Often, the training and
 testing signals are combined such that $\bm{u}_\text{test}$ follows
 directly after $\bm{u}_\text{train}$, which allows the training signal
-to function as the warmup signal for the reservoir during the testing
+to function as the warm-up signal for the reservoir during the testing
 phase.
 
 The most common metric for comparing the true output $\bm{y}(t)$ to
@@ -495,7 +495,7 @@ in $\epsilon > 0$.
 For RCs trained to do inference, this NRMSE is calculated across the
 entire testing signal, regardless of length. However, for forecasting
 this presents a problem. An RC in forecasting mode is autonomous,
-after the warmup period, and receives no ongoing external input as it
+after the warm-up period, and receives no ongoing external input as it
 would in an inference task. The testing output may diverge quickly
 from the reference system. Indeed, if the RC is trained to forecast a
 chaotic system, good forecasting requires the forecast to diverge
@@ -527,7 +527,7 @@ learned the input system. Examples of this are given in
     prediction (dotted red line) must eventually diverge from the true
     system (solid black line). I calculate each $\epsilon_{1,i}$ only
     during a single Lyapunov period after forecasting begins, marked
-    here in grey.}%
+    here in gray.}%
   \label{fig:nrmse-avg}
 \end{figure}
 
@@ -576,12 +576,12 @@ towards learning more.
 Echo state networks are a network-based reservoir choice that is easy
 to simulate in software, and replicates more traditional neural
 network machine learning designs. This approach uses several
-metaparameters to randomly construct the internal network. As with the
+meta-parameters to randomly construct the internal network. As with the
 general reservoirs, there is not much concrete guidance on what values
-these metaparameters should have.
+these meta-parameters should have.
 
 In \cref{ch:low-connectivity}, I will explore some of these
-metaparameters, and conclude that several guidelines for ESN
+meta-parameters, and conclude that several guidelines for ESN
 construction are not necessary. I will demonstrate several RCs with
 very simple internal networks that nonetheless successfully replicate
 the climate of a chaotic dynamic system.
