@@ -35,7 +35,7 @@
 % environment for figure re-use
 % https://tex.stackexchange.com/a/225075
 % \begin{reusefigure}[<float spec>]{<ref>}
-\newenvironment{reusefigure}[2][htbp]
+\newenvironment{reusefigure}[2][tbp]
   {\addtocounter{figure}{-1}%
    \renewcommand{\theHfigure}{dupe-fig}% If you're using hyperref
    \renewcommand{\thefigure}{\ref{#2}}% Figure counter is \ref

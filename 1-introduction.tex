@@ -39,11 +39,11 @@ tool was originally formulated as a novel way to reduce the
 computational cost of training recurrent neural
 networks~\cite{lukosevicius2009}. Reservoir computers (RCs) have been
 effectively applied to chaotic system
-forecasting~\cite{jaeger1978,pathak2017}, system state
+forecasting~\cite{jaeger1978,pathak2017} and system state
 inference~\cite{lu2017}. More than just short-term prediction, RCs are
 capable of reproducing the \emph{climate} of a dynamical
-system;~\cite{pathak2017,haluszczynski2019} it learns the long-term
-features of the system, such as the system's attractor and Lyapunov
+system,~\cite{pathak2017,haluszczynski2019} that is, it learns the long-term
+features of the system such as the system's attractor and Lyapunov
 exponents.
 
 RCs are interesting to physicists not only as a tool to solve
@@ -56,17 +56,18 @@ autonomous logic on an FPGA~\cite{canaday2018} or an optical feedback
 system~\cite{antonik2016}. This is interesting from a theoretical
 perspective, as physical RCs use an ancillary system to help answer
 questions about a main system, but they are also practically
-interesting: by relying on physical reservoirs, rather than simulated,
-these methods perform chaotic system forecasting at a very high rate.
+interesting: by relying on physical reservoirs, rather than
+simulation, these methods perform chaotic system forecasting and other
+tasks at a very high rate.
 
 As a new field, reservoir computing still has many unanswered
 fundamental questions. What qualities should the internal reservoir
 have to create a good RC? A common practice is to use a random network
 as the reservoir, generated from a set of meta-parameters. There are a
-handful of results for some parameters, such as setting the
-\emph{spectral radius} of the network near unity and the need for
-recurrent network connections,\cite{jaeger2001,lukosevicius2012} but
-the applicability of these results is narrow. What features of the
+handful of heuristics for some parameters, such as setting the
+\emph{spectral radius} of the network near one and the need for
+recurrent network connections,~\cite{jaeger2001,lukosevicius2012} but
+the applicability of these rules is narrow. What features of the
 reservoir are necessary, and which can be discarded?
 
 In this thesis, I will construct reservoir computers that do not
@@ -78,6 +79,11 @@ no recurrent connections. Indeed, by the end of this thesis, they do
 not have an internal reservoir at all.
 
 \section{Outline and Summary of Contributions}
+
+In this thesis, \cref{ch:reservoir-computing,ch:nvar} provide
+background information on the methods used, while
+\cref{ch:low-connectivity,ch:nvar-application} present new
+contributions.
 
 \begin{reusefigure}{fig:reservoir}
   \includegraphics[width=0.6\textwidth]{figures/reservoir}
@@ -94,13 +100,14 @@ not have an internal reservoir at all.
 
 In \cref{ch:reservoir-computing}, I describe the reservoir computing
 method, as well as a common concrete implementation of a RC called an
-echo state network (ESN) summarized in \cref{fig:reservoir}. I explain how to construct an ESN, the
-meta-parameters that govern its construction, and discuss some of the
-limited known results for choosing these meta-parameters. Then, I
-discuss how the RC is trained, both for autonomous forecasting tasks
-and for inference tasks, as well as how performance quality on these
-tasks is commonly measured. I briefly discuss the known problems with
-this performance measure, and suggest a few alternative methods.
+\emph{echo state network} (ESN) summarized in \cref{fig:reservoir}. I
+explain how to construct an ESN, the meta-parameters that govern its
+construction, and discuss some of the limited known results for
+choosing these meta-parameters. Then, I discuss how the RC is trained,
+both for autonomous forecasting tasks and for inference tasks, as well
+as how performance quality on these tasks is commonly measured. I
+briefly discuss the known problems with this performance measure, and
+suggest a few alternative methods.
 
 \begin{reusefigure}{fig:topology}
   \includegraphics[width=\textwidth]{figures/topology}
@@ -117,20 +124,20 @@ this performance measure, and suggest a few alternative methods.
 In \cref{ch:low-connectivity}, I apply RCs to the task of chaotic
 system forecasting for three different chaotic systems. I use a
 Bayesian optimization algorithm to tune the meta-parameters for the
-RCs, and in so doing, discover a class of well-performing RCs with very
-simple internal reservoirs. I identify four classes of reservoir
-networks with simple structure, summarized in \cref{fig:topology}. Two of these classes had been
-previously identified. I build on this work and demonstrate that all
-four classes have the capacity to perform as well as a traditional
-RC. In particular, all four classes can reproduce the chaotic
-attractor of the system they are trained on. I then discuss the
-trade-offs between these simpler reservoir structures and a
-traditional RC.
+RCs, and in so doing, discover a class of well-performing RCs with
+very simple internal reservoirs. I identify four classes of reservoir
+networks with particularly simple structure, summarized in
+\cref{fig:topology}. Of these, two had been previously identified. I
+build on this work and demonstrate that all four classes have the
+capacity to perform as well as a traditional RC. In particular, all
+four classes can reproduce the chaotic attractor of the system they
+are trained on. I then discuss the trade-offs between these simpler
+reservoir structures and a traditional RC.
 
 \begin{reusefigure}{fig:var-infer}
   \includegraphics{figures/var-infer}
   \caption{Summary of the VAR method. Many time-delay taps $\tau_i$ of
-    the signal $\bm{u}(t)$ (top, red) is collected into the tap vector
+    the signal $\bm{u}(t)$ (top, red) are collected into the tap vector
     $\bm{x}(t)$ (middle, blue). Here, there are three taps $\tau_0=0$,
     $\tau_1=2$, and $\tau_2=4$. These taps are then combined linearly
     by the output matrix $W_\text{out}$ to produce the next value of
@@ -139,14 +146,15 @@ traditional RC.
     from left to right.}
 \end{reusefigure}
 
-In \cref{ch:nvar} I describe a different technique known as
-non-linear vector auto-regression (NVAR), which has recently been shown
-to be mathematically equivalent to an RC under certain conditions.
-This technique is outlined in \cref{fig:var-infer}.
-I discuss the construction and training of an NVAR, and how to apply it
-to common RC tasks. Then, I discuss the parallels between the NVAR
-and RC approaches, as well as when the equivalence is known to
-hold. Finally, I discuss the trade-offs between the two approaches.
+In \cref{ch:nvar} I describe a different technique known as non-linear
+vector auto-regression (NVAR), which has recently been shown to be
+mathematically equivalent to an RC under certain conditions.  This
+technique is summarized in \cref{fig:var-infer}.  I outline this
+proof, discuss the construction and training of an NVAR, and describe
+how to apply it to common RC tasks. Then, I discuss the parallels
+between the NVAR and RC approaches, as well as the practical
+considerations of applying this equivalence proof. Finally, I discuss
+the trade-offs between the two approaches.
 
 \begin{reusefigure}{fig:nvar-predict-lorenz}
   \includegraphics[width=\textwidth]{figures/nvar-predict-lorenz}
@@ -161,16 +169,16 @@ hold. Finally, I discuss the trade-offs between the two approaches.
 
 In \cref{ch:nvar-application}, I build on this equivalence with my
 collaborators to demonstrate NVARs solving two common RC tasks: system
-forecasting (as in \cref{fig:nvar-predict-lorenz}) and state inference.
-I show that NVARs are capable of
-RC-equivalent performance on these tasks despite being considerably
-simpler than an RC, and can achieve this performance with very little
-training data and training time. In addition, I discuss how a trained
-NVAR can provide interpretable results, while a trained RC is
-opaque. I discuss how to move beyond the strict proven mathematical
-equivalence to solve a wider variety of problems, and then demonstrate
-this by performing chaotic system forecasting on a system without a
-known equivalence.
+forecasting (as in \cref{fig:nvar-predict-lorenz}) and state
+inference.  I show that NVARs are capable of RC-equivalent performance
+on these tasks even under conditions where the equivalence proof does
+not strictly hold. The NVARs achieve this performance despite being
+considerably simpler than an RC and with very little training data and
+training time. In addition, I discuss how a trained NVAR can provide
+interpretable results, while a trained RC is opaque. I then show how
+the NVAR approach can be extended naturally to solve a wider array of
+problems. Finally, I discuss how this approach may replace traditional
+RCs, and what questions remain to be answered before that can happen.
 
 Finally, in \cref{ch:conclusion}, I summarize my findings and
 contributions, and propose interesting new directions for future
