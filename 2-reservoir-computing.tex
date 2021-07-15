@@ -1,12 +1,13 @@
 \chapter{Reservoir Computing}\label{ch:reservoir-computing}
 
-At a high level, an RC is a method to transform one time-varying
-signal $\bm{u}(t)$, the input to the RC, into another time-varying
-signal $\bm{y}(t)$, the output of the RC. The RC is constructed in
-such a way that, given an example input and a desired output, the RC
-can be \emph{trained} to produce that output when given the
-corresponding input. Once trained, the RC can then be used to perform
-the trained transformation on inputs it has not seen before.
+At a high level, a \emph{reservoir computer} (RC) is a method to
+transform one time-varying signal $\bm{u}(t)$, the input to the RC,
+into another time-varying signal $\bm{y}(t)$, the output of the
+RC. The RC is constructed in such a way that, given an example input
+and a desired output, the RC can be \emph{trained} to produce that
+output when given the corresponding input. Once trained, the RC can
+then be used to perform the trained transformation on inputs it has
+not seen before.
 
 The RC does this by means of an internal dynamic system called the
 \emph{reservoir}, which is coupled to the input $\bm{u}(t)$. If the
@@ -31,9 +32,9 @@ in \cref{sec:reservoir-properties}, the most direct and practical way
 to know if a given reservoir will work is to build, train, and test
 it.
 
-The output $\bm{y}(t)$ of the RC is constructed from a linear
-combination of a set of \emph{read-out} signals constructed from the
-reservoir state $\bm{r}(t)$ by means of a read-out function $\bm{g}$,
+The output $\bm{y}(t)$ of the RC is a linear
+combination of a set of \emph{read-out} signals, constructed from the
+reservoir state $\bm{r}(t)$ by means of a read-out function $\bm{g}$:
 \begin{equation}
   \label{eq:output}
   \bm{y}(t) = W_\text{out}\;\bm{g}\left(\bm{r}(t)\right).
@@ -41,9 +42,10 @@ reservoir state $\bm{r}(t)$ by means of a read-out function $\bm{g}$,
 This is called the RCs \emph{output layer}. Often, $\bm{g}$ is the
 identity function, and the output signal $\bm{y}(t)$ is a direct
 linear combination of the state variables of the reservoir. However, a
-non-identity $\bm{g}$ can be used to break an unwanted symmetry in the
-$\bm{u}$-to-$\bm{y}$ transformation, or to model incomplete
-measurements of a physical system being used as a reservoir.
+non-identity $\bm{g}$ can be used to break unwanted symmetries in the
+$\bm{u}$-to-$\bm{y}$ transformation, to introduce non-linearity to an
+otherwise completely linear RC, or to model incomplete measurements of
+a physical system being used as a reservoir.
 
 % FIXME figure for generic reservoir
 
@@ -66,7 +68,7 @@ the training process. I will discuss this choice in more detail in
 \cref{sec:esn,sec:reservoir-properties}. Once these design parameters
 are fixed, the weight matrix $W_\text{out}$ can be calculated from an
 example input and an example output by a process called
-\emph{training}, which results in an RC that performs the desired
+\emph{training}, which results in a complete RC that performs the desired
 transformation.
 
 \section{Training an RC}\label{sec:training}
@@ -102,7 +104,7 @@ regression, also known as Tikhonov regularization, which chooses
 $W_\text{out}$ to minimize
 \begin{equation}
   \label{eq:ridge}
-  \sum_{t>t_\text{warmup}} |\mathbf{u}_\text{train}(t) - W_\text{out}\;\mathbf{r}_\text{train}(t)|^2 + \alpha ||W_\text{out}||^2.
+  \alpha ||W_\text{out}||^2 + \sum_{t>t_\text{warmup}} |\mathbf{u}_\text{train}(t) - W_\text{out}\;\mathbf{r}_\text{train}(t)|^2.
 \end{equation}
 In most practical applications, the signals involved are either
 measured at a fixed time step, or integrated at a fixed time step, and
@@ -124,7 +126,7 @@ feature worth highlighting. Linear regressions are very fast, compared
 to other machine learning techniques like gradient descent and
 backpropogation~\cite{lukosevicius2009}. As a result, training an RC
 is also fast. This opens the door to many interesting applications
-where the ability to retrain the RC to a new system without the aid of
+where the ability to rapidly retrain the RC to a new system without the aid of
 a supercomputer is desirable. For example, an RC that controls the
 motors on an airborne drone could retrain itself in the event of a
 mechanical failure.
@@ -134,7 +136,7 @@ mechanical failure.
 One of the primary uses of an RC is \emph{system forecasting}, where
 the RC is primed with an input signal from a dynamic system and then
 switched into a free-running mode, where it produces a future forecast
-of that signal. This is most commonly used to to forecasting for
+of that signal. This is most commonly used to forecast
 chaotic systems, where forecasting is definitionally difficult.
 
 Training an RC for forecasting starts with an example input signal
@@ -177,9 +179,9 @@ output layer in \cref{eq:output}, is the forecasted signal.
 % FIXME cite echo state more
 Although there are many choices for the dynamic reservoir at the heart
 of an RC, the reservoir computing method originated as a practical way
-to train recurrent neural networks~\cite{lukosevicius2009}, by only
-training the weights in the output layer. One such network reservoir
-design, known as an echo state network (ESN)~\cite{jaeger2001},
+to train recurrent neural networks by only training the weights in the
+output layer.~\cite{lukosevicius2009} One such network reservoir
+design, known as an \emph{echo state network} (ESN)~\cite{jaeger2001},
 remains popular and will be my choice of dynamic reservoir for this
 thesis.
 
@@ -190,7 +192,7 @@ internal state, a single value that decays exponentially to zero over
 time with a decay rate $\gamma$. The node's inputs are summed together
 with weights, and this sum is passed through an activation function
 $f$ to produce a driving signal to the node's exponential state, which
-is used as the node's output.
+is also used as the node's output.
 
 The input connections and weights for each node are represented by two
 matrices: $W_\text{in}$, for connections from the overall input
@@ -252,10 +254,10 @@ in \cref{tab:esn}.
     & (forecasting) & $\bm{y}(t) =$ & $W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)$ \\
     \rule{0pt}{4ex}
     (c) & Discrete & $\bm{r}(t + \Delta t) =$ & $(1 - \gamma \Delta t) \bm{r}(t) + \gamma \Delta t \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;\bm{u}(t) \right)$ \\
-    & (inference) & $\bm{y}(t) =$ & $W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)$ \\
+    & (inference) & $\bm{y}(t + \Delta t) =$ & $W_\text{out}\;\bm{g}\left(\bm{r}(t + \Delta t)\right)$ \\
     \rule{0pt}{4ex}
     (d) & Discrete & $\bm{r}(t + \Delta t) =$ & $(1 - \gamma \Delta t) \bm{r}(t) + \gamma \Delta t \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;W_\text{out}\;\bm{g}\left(\bm{r}(t)\right) \right)$ \\
-    & (forecasting) & $\bm{y}(t) =$ & $W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)$ \\
+    & (forecasting) & $\bm{y}(t + \Delta t) =$ & $W_\text{out}\;\bm{g}\left(\bm{r}(t + \Delta t)\right)$ \\
   \end{tabular}
   \label{tab:esn}
 \end{table}
@@ -271,7 +273,7 @@ reservoir is a hallmark of the RC method. The specific form of the
 underlying reservoir is largely unimportant, except for a few
 requirements to be discussed in
 \cref{sec:reservoir-properties}. Indeed, the internal structure of an
-ESN is determined randomly!
+ESN is determined randomly.
 
 \section{Constructing ESNs}\label{sec:esn-construction}
 
@@ -294,17 +296,17 @@ If the read-out function $\bm{g}$ is taken to be the identity
 function, as is common, and the activation function $f$ is linear,
 then the forecasting-mode equations in \cref{tab:esn} are completely
 linear and have simple, oscillatory analytic solutions. These are
-known as \emph{linear RCs}. Linear RCs are mathematically easy to work
-with, and as a result many of the known proofs about RCs are in the
-context of linear RCs. One of the most recent and prominent results is
+known as \emph{linear ESNs}. Linear ESNs are mathematically easy to work
+with, and as a result many of the known proofs about ESNs are in the
+context of linear ESNs. One of the most recent and prominent results is
 discussed further in \cref{ch:nvar}.
 
-However, because the solutions to a linear RC in prediction mode are
+However, because the solutions to a linear ESN in prediction mode are
 so simple, it is not possible for them to reproduce the strange
 attractors of chaotic systems. To do this, the activation function $f$
 is used to introduce non-linearity into the equations. The most common
-choice is the hyperbolic tangent, $f(x) = \tanh(x)$, and this will be
-used in this thesis. This satisfies the non-linearity requirement, and
+choice is the hyperbolic tangent, $f(x) = \tanh(x)$, and I will use this choice
+in this thesis. This satisfies the non-linearity requirement, and
 also ensures that each component of $\bm{r}(t)$ is bounded in $(-1,
 1)$. Bounds on $\bm{r}(t)$ ensure that \cref{eq:esn} is particularly
 well-behaved for numerical integrators. These bounds can also be used
@@ -312,14 +314,14 @@ to put bounds on the output $\bm{y}(t)$, which may be useful if that
 output is driving a real-world system.
 
 It is also possible to leave $f$ linear, and introduce non-linearity
-into the system with $\bm{g}$. These \emph{output-layer nonlinear RCs} are
-also discussed further in \cref{ch:nvar,ch:nvar-application}.
+into the system with $\bm{g}$. These \emph{output-layer non-linear ESNs} are
+also discussed further in \cref{ch:nvar}.
 
 The matrices $W_r$ and $W_\text{in}$, and therefore the topology and
 weights of the ESN, are chosen randomly. There are many random schemes
 in use, from Erd{\"{o}}s-R{\'{e}}nyi networks and small-world
-networks\cite{haluszczynski2019} to simpler cycle and line
-networks.\cite{rodan2011} The scheme I use is simple. Although this
+networks~\cite{haluszczynski2019} to simpler cycle and line
+networks.~\cite{rodan2011} The scheme I use is simple. Although this
 thesis only discusses RCs simulated in software, this scheme was
 designed with an eye towards hardware implementation, where the number
 of inputs to each node, and the total number of connections in the
@@ -332,14 +334,14 @@ use those as inputs to the current node. Each input is assigned a
 random weight drawn from a normal distribution with mean $0$ and
 variance $1$. This results in a connection matrix $W_r'$ where each
 row has exactly $k$ non-zero entries. Finally, I rescale the whole
-matrix
+matrix by
 \begin{equation}
   \label{eq:setradius}
   W_r = \frac{\rho_r}{\operatorname{SR}(W_r')}\;W_r',
 \end{equation}
 where $\operatorname{SR}(W_r')$ is the spectral radius, or maximum
 absolute eigenvalue, of the matrix $W_r'$. This scaling ensures that
-$\operatorname{SR}(W_r') = \rho_r$, and $\rho_r$ is used to tune the
+$\operatorname{SR}(W_r) = \rho_r$. This parameter is used to tune the
 overall scale of the recurrent weights, and therefore the importance
 of recurrent connections inside the network.
 
@@ -352,8 +354,8 @@ Together, $\sigma$ and $\rho_\text{in}$ are enough to generate a
 random instantiation of $W_\text{in}$, and $k$ and $\rho_r$ are enough
 to generate a random instantiation of $W_r$. The relative scales
 $\rho_r$ and $\rho_\text{in}$ determine the importance of the
-recurrent and external inputs, respectively. The entire construction
-is reduced to choosing these \emph{meta-parameters}, summarized in
+recurrent and external inputs, respectively. The entire ESN construction
+is then reduced to choosing these \emph{meta-parameters}, summarized in
 \cref{tab:esn-metaparameters}.
 
 % FIXME N
@@ -364,6 +366,8 @@ is reduced to choosing these \emph{meta-parameters}, summarized in
   \begin{tabularx}{\linewidth}{rlX}
     & Parameter & Description \\
     \hline
+    \rule{0pt}{4ex}
+    $N$ & Number of Nodes & the total number of nodes in the network. \\
     \rule{0pt}{4ex}
     $\gamma$ & Leak Rate & controls the exponential decay of each node. \\
     \rule{0pt}{4ex}
@@ -390,7 +394,7 @@ handful of known desirable properties that are used to guide reservoir
 design, and in particular ESN design. Chief among these is the
 \emph{fading memory property}, which states that the reservoir's
 response to its input should have a vanishing dependence on the value
-of that input signal in the distant past.\cite{jaeger2001,jaeger2002}
+of that input signal in the distant past.~\cite{jaeger2001,jaeger2002}
 
 More concretely, let $\bm{u}_1(t)$ and $\bm{u}_2(t)$ be two different
 RC input signals which may differ for $t < 0$ but are otherwise
@@ -409,7 +413,7 @@ sufficiently long warm-up time as discussed in \cref{sec:training}.
 
 One early result for ESNs states that this fading memory property
 cannot hold in an ESN when the spectral radius of the matrix $W_r$ is
-greater than $1$~\cite{jaeger2001}, specifically because the zero
+greater than one~\cite{jaeger2001}, specifically because the zero
 input signal $\bm{u}(t) = 0$ is unstable. Such an ESN with initial
 state $\bm{r}(0) = 0$ will quickly become non-zero as soon as the
 input is non-zero, and then will not return to $\bm{r} = 0$ even after
@@ -419,12 +423,12 @@ Likewise, an ESN with $\operatorname{SR}(W_r) \ll 1$ is contracting,
 and will return to $\bm{r} = 0$ rapidly with zero input. These two
 considerations have combined in literature into a recommendation that
 the spectral radius of $W_r$ be near, but not above,
-$1$.~\cite{lukosevicius2012} However, both of these results are very
-narrow in scope, and more recent work in \cref{ch:low-connectivity}
+one.~\cite{lukosevicius2012} However, both of these results are very
+narrow in scope, and more recent work presented in \cref{ch:low-connectivity}
 and elsewhere~\cite{pathak2017,rodan2011} show that these spectral
 radius recommendations are not hard and fast rules. Nonetheless, this
 history has cemented spectral radius as the standard measure of scale
-of $W_r$ in ESNs.
+for $W_r$ in ESNs.
 
 Another desirable property of the reservoir is \emph{separability} and
 \emph{continuity of response}. Similar inputs to the reservoir should produce
@@ -434,7 +438,7 @@ excludes a wide class of chaotic systems from consideration as a
 reservoir, as even very small differences in two input signals would
 be amplified. Likewise, a good reservoir should produce different
 responses to different inputs. In the extreme case, a reservoir that
-produces a constant $0$ regardless of input would form a very poor RC,
+produces a constant zero regardless of input would form a very poor RC,
 despite meeting the other criteria listed so far.
 
 More recently, these requirements have been unified under the umbrella
@@ -485,12 +489,13 @@ the desired output $\bm{y}_\text{test}(t)$ is to calculate the
 normalized root-mean-square error (NRMSE) between them,
 \begin{equation}
   \label{eq:nrmse}
-  \epsilon = {\left(\frac{\int \left| \mathbf{y}(t) - \mathbf{y}_\text{test}(t) \right|^2 \;dt}{T \operatorname{Var}\left[\bm{y}_\text{test}(t)\right]}\right)}^{1/2},
+  \epsilon = {\left(\sum_i\frac{\int \left| y_i(t) - y_{\text{test},i}(t) \right|^2 \;dt}{T \operatorname{Var}\left[y_{\text{test},i}(t)\right]}\right)}^{1/2},
 \end{equation}
-where the integral is evaluated on an interval of length $T$.
-If $\epsilon = 0$, then the two signals are identical during the
-interval being evaluated, and any difference between them will result
-in $\epsilon > 0$.
+where the integral is evaluated on an interval of length $T$, and the
+sum $i$ is over all components of $\bm{y}_\text{test}(t)$.  If
+$\epsilon = 0$, then the two signals are identical during the interval
+being evaluated, and any difference between them will result in
+$\epsilon > 0$.
 
 For RCs trained to do inference, this NRMSE is calculated across the
 entire testing signal, regardless of length. However, for forecasting
@@ -506,14 +511,14 @@ forecasting. In this thesis, I will refer to this one Lyapunov period
 error as $\epsilon_1$.
 
 Using $\epsilon_1$ as a testing metric for forecasting RCs is common,
-but still has problems.\cite{pathak2017,haluszczynski2019} The largest is that the specific value of
-$\epsilon_1$ will depend strongly on which specific input signal
-$\bm{u}_\text{test}(t)$ is used for testing. If the input signal
-passes very near an unstable state of the input system, very small
-errors in the RC's forecasting are amplified dramatically. In these
-cases, $\epsilon_1$ is not a useful measure of how well the RC has
-learned the input system. Examples of this are given in
-\cref{ch:low-connectivity}.
+but still has problems.\cite{pathak2017,haluszczynski2019} The largest
+issue is that the specific value of $\epsilon_1$ will depend strongly
+on which specific input signal $\bm{u}_\text{test}(t)$ is used for
+testing. If the input signal passes very near an unstable state of the
+input system, very small errors in the RC's forecasting are amplified
+dramatically. In these cases, $\epsilon_1$ is not a useful measure of
+how well the RC has learned the input system. Examples of this are
+given in \cref{ch:low-connectivity}.
 
 \begin{figure}
   \includegraphics[width=0.6\textwidth]{figures/nrmse-avg}
@@ -531,20 +536,19 @@ learned the input system. Examples of this are given in
   \label{fig:nrmse-avg}
 \end{figure}
 
-A simple fix is to perform $k$ forecasts with many different example
+A simple fix is to perform $m$ forecasts with many different example
 inputs, calculate an $\epsilon_1$ value for each forecast, and then
 combine them into one final metric
 \begin{equation}
   \label{eq:nrmse-avg}
-  \tilde{\epsilon} = {\left( \frac{1}{k} \sum_{i=1}^k \epsilon_{1,i} \right)}^{1/2}.
+  \tilde{\epsilon} = {\left( \frac{1}{m} \sum_{i=1}^m \epsilon_{1,i}^2 \right)}^{1/2}.
 \end{equation}
 This method is summarized in \cref{fig:nrmse-avg}.
 Using $\tilde{\epsilon}$ averages out the chance encounters with
 unstable states, and as I will show in \cref{ch:low-connectivity}, is
 a more reliable indicator of a forecasting RC's performance.
 
-% FIXME talk about return map?
-For forecasting, a very useful qualitative indicator of an RCs ability
+For forecasting, a very useful qualitative indicator of an RC's ability
 to learn the input system is to use the RC in autonomous mode to
 produce a very long forecast. This forecasted signal will necessarily
 diverge from the true system, but both the forecast and the true
