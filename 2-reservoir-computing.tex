@@ -358,7 +358,6 @@ recurrent and external inputs, respectively. The entire ESN construction
 is then reduced to choosing these \emph{meta-parameters}, summarized in
 \cref{tab:esn-metaparameters}.
 
-% FIXME N
 \begin{table}
   \caption{Summary of echo state network meta-parameters. These
     parameters must be chosen to produce a random realization of an
@@ -382,6 +381,8 @@ is then reduced to choosing these \emph{meta-parameters}, summarized in
     $f$ & Activation Function & the function computed at each node. This is usually $\tanh$. \\
     \rule{0pt}{4ex}
     $\bm{g}$ & Read-out Function & the output layer read-out. This is usually the identity function. \\
+    \rule{0pt}{4ex}
+    $\alpha$ & Ridge Parameter & regularization parameter for ridge regression \\
   \end{tabularx}
   \label{tab:esn-metaparameters}
 \end{table}

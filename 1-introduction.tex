@@ -136,14 +136,16 @@ reservoir structures and a traditional RC.
 
 \begin{reusefigure}{fig:var-infer}
   \includegraphics{figures/var-infer}
-  \caption{Summary of the VAR method. Many time-delay taps $\tau_i$ of
-    the signal $\bm{u}(t)$ (top, red) are collected into the tap vector
-    $\bm{x}(t)$ (middle, blue). Here, there are three taps $\tau_0=0$,
-    $\tau_1=2$, and $\tau_2=4$. These taps are then combined linearly
-    by the output matrix $W_\text{out}$ to produce the next value of
-    the VAR's output $\bm{y}(t)$ (bottom, green). To transform a whole
-    time series input, this VAR process slides along the time axis
-    from left to right.}
+  \caption{Summary of the (N)VAR method. Many time-delay taps $\tau_i$
+    of the signal $\bm{u}(t)$ (top, red) are concatenated into the tap
+    vector $\bm{v}(t)$ (middle, blue). Here, there are three taps
+    $\tau_0=0$, $\tau_1=2$, and $\tau_2=4$. These taps are then passed
+    through a possibly non-linear function $\bm{g}_\text{n}$ and
+    combined linearly by the output matrix $W_\text{out}$ to produce
+    the next value of the (N)VAR's output $\bm{y}(t)$ (bottom,
+    green). For a linear VAR, $\bm{g}_\text{n}$ is the identity
+    function. To transform a whole time series input, this (N)VAR process
+    slides along the time axis from left to right.}
 \end{reusefigure}
 
 In \cref{ch:nvar} I describe a different technique known as non-linear
