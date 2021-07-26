@@ -42,7 +42,7 @@ effectively applied to chaotic system
 forecasting~\cite{jaeger1978,pathak2017} and system state
 inference~\cite{lu2017}. More than just short-term prediction, RCs are
 capable of reproducing the \emph{climate} of a dynamical
-system,~\cite{pathak2017,haluszczynski2019} that is, it learns the long-term
+system~\cite{pathak2017,haluszczynski2019}, that is, it learns the long-term
 features of the system such as the system's attractor and Lyapunov
 exponents.
 
@@ -66,35 +66,41 @@ have to create a good RC? A common practice is to use a random network
 as the reservoir, generated from a set of meta-parameters. There are a
 handful of heuristics for some parameters, such as setting the
 \emph{spectral radius} of the network near one and the need for
-recurrent network connections,~\cite{jaeger2001,lukosevicius2012} but
+recurrent network connections~\cite{jaeger2001,lukosevicius2012}, but
 the applicability of these rules is narrow. What features of the
 reservoir are necessary, and which can be discarded?
 
-In this thesis, I will construct reservoir computers that do not
+In this dissertation, I construct reservoir computers that do not
 follow the conventional rules for reservoir construction. These RCs
 continue to perform well on chaotic system forecasting and state
 inference, and can even reproduce the chaotic attractor of the system
 they have learned, despite the fact that their internal reservoir has
-no recurrent connections. Indeed, by the end of this thesis, they do
+no recurrent connections. Indeed, by the end of this dissertation, they do
 not have an internal reservoir at all.
 
 \section{Outline and Summary of Contributions}
 
-In this thesis, \cref{ch:reservoir-computing,ch:nvar} provide
+In this dissertation, \cref{ch:reservoir-computing,ch:nvar} provide
 background information on the methods used, while
 \cref{ch:low-connectivity,ch:nvar-application} present new
 contributions.
 
 \begin{reusefigure}{fig:reservoir}
   \includegraphics[width=0.6\textwidth]{figures/reservoir}
-  \caption{High-level view of an echo state network RC. Each node may
-    have two kinds of input connections: connections to other nodes in
-    the network ($W_r$, blue), connections to the overall input
-    ($W_\text{in}$, red). Each node may also have output connections
-    to the overall output ($W_\text{out}$, green). Note that the
-    internal connections may contain cycles.  When the RC is used to
+  \caption{High-level view of an echo state network RC.  An input
+    signal (red, top left) drives an internal reservoir to produce a
+    reservoir response (blue, top center) which is then combined to
+    form an output signal (green, top right). In an ESN, the reservoir
+    network has external input signals (red nodes, left) that drive
+    the internal network (blue nodes, center) to produces an overall
+    output (green, right).  Each internal node may have two kinds of
+    input connections: connections to other nodes in the network
+    ($W_r$, blue arrows), or connections to the overall input
+    ($W_\text{in}$, red arrows). Each node may also contribute to the
+    overall output ($W_\text{out}$, green arrows). Note that the
+    internal connections may contain cycles.  When the ESN is used to
     perform forecasting, the output on the right side is connected to
-    the input on the left side, allowing the RC to run autonomously
+    the input on the left side, allowing the ESN to run autonomously
     with no external input.}%
 \end{reusefigure}
 
@@ -137,10 +143,10 @@ reservoir structures and a traditional RC.
 \begin{reusefigure}{fig:var-infer}
   \includegraphics{figures/var-infer}
   \caption{Summary of the (N)VAR method. Many time-delay taps $\tau_i$
-    of the signal $\bm{u}(t)$ (top, red) are concatenated into the tap
+    of the discrete-time signal $\bm{u}(t)$ (top, red) are concatenated into the tap
     vector $\bm{v}(t)$ (middle, blue). Here, there are three taps
     $\tau_0=0$, $\tau_1=2$, and $\tau_2=4$. These taps are then passed
-    through a possibly non-linear function $\bm{g}_\text{n}$ and
+    through a possibly nonlinear function $\bm{g}_\text{n}$ and
     combined linearly by the output matrix $W_\text{out}$ to produce
     the next value of the (N)VAR's output $\bm{y}(t)$ (bottom,
     green). For a linear VAR, $\bm{g}_\text{n}$ is the identity
@@ -148,7 +154,7 @@ reservoir structures and a traditional RC.
     slides along the time axis from left to right.}
 \end{reusefigure}
 
-In \cref{ch:nvar} I describe a different technique known as non-linear
+In \cref{ch:nvar}, I describe a different technique known as nonlinear
 vector auto-regression (NVAR), which has recently been shown to be
 mathematically equivalent to an RC under certain conditions.  This
 technique is summarized in \cref{fig:var-infer}.  I outline this

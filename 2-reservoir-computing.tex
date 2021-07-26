@@ -34,7 +34,7 @@ it.
 
 The output $\bm{y}(t)$ of the RC is a linear
 combination of a set of \emph{read-out} signals, constructed from the
-reservoir state $\bm{r}(t)$ by means of a read-out function $\bm{g}$:
+reservoir state $\bm{r}(t)$ by means of a read-out function $\bm{g}$,
 \begin{equation}
   \label{eq:output}
   \bm{y}(t) = W_\text{out}\;\bm{g}\left(\bm{r}(t)\right).
@@ -43,7 +43,7 @@ This is called the RCs \emph{output layer}. Often, $\bm{g}$ is the
 identity function, and the output signal $\bm{y}(t)$ is a direct
 linear combination of the state variables of the reservoir. However, a
 non-identity $\bm{g}$ can be used to break unwanted symmetries in the
-$\bm{u}$-to-$\bm{y}$ transformation, to introduce non-linearity to an
+$\bm{u}$-to-$\bm{y}$ transformation, to introduce nonlinearity to an
 otherwise completely linear RC, or to model incomplete measurements of
 a physical system being used as a reservoir.
 
@@ -100,12 +100,13 @@ specific choice of reservoir in the RC.
 The right-hand side of \cref{eq:approx-output} is linear in
 $W_\text{out}$, and can be solved by any number of linear regression
 methods. For RCs, $W_\text{out}$ is most commonly found via ridge
-regression, also known as Tikhonov regularization, which chooses
+regression, also known as Tikhonov regularization. This chooses
 $W_\text{out}$ to minimize
 \begin{equation}
   \label{eq:ridge}
-  \alpha ||W_\text{out}||^2 + \sum_{t>t_\text{warmup}} |\mathbf{u}_\text{train}(t) - W_\text{out}\;\mathbf{r}_\text{train}(t)|^2.
+  \alpha ||W_\text{out}||^2 + \sum_{t = t_\text{warmup}}^{t_\text{train}} |\mathbf{u}_\text{train}(t) - W_\text{out}\;\mathbf{r}_\text{train}(t)|^2.
 \end{equation}
+where $t_\text{train}$ is the end time of the example input $\bm{u}_\text{train}(t)$.
 In most practical applications, the signals involved are either
 measured at a fixed time step, or integrated at a fixed time step, and
 the sum in \cref{eq:ridge} is understood to be over these fixed time
@@ -154,7 +155,7 @@ That is, the RC is trained to reproduce its input as its output,
   \label{eq:approx-output-input}
   \bm{u}(t) \approx \bm{y}(t).
 \end{equation}
-As before, this $W_\text{out}$ is found via ridge regression.
+As before, $W_\text{out}$ is found via ridge regression.
 
 Once trained in this way, the RC can be used for forecasting. First,
 the RC is primed with an input signal $\bm{u}(t)$ to be used as the
@@ -180,10 +181,10 @@ output layer in \cref{eq:output}, is the forecasted signal.
 Although there are many choices for the dynamic reservoir at the heart
 of an RC, the reservoir computing method originated as a practical way
 to train recurrent neural networks by only training the weights in the
-output layer.~\cite{lukosevicius2009} One such network reservoir
+output layer~\cite{lukosevicius2009}. One such network reservoir
 design, known as an \emph{echo state network} (ESN)~\cite{jaeger2001},
 remains popular and will be my choice of dynamic reservoir for this
-thesis.
+dissertation.
 
 An echo state network is composed of number of nodes $N$. Each node in
 the network has a number of inputs, drawn either from other nodes in
@@ -206,14 +207,20 @@ the input signal $\bm{u}(t)$.
 
 \begin{figure}
   \includegraphics[width=0.6\textwidth]{figures/reservoir}
-  \caption{High-level view of an echo state network RC. Each node may
-    have two kinds of input connections: connections to other nodes in
-    the network ($W_r$, blue), connections to the overall input
-    ($W_\text{in}$, red). Each node may also have output connections
-    to the overall output ($W_\text{out}$, green). Note that the
-    internal connections may contain cycles.  When the RC is used to
+    \caption{High-level view of an echo state network RC.  An input
+    signal (red, top left) drives an internal reservoir to produce a
+    reservoir response (blue, top center) which is then combined to
+    form an output signal (green, top right). In an ESN, the reservoir
+    network has external input signals (red nodes, left) that drive
+    the internal network (blue nodes, center) to produces an overall
+    output (green, right).  Each internal node may have two kinds of
+    input connections: connections to other nodes in the network
+    ($W_r$, blue arrows), or connections to the overall input
+    ($W_\text{in}$, red arrows). Each node may also contribute to the
+    overall output ($W_\text{out}$, green arrows). Note that the
+    internal connections may contain cycles.  When the ESN is used to
     perform forecasting, the output on the right side is connected to
-    the input on the left side, allowing the RC to run autonomously
+    the input on the left side, allowing the ESN to run autonomously
     with no external input.}%
   \label{fig:reservoir}
 \end{figure}
@@ -280,17 +287,24 @@ ESN is determined randomly.
 The parameters $W_r$, $W_\text{in}$, $\gamma$, and $f$ in
 \cref{eq:esn} must be set before the ESN construction is complete. Of
 these, $\gamma$ has the most simple interpretation: it controls the
-exponential decay of the value of each node in the network. If this
-rate is too slow, the reservoir will not be able to react fast enough
-to its input to be useful for computing the output; if this rate is
-too fast, the reservoir will respond immediately to its inputs and
-have no useful memory of past inputs, which may be necessary for the
-RC's task. As the reservoir network may contain cycles, there is also
-the possibility that a high decay rate may result in very rapid
-oscillation in the network, which is undesirable if the RC's desired
-output does not contain such oscillation. In practice, this decay rate
-should be matched to the characteristic timescale of the output
-signal, and then can be manually tuned from there if needed.
+exponential decay of the value of each node in the network. As the
+overall input to the ESN only influences the network via node inputs,
+if this decay rate is too slow then the network will not be able to
+react fast enough to its input to be useful for computing the
+output. If instead this rate is too high, it is possible the network
+will respond too quickly and have no memory of past inputs, which may
+be necessary for the ESN's task.  The rate $y$ only controls the
+dynamics of an individual node, however, and both of these effects can
+be mitigated by the overall dynamics of the entire network of
+nodes. For example, a network with very fast nodes may still retain
+useful memory of past inputs if it contains long recurrent
+loops. Network structure can also exacerbate a poor choice of
+$\gamma$, as a network made of fast nodes that also contains very
+short recurrent loops may begin to oscillate rapidly, which is
+undesirable if the ESN's desired output does not contain such
+oscillation.  In practice, this decay rate should be matched to the
+characteristic timescale of the output signal, and then can be
+manually tuned from there if needed.
 
 If the read-out function $\bm{g}$ is taken to be the identity
 function, as is common, and the activation function $f$ is linear,
@@ -304,25 +318,25 @@ discussed further in \cref{ch:nvar}.
 However, because the solutions to a linear ESN in prediction mode are
 so simple, it is not possible for them to reproduce the strange
 attractors of chaotic systems. To do this, the activation function $f$
-is used to introduce non-linearity into the equations. The most common
+is used to introduce nonlinearity into the equations. The most common
 choice is the hyperbolic tangent, $f(x) = \tanh(x)$, and I will use this choice
-in this thesis. This satisfies the non-linearity requirement, and
+in this dissertation. This satisfies the nonlinearity requirement, and
 also ensures that each component of $\bm{r}(t)$ is bounded in $(-1,
 1)$. Bounds on $\bm{r}(t)$ ensure that \cref{eq:esn} is particularly
 well-behaved for numerical integrators. These bounds can also be used
 to put bounds on the output $\bm{y}(t)$, which may be useful if that
 output is driving a real-world system.
 
-It is also possible to leave $f$ linear, and introduce non-linearity
-into the system with $\bm{g}$. These \emph{output-layer non-linear ESNs} are
+It is also possible to leave $f$ linear, and introduce nonlinearity
+into the system with $\bm{g}$. These \emph{output-layer nonlinear ESNs} are
 also discussed further in \cref{ch:nvar}.
 
 The matrices $W_r$ and $W_\text{in}$, and therefore the topology and
 weights of the ESN, are chosen randomly. There are many random schemes
 in use, from Erd{\"{o}}s-R{\'{e}}nyi networks and small-world
 networks~\cite{haluszczynski2019} to simpler cycle and line
-networks.~\cite{rodan2011} The scheme I use is simple. Although this
-thesis only discusses RCs simulated in software, this scheme was
+networks~\cite{rodan2011}. The scheme I use is simple. Although this
+dissertation only discusses RCs simulated in software, this scheme is
 designed with an eye towards hardware implementation, where the number
 of inputs to each node, and the total number of connections in the
 network, have an associated hardware cost.
@@ -395,7 +409,7 @@ handful of known desirable properties that are used to guide reservoir
 design, and in particular ESN design. Chief among these is the
 \emph{fading memory property}, which states that the reservoir's
 response to its input should have a vanishing dependence on the value
-of that input signal in the distant past.~\cite{jaeger2001,jaeger2002}
+of that input signal in the distant past~\cite{jaeger2001,jaeger2002}.
 
 More concretely, let $\bm{u}_1(t)$ and $\bm{u}_2(t)$ be two different
 RC input signals which may differ for $t < 0$ but are otherwise
@@ -413,23 +427,27 @@ state of the reservoir does not matter, as long as it has a
 sufficiently long warm-up time as discussed in \cref{sec:training}.
 
 One early result for ESNs states that this fading memory property
-cannot hold in an ESN when the spectral radius of the matrix $W_r$ is
-greater than one~\cite{jaeger2001}, specifically because the zero
-input signal $\bm{u}(t) = 0$ is unstable. Such an ESN with initial
-state $\bm{r}(0) = 0$ will quickly become non-zero as soon as the
-input is non-zero, and then will not return to $\bm{r} = 0$ even after
-the input returns to zero.
+cannot hold in an ESN when the input $\bm{u}(t) = 0$ and the spectral radius
+of the matrix $W_r$ is greater than one~\cite{jaeger2001},
+as any two distinct initial reservoir states
+$\bm{r}_1(0)$ and $\bm{r}_2(0)$ must diverge exponentially as $t
+\rightarrow \infty$.
 
 Likewise, an ESN with $\operatorname{SR}(W_r) \ll 1$ is contracting,
 and will return to $\bm{r} = 0$ rapidly with zero input. These two
 considerations have combined in literature into a recommendation that
 the spectral radius of $W_r$ be near, but not above,
-one.~\cite{lukosevicius2012} However, both of these results are very
-narrow in scope, and more recent work presented in \cref{ch:low-connectivity}
-and elsewhere~\cite{pathak2017,rodan2011} show that these spectral
-radius recommendations are not hard and fast rules. Nonetheless, this
-history has cemented spectral radius as the standard measure of scale
-for $W_r$ in ESNs.
+one~\cite{lukosevicius2012}. However, both of these results only hold
+for zero input, which is never the case when using an ESN in practice.
+Once the ESN and the input system are considered as a single coupled
+system, the ESN can display fading memory even when
+$\operatorname{SR}(W_r) > 1$, and may never return to $\bm{r} = 0$
+even when $\operatorname{SR}(W_r) \ll 1$.  More recent work presented
+in \cref{ch:low-connectivity} and
+elsewhere~\cite{pathak2017,rodan2011} show that these spectral radius
+recommendations are not hard and fast rules. Nonetheless, this history
+has cemented spectral radius as the standard measure of scale for
+$W_r$ in ESNs.
 
 Another desirable property of the reservoir is \emph{separability} and
 \emph{continuity of response}. Similar inputs to the reservoir should produce
@@ -508,11 +526,11 @@ chaotic system, good forecasting requires the forecast to diverge
 eventually. In these situations, the testing error is calculated only
 for a period of $T = 1/\lambda_\text{max}$, where $\lambda_\text{max}$
 is the largest Lyapunov exponent of the system the RC is
-forecasting. In this thesis, I will refer to this one Lyapunov period
+forecasting. In this dissertation, I will refer to this one Lyapunov period
 error as $\epsilon_1$.
 
 Using $\epsilon_1$ as a testing metric for forecasting RCs is common,
-but still has problems.\cite{pathak2017,haluszczynski2019} The largest
+but still has problems~\cite{pathak2017,haluszczynski2019}. The largest
 issue is that the specific value of $\epsilon_1$ will depend strongly
 on which specific input signal $\bm{u}_\text{test}(t)$ is used for
 testing. If the input signal passes very near an unstable state of the
@@ -537,9 +555,10 @@ given in \cref{ch:low-connectivity}.
   \label{fig:nrmse-avg}
 \end{figure}
 
-A simple fix is to perform $m$ forecasts with many different example
-inputs, calculate an $\epsilon_1$ value for each forecast, and then
-combine them into one final metric
+To address these issues, I instead use a new metric calculated from
+$m$ forecasts with many different example inputs. I calculate an
+$\epsilon_1$ value for each forecast, and then combine them into one
+final metric
 \begin{equation}
   \label{eq:nrmse-avg}
   \tilde{\epsilon} = {\left( \frac{1}{m} \sum_{i=1}^m \epsilon_{1,i}^2 \right)}^{1/2}.
