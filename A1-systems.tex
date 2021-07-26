@@ -8,8 +8,14 @@ for example RC tasks. For reference, they are included here.
 \section{Lorenz '63}\label{sec:lorenz}
 
 \begin{figure}
+  \includegraphics[width=0.7\textwidth]{figures/lorenz-3d}
+  \caption{The true Lorenz attractor, produced by integrating \cref{eq:lorenz}.}%
+  \label{fig:lorenz-3d}
+\end{figure}
+
+\begin{figure}
   \includegraphics[width=0.6\textwidth]{figures/lorenz}
-  \caption{The true Lorenz attractor in the $x$/$z$ plane, produced by integrating \cref{eq:lorenz}.}%
+  \caption{The true Lorenz attractor projected on to the $x$/$z$ plane.}%
   \label{fig:lorenz}
 \end{figure}
 
@@ -22,18 +28,24 @@ The Lorenz '63 chaotic system is described by
   \end{aligned}
   \label{eq:lorenz}
 \end{equation}
-with standard parameters $\sigma = 10$, $\rho = 28$, and $\beta = 8/3$.\cite{lorenz1963} The attractor of this
-system can be visualized easily in two dimensions by projecting the
+with standard parameters $\sigma = 10$, $\rho = 28$, and $\beta = 8/3$~\cite{lorenz1963}. The attractor of this
+system in \cref{fig:lorenz-3d} can be visualized easily in two dimensions by projecting the
 three-dimensional trajectory of the system onto a plane. I show the
-attractor in the $x$/$z$ plane in \cref{fig:lorenz}.
+attractor in the $x$/$z$ plane in \cref{fig:lorenz}, and I use this projection throughout this dissertation whenever I compare ESN or NVAR output to the true Lorenz attractor.
 
 \section{R{\"{o}}ssler}\label{sec:rossler}
 
 \begin{figure}
-  \includegraphics[width=0.6\textwidth]{figures/rossler}
-  \caption{The true R{\"{o}}ssler attractor in the $x$/$z$ plane, produced by integrating \cref{eq:rossler}.}%
-  \label{fig:rossler}
+  \includegraphics[width=0.6\textwidth]{figures/rossler-3d}
+  \caption{The true R{\"{o}}ssler attractor, produced by integrating \cref{eq:rossler}.}%
+  \label{fig:rossler-3d}
 \end{figure}
+
+%\begin{figure}
+%  \includegraphics[width=0.6\textwidth]{figures/rossler}
+%  \caption{The true R{\"{o}}ssler attractor projected on to the $x$/$z$ plane.}
+%  \label{fig:rossler}
+%\end{figure}
 
 The R{\"{o}}ssler system is described by
 \begin{equation}
@@ -45,19 +57,25 @@ The R{\"{o}}ssler system is described by
   \label{eq:rossler}
 \end{equation}
 with standard parameters $a = 0.2$, $b = 0.2$, $c =
-5.7$.\cite{rossler1976} The attractor of this system is visualized in
-\cref{fig:rossler}.
+5.7$~\cite{rossler1976}. The attractor of this system is visualized in
+\cref{fig:rossler-3d}.
 
 The $z$ component of this system mostly stays near zero, with rare
-positive spikes. This makes prediction with an RC difficult. To make
-this component of the system more suitable for RC prediction, I use
-$\log z$ instead for both RC input and prediction output.
+positive spikes. This makes prediction with an ESN difficult. To make
+this component of the system more suitable for ESN prediction, I use
+$\log z$ instead for both ESN input and prediction output.
 
 \section{Double-Scroll}\label{sec:dscroll}
 
 \begin{figure}
+  \includegraphics[width=0.7\textwidth]{figures/dscroll-3d}
+  \caption{The true double-scroll circuit attractor, produced by integrating \cref{eq:dscroll}.}%
+  \label{fig:dscroll-3d}
+\end{figure}
+
+\begin{figure}
   \includegraphics[width=0.6\textwidth]{figures/dscroll}
-  \caption{The true double-scroll circuit attractor in the $V_1$/$I$ plane, produced by integrating \cref{eq:dscroll}.}%
+  \caption{The true double-scroll circuit attractor projected on to the $V_1$/$I$ plane.}%
   \label{fig:dscroll}
 \end{figure}
 
@@ -71,8 +89,11 @@ The double-scroll chaotic circuit is described by the dimensionless equations
  \label{eq:dscroll}
 \end{equation}
 with parameters $R_1 = 1.2$, $R_2 = 3.44$, $R_4 = 0.193$, $I_r = 2.25
-\times 10^{-5}$, and $\alpha = 11.6$.\cite{gauthier1996} The attractor
-of this system is visualized in \cref{fig:dscroll}.
+\times 10^{-5}$, and $\alpha = 11.6$~\cite{gauthier1996}. The
+attractor of this system is depicted in \cref{fig:dscroll-3d}. As
+with the Lorenz system, for comparison purposes I will use a
+projection of the attractor on to the $V_1$/$I$ plane, depicted in
+\cref{fig:dscroll}.
 
 \section{Mackey-Glass}\label{sec:mackey-glass}
 
@@ -88,6 +109,6 @@ The Mackey-Glass system is described by the time-delay differential equation
   \label{eq:mackey-glass}
 \end{equation}
 with standard parameters $\beta = 0.2$, $\gamma = 0.1$, $\tau = 17$,
-$n = 10$.\cite{mackey1977} The attractor of this system is most
+$n = 10$~\cite{mackey1977}. The attractor of this system is most
 commonly visualized as a time-delay embedding of the trajectory, using
 $\tau$ as the delay parameter, as depicted in \cref{fig:mackey-glass}.
