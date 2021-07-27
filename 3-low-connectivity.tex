@@ -9,17 +9,19 @@ double-scroll circuit system described in \cref{ch:systems}. This
 exploration is guided by optimization -- by trying to discover the
 meta-parameters that result in the best averaged NRMSE
 $\tilde{\epsilon}$ during forecasting for the given system. This
-exploration leads to a surprising discovery: that ESNs with
-simple internal structure perform as well as their more complicated
-siblings.
+exploration leads to a surprising discovery: that ESNs with simple
+internal structure perform as well as their more complicated
+siblings. In the process, I find concrete evidence that my new
+averaged $\tilde{\epsilon}$ metric is a more reliable indicator of
+forecasting quality than $\epsilon_1$.
 
 In particular, I am interested in the recurrent connectivity $k$. In
-software simulations, such as those described in this thesis, the
+software simulations, such as those described in this dissertation, the
 connectivity $k$ has only a slight impact on the speed of the
 simulation. However, in hardware network implementations, each
 connection has an associated cost. For autonomous Boolean networks
 implemented on FPGAs, every network connection is built from a long
-chain of delay nodes.~\cite{canaday2018} These delays often compose the
+chain of delay nodes~\cite{canaday2018}. These delays often compose the
 majority of the resource budget of the hardware network. Although the
 results in this chapter are all software simulation, the particular
 focus on the $k$ parameter is done with an eye towards hardware
@@ -30,11 +32,11 @@ optimization, such as grid search~\cite{rodan2011} and gradient
 descent~\cite{jaeger2007}. However, both of these approaches have
 drawbacks. Grid search quickly becomes intractable when the number of
 dimensions grows, and even after fixing the two functional
-meta-parameters $f$ and $\bm{g}$, there are 5 dimensions
-left. Compounding this problem, the ESN construction is a random
+meta-parameters $f$ and $\bm{g}$, there are 5 dimensions.
+Compounding this problem, the ESN construction is a random
 process, and so the resulting measured $\tilde{\epsilon}$ for a given
-set of meta-parameters is a random variable. To get a meaningful
-result, each set of meta-parameters would need to be tested multiple
+set of meta-parameters is a random variable. To obtain a meaningful
+result, each set of meta-parameters needs to be tested multiple
 times. For even a coarse grid search, with 10 trials and 10 points per
 meta-parameter, this already means one million trial RCs. Gradient
 descent suffers from the randomness of ESN construction as well, for
@@ -53,19 +55,19 @@ however, this is optimizing only a single random instantiation of an
 ESN, and provides little insight into how the fully random ESN will
 perform.
 
-In this chapter, I will be using Bayesian
-optimization,~\cite{yperman2016,maat2018} as implemented by the
-\texttt{skopt} Python package,~\cite{skopt2018} to explore which
+In this chapter, I use Bayesian
+optimization~\cite{yperman2016,maat2018}, as implemented by the
+\texttt{skopt} Python package~\cite{skopt2018}, to explore which
 meta-parameters result in the lowest forecasting error
 $\tilde{\epsilon}$ for the three example systems. Bayesian
 optimization deals well with both noise and integer parameters like
-$k$, is more efficient than grid search,~\cite{maat2018} and works well
+$k$, is more efficient than grid search~\cite{maat2018}, and works well
 with minimal tuning.
 
 \section{Bayesian Optimization}
 
 % FIXME cartoon figure for this?
-Bayesian optimization is an optimization technique that finds the
+Bayesian optimization is a technique that finds the
 minimum of an objective function $h(\bm{x})$, in this case the
 measured error $\tilde{\epsilon}$ of an ESN with meta-parameters
 $\bm{x}$, by repeated evaluation. The process starts with a prior
@@ -74,8 +76,8 @@ the function $h$. As each new point $\bm{x}$ is evaluated, the
 algorithm incorporates this new knowledge and updates its prior
 distribution. At the start of the optimization, points are chosen
 randomly. This is the exploration phase, where the Bayesian optimizer
-is only gathering data to improve its prior distribution. After
-exploration, the optimizer will then evaluate points $\bm{x}$ with the
+gathers data to improve its prior distribution. After
+exploration, the optimizer then evaluates points $\bm{x}$ with the
 most expected improvement over the best known minimum so far.
 
 This algorithm has a number of drawbacks. Primarily, it is
@@ -116,13 +118,13 @@ an RC each time.
 
 In this chapter, the Bayesian algorithm repeatedly generates a set of
 meta-parameters to test within the ranges listen in
-\cref{tab:bayes-ranges}. Larger ranges would require a longer
+\cref{tab:bayes-ranges}. Larger ranges require a longer
 optimization time. I selected these ranges to include values that
 existing ESN design heuristics would choose, while also allowing
 exploration outside those ranges without a prohibitively long runtime.
 
-During the optimization process, I discovered that the optimizer was
-often finding ESNs with an input connectivity of $k = 1$ that perform as well as ESNs with a
+During the optimization process, I discover that the optimizer
+often finds ESNs with an input connectivity of $k = 1$ that perform as well as ESNs with a
 higher $k$. Such networks have an interesting and simple network
 structure, and also suggest other simple structures for comparison.
 
@@ -133,7 +135,7 @@ disconnected components. For higher $k$, this is still possible but
 relatively rare, as $k$ controls the number of opportunities for
 components in the network to connect. Disconnected components in the
 network essentially act as smaller ESNs operating in parallel. This is an
-interesting line of research,~\cite{pathak2018} but not one I
+interesting line of research~\cite{pathak2018}, but not one I
 investigate further here. In the interest of a more equitable
 comparison between $k = 1$ networks and $k > 1$, I discard and
 regenerate any networks with more than a single connected component.
@@ -165,16 +167,17 @@ depicted in \cref{fig:topology}~(b).
 Inspired by the high performance of this simple structure, I also
 investigate $k = 1$ networks when the single cycle is cut at a random
 point. This turns the entire network into a tree, as in
-\cref{fig:topology}~(c).
+\cref{fig:topology}~(c). These networks retain the random weights they
+have before the single cycle is cut.
 
 Finally, I also investigate reservoir networks that consist entirely
 of a cycle or a ring with identical weights with no attached tree
 structure, depicted in \cref{fig:topology}~(d), and networks with a
 single line of nodes (a cycle that has been cut), in
-\cref{fig:topology}~(e). These choices were inspired by the $k = 1$
+\cref{fig:topology}~(e). These choices are inspired by the $k = 1$
 networks, but have also been researched previously and are known as
 \emph{simple cycle reservoirs} and \emph{delay line reservoirs},
-respectively.\cite{rodan2011}
+respectively~\cite{rodan2011}.
 
 In total, there are five network structures I investigate:
 \begin{enumerate}[label= (\alph*)]
@@ -186,23 +189,23 @@ In total, there are five network structures I investigate:
 \end{enumerate}
 Both the $k = 1$ cut cycle networks (c) and line networks (e) are
 rescaled to have a fixed $\rho_r$ before the cycle is cut. However,
-after the cycle is cut, they both have $\rho_r=0$. As I will
-demonstrate, these simpler network structures have the capability to
+after the cycle is cut, they both have $\rho_r=0$. As I
+demonstrate in this chapter, these simpler network structures have the capability to
 perform as well as their more complicated counterparts, despite the
 fact that (c) and (e) have no recurrence and a spectral radius nowhere
 near $\rho_r = 1$.
 
-\section{RC Symmetries and their Consequences}
+\section{ESN Symmetries and their Consequences}
 
 An ESN in autonomous forecast mode, described by \cref{tab:esn}~(b),
 has an inversion symmetry about the origin. That is, if $\bm{r}(t)$ is
 a solution to this equation, so is $-\bm{r}(t)$. For an output layer
 with an identity read-out function $\bm{g}$, this means that if
 $\bm{y}(t)$ is a possible output of the trained RC, then so is
-$-\bm{y}(t)$. If the underlying system the RC was trained to forecast
+$-\bm{y}(t)$. If the underlying system the ESN is trained to forecast
 also exhibits this symmetry, this is not a problem. In fact, designing
 the internal reservoir to match symmetries with the input system can
-dramatically improve RC performance.~\cite{barbosa2021}
+dramatically improve ESN performance~\cite{barbosa2021}.
 
 However, if the input system does not have this symmetry, this can be
 an issue. If at any time the autonomous forecast strays near $\bm{r} =
@@ -211,8 +214,8 @@ begin producing an output $\bm{y}(t)$ that is flipped through the
 origin. This problem is exacerbated if the input signal $\bm{u}(t)$ is
 normalized to have mean zero, a common practice.
 
-This problem was identified early, and a common fix~\cite{pathak2017,herteux2020}
-is to use a non-linear read-out function
+This problem is well-known, and a common fix~\cite{pathak2017,herteux2020}
+is to use a nonlinear read-out function
 \begin{equation}
   g_i(\bm{r}) = \begin{cases}
     r_i & \text{if } i \leq N / 2, \\
@@ -241,14 +244,20 @@ layer the same.
 
 This problem can be difficult to diagnose if the input system has a
 partial inversion symmetry. For example, the Lorenz '63 system in
-\cref{eq:lorenz} has an $(x, y) \rightarrow (-x, -y)$ symmetry, and so the
-complete inversion of the Lorenz attractor looks exactly the same as a
-flip along the $z$ axis. This is misleading, as the problem has
+\cref{eq:lorenz} has an $(x, y) \rightarrow (-x, -y)$ symmetry, and so
+the complete inversion of the Lorenz attractor looks exactly the same
+as a flip along the $z$ axis. This is misleading, as the problem has
 nothing to do with the Lorenz $z$ variable specifically, and this
 confusion prevented a full understanding of the problem until
-recently.~\cite{herteux2020} \Cref{fig:lorenz-symmetry} provides an
+recently~\cite{herteux2020}. \Cref{fig:lorenz-symmetry} provides an
 example of the forecasting failure characteristic to the identity
-read-out function when applied to the Lorenz '63 system.
+read-out function when applied to the Lorenz '63 system. The ESN does
+a poor job reconstructing the Lorenz attractor, but it also reproduces
+this attractor reflected through the origin. This mirror attractor is
+not a feature of Lorenz '63, is not present in the training data used
+to produce \cref{fig:lorenz-symmetry}, and is entirely due to the
+symmetry of the ESN equations. Using the read-out function in
+\cref{eq:esn-break-sym} removes this symmetry.
 
 For consistency, I use this \emph{quadratic read-out} for all three
 example input systems used in this chapter, even if the inversion
@@ -258,12 +267,11 @@ circuit.
 \section{Training, Forecasting, and Evaluation}
 
 Now that I have identified the five networks structures of interest, I
-can use the Bayesian optimization algorithm to identify networks in
-each class that perform well on the system forecasting task. I
-optimize the meta-parameters independently for each of the three
-example input systems: Lorenz '63 (\cref{sec:lorenz}), R{\"{o}}ssler
-(\cref{sec:rossler}), and the double-scroll circuit
-(\cref{sec:dscroll}).
+use the Bayesian optimization algorithm to identify networks in each
+class that perform well on the system forecasting task. I optimize the
+meta-parameters independently for each of the three example input
+systems: Lorenz '63, R{\"{o}}ssler, and the double-scroll circuit. I
+describe all three systems in \cref{ch:systems}.
 
 For each input system and for each network structure, the Bayesian
 algorithm performs random exploration for $50$ iterations, and then
@@ -280,7 +288,7 @@ To ensure that results are comparable across all three systems, I
 normalize their components to have $0$ mean and unit variance. In
 addition, I rescale the time axes of all systems so that their maximum
 positive Lyapunov exponent matches that of the Lorenz system,
-$\lambda_\text{max} = 0.9056$.
+$\lambda_\text{max} = 0.9056$~\cite{viswanath1998}.
 
 To train the ESN, I integrate \cref{eq:esn} with the quadratic readout
 in \cref{eq:esn-break-sym}, coupled with the chosen input system, via
@@ -299,12 +307,14 @@ evaluate the ESN performance.
 
 I then determine $W_\text{out}$ via ridge regression, as in
 \cref{eq:ridge}, where the sum ranges over the training period. The
-ridge parameter $\alpha$ could be included among the meta-parameters to
-optimize. However, unlike the other meta-parameters, modifying $\alpha$
-does not require re-integration and can be optimized with simpler
-methods. I select an $\alpha$ from among $10^{-5}$ to $10^5$ by
-leave-one-out cross-validation. This method also reduces the number of
-dimensions the Bayesian algorithm must work with.
+ridge parameter $\alpha$ could be included among the meta-parameters
+to optimize. However, unlike the other meta-parameters, modifying
+$\alpha$ does not require re-integration and can be optimized with
+simpler methods.  I select an $\alpha$ from among $10^{-5}$ to $10^5$
+by leave-one-out cross-validation, which has an extremely efficient
+implementation for ridge regression~\cite{rifkin2007}. This method
+also reduces the number of dimensions the Bayesian algorithm must work
+with.
 
 To evaluate the performance of the trained ESN, I use it to perform
 autonomous forecasting using the autonomous equation \cref{tab:esn}~(b). I choose $50$ times
@@ -321,11 +331,11 @@ input system attractor.
 
 \begin{figure}
   \includegraphics[width=0.6\textwidth]{figures/epsilon-failure}
-  \caption{Two examples of reservoir computers that fail to reproduce
+  \caption{Two examples of ESNs that fail to reproduce
     the Lorenz attractor, but produce a low $\epsilon_1$. Compare with
-    the true attractor in \cref{fig:lorenz}. Reservoir (i) fails to
+    the true attractor in \cref{fig:lorenz}. Network (i) fails to
     learn the attractor, overemphasizing the right lobe in which $t_1$
-    resides. Reservoir (ii) matches the attractor well early on, but
+    resides. Network (ii) matches the attractor well early on, but
     as the prediction lengthens, it falls into a periodic orbit (thick
     black line). Both (i) and (ii) show a promising low $\epsilon_1$,
     but the averaged $\tilde{\epsilon}$ measure more accurately
@@ -334,18 +344,24 @@ input system attractor.
 \end{figure}
 
 Using $\tilde{\epsilon}$ and not simply $\epsilon_1$ is even more
-important in an optimization setting than usual, as searching for ESNs with the
-lowest $\epsilon_1$ risks producing ESNs that are only good at
-forecasts near $t_1$, but otherwise perform poorly in reproducing the
-attractor of their input system. It can also waste time, as the
+important in an optimization setting than usual, as searching for ESNs
+with the lowest $\epsilon_1$ risks producing ESNs that are only good
+at forecasts near $t_1$, but otherwise perform poorly in reproducing
+the attractor of their input system. It can also waste time, as the
 optimization algorithm explores areas of the parameter space it
-believes perform well, but in fact only perform coincidentally well at $t_1$. \Cref{fig:epsilon-failure}
-depicts two common ways for an ESN to fail to replicate the true Lorenz
-attractor. However, both produce a good
-short-term forecast near $t_1$. In particular, reservoir (ii) in
-\cref{fig:epsilon-failure} has a lower $\epsilon_1$ than any of
-the optimized reservoirs I found despite its obvious failure to learn the
-Lorenz attractor.
+believes perform well, but in fact only perform coincidentally well at
+$t_1$. \Cref{fig:epsilon-failure} depicts two common ways for an ESN
+to fail to replicate the true Lorenz attractor. In
+\cref{fig:epsilon-failure} (i), the ESN learns the right lobe of the
+attractor reasonably well, as this is where $t_1$ resides, but quickly
+exhibits non-Lorenz behavior in the left lobe. In
+\cref{fig:epsilon-failure} (ii), the ESN performs well in both lobes
+for a short period of time before settling in to a periodic orbit that
+does not match Lorenz at all. However, both produce a good short-term
+forecast near $t_1$. In particular, network (ii) in
+\cref{fig:epsilon-failure} has a lower $\epsilon_1$ than any of the
+optimized reservoirs I found despite its obvious failure to learn the
+long-term Lorenz attractor.
 
 \section{Results}
 
@@ -386,9 +402,9 @@ structures (c) and (e) both have $\rho_r=0$ and no recurrent
 connections within the network. The other structures have
 $\rho_r\ll1$.  Previous work has already demonstrated that ESNs with
 low or zero spectral radius can still
-function.~\cite{pathak2017,rodan2011} These results act as additional
+function~\cite{pathak2017,rodan2011}. These results act as additional
 counterexamples to the heuristic that ESNs should have recurrence and
-$\rho_r \approx 1$.~\cite{lukosevicius2012}
+$\rho_r \approx 1$~\cite{lukosevicius2012}.
 
 \subsection{ESN Variation}
 
@@ -400,7 +416,7 @@ process. Not all networks with a fixed structure type and meta-parameters
 will perform the same.
 
 To explore this variation, I generate and evaluate $200$ networks of
-each structure on the Lorenz system, using the optimized
+each structure on the Lorenz system using the optimized
 meta-parameters in \cref{tab:lowk-lorenz-results}. For all five
 structures, as the measured $\tilde{\epsilon}$ increases, the quality
 of the reproduced attractor decreases gradually. On manual inspection
@@ -431,7 +447,7 @@ distributions are shown in \cref{fig:epsilon-distribution}.
     Lorenz system at the meta-parameters listed in
     \cref{tab:lowk-lorenz-results}. Each is visualized as a Gaussian
     kernel density estimation in $\log_{10} \tilde{\epsilon}$ with a bandwidth
-    of 0.35,~\cite{scott1992} which can be interpreted as a probability
+    of 0.35~\cite{scott1992}, which can be interpreted as a probability
     distribution. Using a narrower bandwidth does not reveal
     additional features. A vertical line marks the median.  Note that
     structures (b) -- (e) have very long tails, and can produce
@@ -455,11 +471,11 @@ best-performing networks in \cref{tab:lowk-lorenz-results} after only $100$
 trials. A hardware design can still benefit from the simpler
 structures (b) -- (e) despite their very wide performance distributions
 if the creation of the evaluation of the design can be automated to
-test many candidate reservoirs, as on an FPGA.~\cite{canaday2018}
+test many candidate reservoirs, as on an FPGA~\cite{canaday2018}.
 
 There may also be a benefit in software. The simpler structures are
 represented by weight matrices $W_r$ in very simple forms. Structure
-(c) can always be represented as a strictly lower-diagonal matrix, and
+(c) can always be represented as a strictly lower-diagonal (or upper-diagonal) matrix, and
 (d) -- (e) can be represented with non-zero entries only directly below
 the main diagonal. Software simulations can take advantage of this structure to
 speed up integration of \cref{eq:esn}.
@@ -552,7 +568,7 @@ summarized in \cref{tab:lowk-resultsgen}.
 \end{table}
 
 In general, these reservoirs perform poorly on this new task. However,
-there is extremely high variation. Even though they were optimized to
+there is extremely high variation. Even though they are optimized to
 perform Lorenz forecasting, many of these reservoirs are still able to
 reproduce the double-scroll attractor. Moreover, the best performers
 in each category approach the performance of reservoirs optimized
@@ -583,7 +599,7 @@ system attractor.
 One surprising outcome of this optimization procedure is finding
 reservoirs that perform well even with no recurrent connections and
 $\rho_r=0$.  Though some reservoirs of this kind have been explored
-previously and shown to work,\cite{pathak2017,rodan2011} the
+previously and shown to work~\cite{pathak2017,rodan2011}, the
 heuristics remain common in reservoir design. I present these networks
 as concrete examples that provide evidence these heuristics are not
 unbreakable rules, and that breaking these rules does not need to come
@@ -608,7 +624,7 @@ reservoirs that can be constructed and evaluated in an automated way.
 During this work, I have discovered many interesting lines of future
 research. First, the metric $\tilde{\epsilon}$ can be further evaluated by
 comparing the output of the reservoir predictions to the true system
-attractor using a new metric for attractor overlap.~\cite{ishar2019}
+attractor using a new metric for attractor overlap~\cite{ishar2019}.
 This overlap metric may also be used to quantify my qualitative
 observations of different failure modes in regions of the
 $\tilde{\epsilon}$ metric. Second, these results show that these very
@@ -625,7 +641,7 @@ operating hardware RCs.
 At the time the work in this chapter was conducted, there were known
 results that prove that a linear network architecture with
 time-independent nodes, the discrete-time NARX networks, can simulate
-fully-connected networks.~\cite{siegelmann1997} A similar proof for RCs
+fully-connected networks~\cite{siegelmann1997}. A similar proof for RCs
 would explain why there is no difference in the best-performing
 reservoirs in each structure type. The discovery that a line network
 (e) can perform as well as a general-$k$ network (a) suggests that the
@@ -633,7 +649,7 @@ network's role in the RC may only be to produce a variety of time
 delays for the output layer to draw on.
 
 In the time since, such a proof has been discovered. In the next
-chapter, I will introduce non-linear vector auto-regressions (NVARs),
+chapter, I will introduce nonlinear vector auto-regressions (NVARs),
 an existing machine learning tool that is proven to be mathematically
 equivalent to ESNs under specific conditions, and discuss how this
 relationship between NVARs and RCs has advanced the understanding and
