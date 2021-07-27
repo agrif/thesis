@@ -40,13 +40,13 @@
 % environment for figure re-use
 % https://tex.stackexchange.com/a/225075
 % \begin{reusefigure}[<float spec>]{<ref>}
-\newenvironment{reusefigure}[2][tbp]
-  {\addtocounter{figure}{-1}%
-   \renewcommand{\theHfigure}{dupe-fig}% If you're using hyperref
-   \renewcommand{\thefigure}{\ref{#2}}% Figure counter is \ref
-   \renewcommand{\addcontentsline}[3]{}% Avoid placing figure in LoF
-   \begin{figure}[#1]}
-  {\end{figure}}
+%\newenvironment{reusefigure}[2][tbp]
+%  {\addtocounter{figure}{-1}%
+%   \renewcommand{\theHfigure}{dupe-fig}% If you're using hyperref
+%   \renewcommand{\thefigure}{\ref{#2}}% Figure counter is \ref
+%   \renewcommand{\addcontentsline}[3]{}% Avoid placing figure in LoF
+%   \begin{figure}[#1]}
+%  {\end{figure}}
 
 % use dcolumn
 \newcolumntype{d}{D{.}{.}{-1}}

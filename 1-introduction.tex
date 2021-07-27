@@ -85,7 +85,7 @@ background information on the methods used, while
 \cref{ch:low-connectivity,ch:nvar-application} present new
 contributions.
 
-\begin{reusefigure}{fig:reservoir}
+\begin{figure}
   \includegraphics[width=0.6\textwidth]{figures/reservoir}
   \caption{High-level view of an echo state network RC.  An input
     signal (red, top left) drives an internal reservoir to produce a
@@ -102,11 +102,12 @@ contributions.
     perform forecasting, the output on the right side is connected to
     the input on the left side, allowing the ESN to run autonomously
     with no external input.}%
-\end{reusefigure}
+  \label{fig:intro-reservoir}
+\end{figure}
 
 In \cref{ch:reservoir-computing}, I describe the reservoir computing
 method, as well as a common concrete implementation of a RC called an
-\emph{echo state network} (ESN) summarized in \cref{fig:reservoir}. I
+\emph{echo state network} (ESN) summarized in \cref{fig:intro-reservoir}. I
 explain how to construct an ESN, the meta-parameters that govern its
 construction, and discuss some of the limited known results for
 choosing these meta-parameters. Then, I discuss how the RC is trained,
@@ -115,7 +116,7 @@ as how performance quality on these tasks is commonly measured. I
 briefly discuss the known problems with this performance measure, and
 suggest a few alternative methods.
 
-\begin{reusefigure}{fig:topology}
+\begin{figure}
   \includegraphics[width=0.7\textwidth]{figures/topology}
   \caption{The five reservoir structures tested. Only internal
     reservoir connections are pictured. Connections to the reservoir
@@ -125,7 +126,8 @@ suggest a few alternative methods.
     A $k=1$ network with the single cycle cut at an arbitrary
     point. (d) A \emph{simple cycle reservoir}. (e) A \emph{delay line
       reservoir}.}%
-\end{reusefigure}
+  \label{fig:intro-topology}
+\end{figure}
 
 In \cref{ch:low-connectivity}, I apply RCs to the task of chaotic
 system forecasting for three different chaotic systems. I use a
@@ -133,14 +135,14 @@ Bayesian optimization algorithm to tune the meta-parameters for the
 RCs, and in so doing, discover a class of well-performing RCs with
 very simple internal reservoirs. I identify four classes of reservoir
 networks with particularly simple structure, summarized in
-\cref{fig:topology}. Of these, two had been previously identified. I
+\cref{fig:intro-topology}. Of these, two had been previously identified. I
 build on this work and demonstrate that all four classes have the
 capacity to perform as well as a traditional RC. In particular, all
 four classes can reproduce the chaotic attractor of the system they
 are trained on. I then discuss the trade-offs between these simpler
 reservoir structures and a traditional RC.
 
-\begin{reusefigure}{fig:var-infer}
+\begin{figure}
   \includegraphics{figures/var-infer}
   \caption{Summary of the (N)VAR method. Many time-delay taps $\tau_i$
     of the discrete-time signal $\bm{u}(t)$ (top, red) are concatenated into the tap
@@ -152,19 +154,20 @@ reservoir structures and a traditional RC.
     green). For a linear VAR, $\bm{g}_\text{n}$ is the identity
     function. To transform a whole time series input, this (N)VAR process
     slides along the time axis from left to right.}
-\end{reusefigure}
+  \label{fig:intro-var-infer}
+\end{figure}
 
 In \cref{ch:nvar}, I describe a different technique known as nonlinear
 vector auto-regression (NVAR), which has recently been shown to be
 mathematically equivalent to an RC under certain conditions.  This
-technique is summarized in \cref{fig:var-infer}.  I outline this
+technique is summarized in \cref{fig:intro-var-infer}.  I outline this
 proof, discuss the construction and training of an NVAR, and describe
 how to apply it to common RC tasks. Then, I discuss the parallels
 between the NVAR and RC approaches, as well as the practical
 considerations of applying this equivalence proof. Finally, I discuss
 the trade-offs between the two approaches.
 
-\begin{reusefigure}{fig:nvar-predict-lorenz}
+\begin{figure}
   \includegraphics[width=\textwidth]{figures/nvar-predict-lorenz}
   \caption{The true Lorenz attractor (a) and NVAR predicted attractor
     (e) for a single training trial. (b) -- (d) True Lorenz system
@@ -173,11 +176,12 @@ the trade-offs between the two approaches.
     forecasted output (red). The NVAR shows good agreement with the
     true system as far as $5$ Lyapunov periods in to the autonomous
     forecast.}
-\end{reusefigure}
+  \label{fig:intro-nvar-predict-lorenz}
+\end{figure}
 
 In \cref{ch:nvar-application}, I build on this equivalence with my
 collaborators to demonstrate NVARs solving two common RC tasks: system
-forecasting (as in \cref{fig:nvar-predict-lorenz}) and state
+forecasting (as in \cref{fig:intro-nvar-predict-lorenz}) and state
 inference.  I show that NVARs are capable of RC-equivalent performance
 on these tasks even under conditions where the equivalence proof does
 not strictly hold. The NVARs achieve this performance despite being
