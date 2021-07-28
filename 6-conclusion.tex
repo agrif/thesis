@@ -1,6 +1,6 @@
 \chapter{Conclusion}\label{ch:conclusion}
 
-In this thesis, I challenge common RC design rules, and
+In this dissertation, I challenge common RC design rules, and
 demonstrate increasingly simple RCs that break these rules and still
 perform well.
 
@@ -30,13 +30,13 @@ on. In \cref{ch:nvar}, I summarize the NVAR method, which parallels
 the RC method but instead takes time-delay taps of the input directly
 rather than relying on a reservoir. I also sketch a new proof in the
 field of reservoir computing that shows a certain type of
-output-non-linear ESN is equivalent to an infinite-tap NVAR.
+output-nonlinear ESN is equivalent to an infinite-tap NVAR.
 
 In \cref{ch:nvar-application} I build on this proof with my
 collaborators to implement NVARs that solve the traditional RC tasks
 of system state inference and system forecasting. I show
 that the NVAR can solve these tasks with only a few, finite taps, and
-that the specific non-linearity used in the proof can be modified an
+that the specific nonlinearity used in the proof can be modified an
 extended in obvious ways to expand the number of problems it can
 solve. This opens the door to an entire expanding tree of interesting
 research. Now any task previously solved in an RC context can be
@@ -50,7 +50,7 @@ are not sufficient for all problems, but adding higher-order monomials
 directly to the NVAR leads to an exponential explosion in training
 time. Future research will need to resolve this by including these
 higher-order terms without exhaustively including all monomials, and
-may possibly make use of non-linear functions with infinite power
+may possibly make use of nonlinear functions with infinite power
 series.
 
 The NVAR is a reservoir computer pruned down to its most essential
