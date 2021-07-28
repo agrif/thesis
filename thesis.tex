@@ -51,6 +51,9 @@
 % use dcolumn
 \newcolumntype{d}{D{.}{.}{-1}}
 
+% full references with names
+\newcommand*{\fullref}[1]{\hyperref[{#1}]{\Cref*{#1} \nameref*{#1}}}
+
 \title{Essential Reservoir Computing}
 \author{Aaron Griffith}
 \advisorname{Daniel J. Gauthier}

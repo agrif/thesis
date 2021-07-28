@@ -83,7 +83,7 @@ not have an internal reservoir at all.
 In this dissertation, \cref{ch:reservoir-computing,ch:nvar} provide
 background information on the methods used, while
 \cref{ch:low-connectivity,ch:nvar-application} present new
-contributions.
+contributions. These contributions are summarized in \cref{tab:contribution}.
 
 \begin{figure}
   \includegraphics[width=0.6\textwidth]{figures/reservoir}
@@ -114,7 +114,30 @@ choosing these meta-parameters. Then, I discuss how the RC is trained,
 both for autonomous forecasting tasks and for inference tasks, as well
 as how performance quality on these tasks is commonly measured. I
 briefly discuss the known problems with this performance measure, and
-suggest a few alternative methods.
+suggest a new measure designed to mitigate these problems.
+
+\begin{table}
+  \caption{A summary of chapters and associated contributions.}
+  \begin{tabularx}{\linewidth}{llcX}
+    & Chapter & & Contribution \\
+    \hline
+    \rule{0pt}{4ex}%
+    & \Cref{ch:reservoir-computing} & $\bullet$ & introduce a new metric $\tilde{\epsilon}$ \\
+    & \nameref{ch:reservoir-computing} & & \\
+    \rule{0pt}{4ex}%
+    \cite{griffith2019}
+    & \Cref{ch:low-connectivity} & $\bullet$ & demonstrate new metric $\tilde{\epsilon}$ \\
+    & \nameref{ch:low-connectivity} & $\bullet$ & explore ESNs with very low connectivity \\
+    & & $\bullet$ & demonstrate these ESNs perform equally well as traditional ESNs \\
+    \rule{0pt}{4ex}%
+    \cite{gauthier2021}
+    & \Cref{ch:nvar-application} & $\bullet$ & demonstrate NVARs on forecasting/inference \\
+    & \nameref{ch:nvar-application} & $\bullet$ & show that NVARs perform as well as ESNs even with a low number of taps \\
+    & & $\bullet$ & use RC-style linear regression to improve NVAR generalization \\
+    & & $\bullet$ & explore current limitations of NVAR approach \\
+  \end{tabularx}
+  \label{tab:contribution}
+\end{table}
 
 \begin{figure}
   \includegraphics[width=0.7\textwidth]{figures/topology}
@@ -129,18 +152,21 @@ suggest a few alternative methods.
   \label{fig:intro-topology}
 \end{figure}
 
-In \cref{ch:low-connectivity}, I apply RCs to the task of chaotic
-system forecasting for three different chaotic systems. I use a
-Bayesian optimization algorithm to tune the meta-parameters for the
-RCs, and in so doing, discover a class of well-performing RCs with
-very simple internal reservoirs. I identify four classes of reservoir
-networks with particularly simple structure, summarized in
-\cref{fig:intro-topology}. Of these, two had been previously identified. I
-build on this work and demonstrate that all four classes have the
-capacity to perform as well as a traditional RC. In particular, all
-four classes can reproduce the chaotic attractor of the system they
-are trained on. I then discuss the trade-offs between these simpler
-reservoir structures and a traditional RC.
+In \cref{ch:low-connectivity}, I apply ESNs to the task of chaotic
+system forecasting for three different chaotic systems, using my new
+metric. I demonstrate that this new metric more accurately reflects
+some long-term forecasting failures that the traditional metric does
+not. I use a Bayesian optimization algorithm to tune the
+meta-parameters for the ESNs, and in so doing, discover a class of
+well-performing ESNs with very simple internal reservoirs. I identify
+four classes of reservoir networks with particularly simple structure,
+summarized in \cref{fig:intro-topology}. Of these, two had been
+previously identified. I build on this work and demonstrate that all
+four classes have the capacity to perform equally well as a traditional
+ESN. In particular, all four classes can reproduce the chaotic
+attractor of the system they are trained on. I then discuss the
+trade-offs between these simpler reservoir structures and a
+traditional ESN.
 
 \begin{figure}
   \includegraphics{figures/var-infer}
@@ -159,7 +185,7 @@ reservoir structures and a traditional RC.
 
 In \cref{ch:nvar}, I describe a different technique known as nonlinear
 vector auto-regression (NVAR), which has recently been shown to be
-mathematically equivalent to an RC under certain conditions.  This
+mathematically equivalent to an ESN under certain conditions.  This
 technique is summarized in \cref{fig:intro-var-infer}.  I outline this
 proof, discuss the construction and training of an NVAR, and describe
 how to apply it to common RC tasks. Then, I discuss the parallels
@@ -182,10 +208,10 @@ the trade-offs between the two approaches.
 In \cref{ch:nvar-application}, I build on this equivalence with my
 collaborators to demonstrate NVARs solving two common RC tasks: system
 forecasting (as in \cref{fig:intro-nvar-predict-lorenz}) and state
-inference.  I show that NVARs are capable of RC-equivalent performance
+inference.  I show that NVARs are capable of ESN-equivalent performance
 on these tasks even under conditions where the equivalence proof does
 not strictly hold. The NVARs achieve this performance despite being
-considerably simpler than an RC and with very little training data and
+considerably simpler than an ESN and with very little training data and
 training time. In addition, I discuss how a trained NVAR can provide
 interpretable results, while a trained RC is opaque. I then show how
 the NVAR approach can be extended naturally to solve a wider array of
