@@ -198,15 +198,34 @@ two such maps provides a quick way to qualitatively compare two
 systems. This comparison has been used previously to verify that a
 trained RC can replicate the Lorenz '63 dynamics~\cite{pathak2017}.
 
-% FIXME show different integrators
-In many ways, this comparison is similar to the visual inspection of the
-reproduced attractor in \cref{fig:nvar-predict-lorenz}. However, the
-return map is a simpler shape and is much more sensitive to error
-than the attractor itself, even when comparing two maps by eye. Indeed,
-the return map is so sensitive that it depends on the specific integrator
-used to find the true Lorenz '63 solution. Here, I use an explicit
-Runge-Kutta~3(2)~\cite{dormand1980} integrator for both the Lorenz '63
-and double-scroll systems.
+\begin{figure}
+  \includegraphics{figures/lorenz-rmap-tol}
+  \caption{(a) The $z$ return map of the Lorenz '63 system, integrated
+    using various methods. (b) Detail of the region marked in
+    (a). Using a relative integration tolerance of $10^{-3}$, the
+    Runge-Kutta~3(2) (blue $+$) differs from R-K~5(4) (orange
+    $\times$) in both position and spread. Both methods converge after
+    sharpening the tolerance to $10^{-5}$ (green square and red
+    triangle, respectively).}
+  \label{fig:lorenz-rmap-tol}
+\end{figure}
+
+In many ways, this comparison is similar to the visual inspection of
+the reproduced attractor in \cref{fig:nvar-predict-lorenz}. However,
+the return map is a simpler shape and is much more sensitive to error
+than the attractor itself, even when comparing two maps by
+eye. Indeed, the return map is so sensitive that it depends on the
+specific integrator used to find the true Lorenz '63 solution. In
+\cref{fig:lorenz-rmap-tol}, I show this return map calculated on a
+Lorenz solution produced by four different integrators. All four
+methods agree on a large scale, but the zoomed view in (b) reveals
+their differences. Using a relative tolerance of $10^{-3}$, the
+Runge-Kutta~3(2) method produces a narrow, nearly one-dimensional
+return map slightly offset from the much wider return map produced by
+Runge-Kutta~5(4). Both algorithms agree after sharpening the tolerance
+to $10^{-5}$.  In this chapter, I use the
+Runge-Kutta~3(2)~\cite{dormand1980} integrator with $10^{-3}$ relative
+tolerance for both the Lorenz '63 and double-scroll systems.
 
 The values of the maxima in the discrete-time solutions for both the
 NVAR and Lorenz '63 system depend on the time step $\Delta t$ used for
@@ -220,23 +239,39 @@ local maxima are then found on this interpolated spline~\cite{dierckx1995}.
   \includegraphics{figures/nvar-lorenz-rmap}
   \caption{(a) The $z$ return map of the Lorenz '63 system (blue $+$)
     overlaid with the $z$ return map of the NVAR forecast (red
-    $\times$). The NVAR reproduces the long-term dynamics of the $z$
-    variable accurately enough at this scale that it is difficult to
-    see the true return map underneath. (b) Detail of the region
-    marked in (a). At this scale, it is possible to see the small
-    difference between the true and predicted return maps.}
+    $\times$), trained for $10$ time units. The NVAR reproduces the
+    long-term dynamics of the $z$ variable accurately enough at this
+    scale that it is difficult to see the true return map
+    underneath. (b) Detail of the region marked in (a). At this scale,
+    it is possible to see that the NVAR return map is wider than the
+    true Lorenz return map, although they lie on top of each
+    other. This reproduction can be improved by training the NVAR for
+    longer (see \cref{fig:nvar-lorenz-rmap-extra}).}
   \label{fig:nvar-lorenz-rmap}
 \end{figure}
 
-% FIXME return map improve with training time
+\begin{figure}
+  \includegraphics{figures/nvar-lorenz-rmap-extra}
+  \caption{(a) The $z$ return map of the Lorenz '63 system (blue $+$)
+    overlaid with the $z$ return map of the NVAR forecast (red
+    $\times$), trained for $20$ time units. (b) Detail of the
+    region marked in (a). With more training time, the NVAR return map
+    is narrower and more accurately reproduces the Lorenz return
+    map.}
+  \label{fig:nvar-lorenz-rmap-extra}
+\end{figure}
+
 \Cref{fig:nvar-lorenz-rmap} shows the return maps for both the true
 Lorenz system and the NVAR. Qualitatively, there is good agreement
 between the two. The NVAR return map almost completely obscures the
-true Lorenz return map at this scale. Upon close inspection, I see
-that the NVAR return map does not line up precisely with the true
-return map. This can be improved by extending the training time of the
-NVAR, but the difference between the two return maps is already small
-even when the NVAR is trained for only $10$ time units.
+true Lorenz return map in (a). Upon close inspection in (b), I see
+that the NVAR return map has a width that is wider than that of the
+true return map. This can be improved by extending the training time
+of the NVAR. The difference between the two return maps is already
+small even when the NVAR is trained for only $10$ time units; when
+training for $20$ time units, as in \cref{fig:nvar-lorenz-rmap-extra},
+the NVAR's predicted return map narrows and lies on top of the true
+return map.
 
 As with the attractor comparison, a quantitative measure of return map
 similarity would be a strong candidate for replacing the flawed NRMSE
