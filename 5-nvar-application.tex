@@ -50,7 +50,7 @@ terms of the tap vector $\bm{v}$. That is,
 \end{equation}
 The addition of a constant term allows the trained linear
 $W_\text{out}$ to fit a constant offset, which is useful here as the
-$z$ component has a non-zero mean.
+$z$ component is always positive, even when both $x$ and $y$ are zero.
 
 For this task, with $4$ taps and two input dimensions $x$ and $y$, the
 output of $\bm{g}_\text{n}$ has $1 + 8 + 36 = 45$ components, and the linear
@@ -79,29 +79,78 @@ different times and evaluating the error, takes only a few seconds on
 a modern computer even with a poorly-optimized implementation.
 
 I find this NVAR has a NRMSE of $1.75\mp0.3\times10^{-2}$ on this
-inference task, using the ridge parameter $\alpha = 0.05$. An example of the NVAR during a
-single training and testing trial is shown in
-\cref{fig:nvar-infer-lorenz}.
+inference task, using the ridge parameter $\alpha = 0.05$. An example
+of the NVAR during a single training and testing trial is shown in
+\cref{fig:nvar-infer-lorenz}. The trained NVAR shows good agreement in
+the $z$ component during both the training phase (c) and the testing
+phase (f); in fact, the agreement is so good that when the NVAR signal is
+drawn on top of the true Lorenz signal, the true signal is not visible
+underneath.
+
+\subsection{Output Weights}
+
+The output weights $W_\text{out}$ from a single trial, visualized in
+\cref{fig:nvar-infer-lorenz-wout}, have two notable features. First,
+the largest trained weight by far corresponds to the $1$ term in
+$\bm{g}_\text{n}$. This accounts for the fact that $z$ is always
+positive, and justifies the inclusion of the constant term in
+$\bm{g}_\text{n}$.
+
+\begin{figure}
+  \includegraphics[width=\textwidth]{figures/nvar-infer-lorenz-wout}
+  \caption{Weights in the matrix $W_\text{out}$ (left) for the NVAR
+    trained for Lorenz system forecasting. On the right, a magnified
+    view of the same. The largest component is the constant offset, to
+    account for the fact that the $z$ component of the Lorenz system
+    is positive, even when both $x$ and $y$ are zero. Also note that
+    the linear terms in $x$ and $y$ have weights near zero. As the
+    Lorenz system has a $(x, y) \rightarrow (-x, -y)$ symmetry, the
+    NVAR must have zero weights attached to these terms to respect
+    that symmetry.}
+  \label{fig:nvar-infer-lorenz-wout}
+\end{figure}
+
+Second, the weights of all the linear terms in $x$ and $y$ are all
+near zero. This reflects the $(x, y) \rightarrow (-x, -y)$ symmetry of
+the Lorenz system. Since the NVAR input $\bm{u}(t)$ is just these $x$
+and $y$ terms, in order to respect this symmetry the NVAR must predict
+the same $z(t)$ for both $\bm{u}(t)$ and $-\bm{u}(t)$. This is only
+possible if the linear terms in $x$ and $y$ have zero coefficients.
+
+In general, an NVAR does not need to respect the symmetries of the
+entire underlying system: if the NVAR is trained on only a small part
+of the input system's phase space, it does not need to respect
+symmetries outside that space to perform well within that space. Here,
+however, the NVAR training input $\bm{u}_\text{train}(t)$ overlaps
+with its symmetric counterpart $-\bm{u}_\text{train}(t)$, and so learning
+the example input necessarily means learning the symmetry.
+
+Later, in \cref{sec:nvar-mackey-glass}, I will investigate a task
+where the example input does not overlap with its symmetric
+counterpart, and demonstrate that the NVAR will learn weights that do
+not agree with this symmetry.
 
 \section{Forecasting Lorenz '63}
 
 For this task, I use an NVAR in forecasting mode to do system
-forecasting for the Lorenz '63 system. That is, I train the NVAR to use all
-three state variables $x$, $y$, and $z$ to perform next-step-ahead
-prediction of the Lorenz system in \cref{eq:lorenz}. Unlike for the inference task,
-the NVAR has no external driving
-input and runs autonomously once it is in forecast mode. In analogy to other discrete-time integration algorithms, the choice of time step
-$\Delta t$ has a stronger effect on forecasting than inference. Too
-small a time step is wasted effort, and too large risks
-inaccuracy. Here, I use a time step of $\Delta t = 0.025$, which results in about $40$ steps per Lyapunov period.
+forecasting for the Lorenz '63 system. That is, I train the NVAR to
+use all three state variables $x$, $y$, and $z$ to perform
+next-step-ahead prediction of the Lorenz system in
+\cref{eq:lorenz}. Unlike for the inference task, the NVAR has no
+external driving input and runs autonomously once it is in forecast
+mode. In analogy to other discrete-time integration algorithms, the
+choice of time step $\Delta t$ has a stronger effect on forecasting
+than inference. Too small a time step is wasted effort, and too large
+risks inaccuracy. Here, I use a time step of $\Delta t = 0.025$, which
+results in about $40$ steps per Lyapunov period.
 
 For this forecasting task, I use only $2$ taps, $\tau_0 = 0$ and
-$\tau_1 = 1$. That is, the NVAR has access to the two previous time steps,
-and I find this is enough for the forecasting task.
-I use the quadratic nonlinearity with constant term described
-in \cref{eq:quadratic-nvar-const}. With 2 taps and 3 input dimensions, the nonlinear output
-of $\bm{g}_\text{n}$ has $1 + 6 + 21 = 28$ components, and so $W_\text{out}$ has
-dimension $3 \times 28$.
+$\tau_1 = 1$. That is, the NVAR has access to the two previous time
+steps, and I find this is enough for the forecasting task.  I use the
+quadratic nonlinearity with constant term described in
+\cref{eq:quadratic-nvar-const}. With 2 taps and 3 input dimensions,
+the nonlinear output of $\bm{g}_\text{n}$ has $1 + 6 + 21 = 28$
+components, and so $W_\text{out}$ has dimension $3 \times 28$.
 
 Again, I train this NVAR on $10$ different examples of the Lorenz '63
 system, each time training on $10$ time units. I then evaluate the
@@ -113,9 +162,9 @@ average this over the $10$ trials to produce $\tilde{\epsilon}$ in
 \begin{figure}
   \includegraphics[width=\textwidth]{figures/nvar-predict-lorenz}
   \caption{The true Lorenz attractor (a) and NVAR predicted attractor
-    (e) for a single training trial. (b) -- (d) True Lorenz system
+    (e) for a single training trial. (b)~--~(d) True Lorenz system
     (blue) during training overlaid with NVAR output (red) calculated
-    after training is complete. (f) -- (h) True (blue) and NVAR
+    after training is complete. (f)~--~(h) True (blue) and NVAR
     forecasted output (red). The NVAR shows good agreement with the
     true system as far as $5$ Lyapunov periods in to the autonomous
     forecast.}
@@ -124,16 +173,19 @@ average this over the $10$ trials to produce $\tilde{\epsilon}$ in
 
 The performance of this NVAR during a single training trial is shown
 in \cref{fig:nvar-predict-lorenz}. A long autonomous forecast from the
-NVAR produces an attractor that shows qualitative agreement with the
-true Lorenz attractor, and produces a NRMSE over one Lyapunov period
-of $4.51\pm0.85\times10^{-3}$ using $\alpha = 2.5\times10^{-6}$, about
-five times better than the ESNs described in
+NVAR produces an attractor (e) that shows qualitative agreement with
+the true Lorenz attractor (a), and produces a NRMSE over one Lyapunov
+period of $4.51\pm0.85\times10^{-3}$ using $\alpha =
+2.5\times10^{-6}$, about five times better than the ESNs described in
 \cref{tab:lowk-lorenz-results}. This NVAR performs better than the
 ESNs despite the fact that it is simpler to describe and implement,
 does not require lengthy optimization, and trains at least an order of
 magnitude faster. The training data used for the NVAR is also very
 light: only $10$ time units, corresponding to $400$ points at this
-time step, is enough to train the NVAR.
+time step, is enough to train the NVAR. During training, the NVAR's
+output (b)~--~(d) matches the true signal so well it obscures it, and
+during testing, the autonomous forecast (f)~--~(h) only visibly
+diverges from the truth after 5 Lyapunov exponents.
 
 \subsection{$z$ Return Map}
 
@@ -246,7 +298,6 @@ approximate even non-polynomial systems, and so it is not surprising
 that it can also approximate quadratic polynomial systems.
 
 \begin{figure}
-  % FIXME fix labels \Delta t also 1 (also (a) not a) for other plots)
   \includegraphics{figures/nvar-predict-lorenz-wout}
   \caption{Weights in the matrix $W_\text{out}$ for the NVAR trained
     for Lorenz system forecasting. Terms that appear directly in the
@@ -361,7 +412,7 @@ $W_\text{out}$, and consequently a huge increase in training time. In
 the next section, I explore how careful use of tap spacing can
 keep the number of taps required low.
 
-\section{Forecasting Mackey-Glass}
+\section{Forecasting Mackey-Glass}\label{sec:nvar-mackey-glass}
 
 % FIXME how integrated
 % FIXME billings m-g?
