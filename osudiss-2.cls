@@ -189,7 +189,7 @@
       \newcommand\@committee{Master's Examination}
   }{\relax}
 }
-\geometry{top=1in, left=1.5in, right=1in, bottom=1in, nohead, includefoot,
+\geometry{top=1in, left=1.25in, right=1.25in, bottom=1in, nohead, includefoot,
           footskip=1.5\baselineskip, letterpaper, portrait,
           twocolumn=false, twoside=false}
 %%\pdfpagewidth \paperwidth
