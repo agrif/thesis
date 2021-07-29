@@ -333,7 +333,7 @@ approximate even non-polynomial systems, and so it is not surprising
 that it can also approximate quadratic polynomial systems.
 
 \begin{figure}
-  \includegraphics{figures/nvar-predict-lorenz-wout}
+  \includegraphics[width=\textwidth]{figures/nvar-predict-lorenz-wout}
   \caption{Weights in the matrix $W_\text{out}$ for the NVAR trained
     for Lorenz system forecasting. Terms that appear directly in the
     Lorenz system (\cref{eq:lorenz}) are in red. There does not appear
@@ -346,10 +346,14 @@ Another way to allay these concerns is to look at other non-polynomial
 systems, as in the next few sections. However, even with the Lorenz
 system, I see that this is not the case by inspecting the trained
 weight matrix $W_\text{out}$ in
-\cref{fig:nvar-predict-lorenz-wout}. There are significant contributions
-in the output from terms not present in the Lorenz equations. From
-this I derive an interpretation: a trained NVAR is finding the best
-possible one-step-ahead integrator it can find, given the example
+\cref{fig:nvar-predict-lorenz-wout}. The terms on the right hand side
+of the Lorenz system (marked in red) are present with non-zero weights
+in the output matrix, but there are also significant contributions
+from other terms, and there does not appear to be a preference for the
+NVAR to rely on Lorenz terms only.
+
+From this I derive an interpretation: a trained NVAR is finding the
+best possible one-step-ahead integrator it can find, given the example
 input and the available terms in $\bm{g}_\text{n}$. When the time step
 is large enough, a strictly linear prediction becomes more and more
 inaccurate, and so the NVAR relies on the nonlinear and time-delayed
