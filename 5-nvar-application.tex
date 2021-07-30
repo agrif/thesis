@@ -52,7 +52,7 @@ The addition of a constant term allows the trained linear
 $W_\text{out}$ to fit a constant offset, which is useful here as the
 $z$ component is always positive, even when both $x$ and $y$ are zero.
 
-For this task, with $4$ taps and two input dimensions $x$ and $y$, the
+For this task, with $q = 4$ taps and $d = 2$ input dimensions, $x$ and $y$, the
 output of $\bm{g}_\text{n}$ has $1 + 8 + 36 = 45$ components, and the linear
 output matrix $W_\text{out}$ has dimension $1 \times 45$.
 
@@ -87,7 +87,7 @@ phase (f); in fact, the agreement is so good that when the NVAR signal is
 drawn on top of the true Lorenz signal, the true signal is not visible
 underneath.
 
-\subsection{Output Weights}
+\subsection{Output Weights}\label{sec:nvar-infer-weights}
 
 The output weights $W_\text{out}$ from a single trial, visualized in
 \cref{fig:nvar-infer-lorenz-wout}, have two notable features. First,
@@ -148,7 +148,7 @@ For this forecasting task, I use only $2$ taps, $\tau_0 = 0$ and
 $\tau_1 = 1$. That is, the NVAR has access to the two previous time
 steps, and I find this is enough for the forecasting task.  I use the
 quadratic nonlinearity with constant term described in
-\cref{eq:quadratic-nvar-const}. With 2 taps and 3 input dimensions,
+\cref{eq:quadratic-nvar-const}. With $q = 2$ taps and $d = 3$ input dimensions,
 the nonlinear output of $\bm{g}_\text{n}$ has $1 + 6 + 21 = 28$
 components, and so $W_\text{out}$ has dimension $3 \times 28$.
 
@@ -369,15 +369,18 @@ the choice of nonlinearity.
 
 Unlike the Lorenz system, the double-scroll circuit cannot be
 described by a polynomial of degree $2$. Indeed, the double-scroll
-equations are odd, and have full inversion
-symmetry. As a result, even terms in the nonlinear function
-$\bm{g}_\text{n}$ are not useful to the NVAR. In light of this, I use
-a nonlinear function that includes all linear terms of the tap vector
-$\bm{v}$ as well as all terms with degree $3$. That is,
+equations are odd, and have full inversion symmetry. On top of this,
+the double-scroll attractor includes this symmetry; it is identical to
+its symmetric partner. As discussed in \cref{sec:nvar-infer-weights},
+this drives the contribution of any even terms in $\bm{g}_\text{n}$ to
+zero in the trained weight matrix $W_\text{out}$. In light of this, I
+use a nonlinear function that includes all linear terms of the tap
+vector $\bm{v}$ as well as all terms with degree $3$, but includes no
+even terms. That is,
 \begin{equation}
   \bm{g}_\text{n}(\bm{v}) = \bm{v} \oplus \ceil{\bm{v} \otimes \bm{v} \otimes \bm{v}}.
 \end{equation}
-With $2$ taps and $3$ input dimensions, the output of
+With $q = 2$ taps and $d = 3$ input dimensions, the output of
 $\bm{g}_\text{n}$ has $6 + 56 = 62$ components, and so $W_\text{out}$
 has dimension $3 \times 62$.
 
@@ -391,11 +394,11 @@ and double-scroll cases use $400$ data points during training.
 \begin{figure}
   \includegraphics[width=\textwidth]{figures/nvar-predict-dscroll}
   \caption{The true double-scroll attractor (a) and NVAR predicted
-    attractor (e) for a single training trial. (b) -- (d) True
+    attractor (e) for a single training trial. (b)~--~(d) True
     double-scroll system (blue) during training overlaid with NVAR
-    output (red) calculated after training is complete. (f) -- (h)
-    True (blue) and NVAR forecasted output (red). Again, the NVAR
-    shows good agreement with the true system as far as $5$ Lyapunov
+    output (red) calculated after training is complete. (f)~--~(h)
+    True (blue) and NVAR forecasted output (red). Here, the NVAR
+    shows good agreement with the true system as far as $6$ Lyapunov
     periods.}
   \label{fig:nvar-predict-dscroll}
 \end{figure}
@@ -407,11 +410,15 @@ double-scroll circuit and then evaluating the NRMSE for one Lyapunov
 period each. The performance of this NVAR during a single training
 trial is shown in \cref{fig:nvar-predict-dscroll}.
 
-Once again, a long autonomous forecast shows the NVAR can reproduce
-the shape of the double-scroll attractor, and over one Lyapunov period
-has an NRMSE of $2.15\pm0.63\times10^{-2}$ using $\alpha =
-1.0\times10^{-3}$, about $1.5\times$ better than the ESNs
-described in \cref{tab:lowk-resultsplus}.
+Once again, a long autonomous forecast (e) shows the NVAR can
+reproduce the shape of the double-scroll attractor (a), and over one
+Lyapunov period has an NRMSE of $2.15\pm0.63\times10^{-2}$ using
+$\alpha = 1.0\times10^{-3}$, about $1.5\times$ better than the ESNs
+described in \cref{tab:lowk-resultsplus}. During training (b)~--~(d)
+the NVAR matches the system so well the true signal cannot be seen
+underneath, and once autonomous forecasting begins in (f)~--~(h), the
+NVAR's prediction lies on top of the true system for $6$ Lyapunov
+periods.
 
 \subsection{Fixed Points}
 
@@ -453,33 +460,49 @@ keep the number of taps required low.
 
 \section{Forecasting Mackey-Glass}\label{sec:nvar-mackey-glass}
 
-% FIXME how integrated
-% FIXME billings m-g?
-
 For this task, I again use an NVAR in forecasting mode, this time
-using the single Mackey-Glass state variable $u$ (in
-\cref{eq:mackey-glass}) as input, with $\Delta t = 0.2$. For this
-system, using two adjacent taps for the NVAR as in the previous
-examples is insufficient, as the Mackey-Glass system behavior depends
-strongly on both the value of $u(t)$ as well as $u(t - 17)$. One way
-to access this value in the NVAR is to add taps at every time step
-until they reach $t = 17$, resulting in $85$ total taps. Even with only a
-quadratic output, this requires training a $W_\text{out}$ with
-dimension $1 \times 3741$. This cost can be avoided by increasing the
-time step $\Delta t$, thus reducing the total number of taps, but this
-solution comes with the cost of a much more granular prediction.
+using the single Mackey-Glass state variable $u$ in
+\cref{eq:mackey-glass} as input, with $\Delta t = 0.2$. I use the
+\texttt{jitcdde} Python package~\cite{ansmann2018} to integrate this
+time-delay differential equation. For this system, using two adjacent
+taps for the NVAR as in the previous examples is insufficient, as the
+Mackey-Glass system behavior depends strongly on both the value of
+$u(t)$ as well as $u(t - 17)$. One way to access this value in the
+NVAR is to add taps at every time step until they reach $t = 17$,
+resulting in $85$ total taps. Even with only a quadratic output, this
+requires training a $W_\text{out}$ with dimension $1 \times
+3741$. This cost can be avoided by increasing the time step $\Delta
+t$, thus reducing the total number of taps, but this solution comes
+with the cost of a much more granular prediction.
 
-Another way to access the value at $u(t-17)$ is to use only two taps,
-placed at $\tau_0 = 0$ and $\tau_1 = 17 / \Delta t$, which is the
-method I use here. I also use a nonlinear function
+Another way to access the value at $u(t-17)$ is to use sparse
+taps. Here, I use three clusters of two adjacent taps: one cluster at
+$\tau_0 = 0$ and $\tau_1 = 1$, one cluster at $\tau_2 = \floor{17 / 2
+  \Delta t}$ and $\tau_3 = \tau_2 + 1$, and one cluster at $\tau_4 =
+\floor{17 / Delta t}$ and $\tau_5 = \tau_4 + 1$. Here, $\floor{a}$ refers to the integer floor of $a$. This gives the NVAR
+access to information at $u(t - 17)$ as well the midpoint $u(t -
+17/2)$. I find that adding the tap cluster at the midpoint improves performance
+by a factor of $3$, and increases the number of features available to
+$W_\text{out}$ to be comparable to the other tasks in this chapter.
+
+The Mackey-Glass system exhibits full inversion symmetry. However,
+unlike the double-scroll circuit, the Mackey-Glass system has two
+distinct attractors that do not overlap. Any solution on the positive
+attractor will remain positive, and never cross over zero to the
+negative attractor. Since I am only training the NVAR on a positive
+solution to Mackey-Glass, I include even terms in $\bm{g}_\text{n}$. In
+fact, I find that including these even terms improves NRMSE
+performance. In \cref{sec:nvar-mg-weights}, I demonstrate that the trained NVAR is assigning these terms non-zero weights.
+
+Therefore, I use a nonlinear function
 $\bm{g}_\text{n}$ that includes the constant, linear, quadratic, and
 cubic terms constructed from the tap vector $\bm{v}$,
 \begin{equation}
   \bm{g}_\text{n}(\bm{v}) = 1 \oplus \bm{v} \oplus \ceil{\bm{v} \otimes \bm{v}} \oplus \ceil{\bm{v} \otimes \bm{v} \otimes \bm{v}}.
 \end{equation}
-With $2$ taps and $1$ input dimension, the output of $\bm{g}_\text{n}$
-has $1 + 2 + 3 + 4 = 10$ components, and so $W_\text{out}$ has
-dimension $1 \times 10$.
+With $q = 6$ taps and $d = 1$ input dimension, the output of $\bm{g}_\text{n}$
+has $1 + 6 + 21 + 56 = 84$ components, and so $W_\text{out}$ has
+dimension $1 \times 84$.
 
 The Lyapunov time of the Mackey-Glass system is roughly $100$ times
 longer than that of the Lorenz system. However, I find that a
@@ -511,21 +534,26 @@ Other than these modifications, the methodology for training and
 evaluating the NVAR is exactly as for the other two systems. The
 performance of this NVAR during a single training trial is shown in
 \cref{fig:nvar-predict-mackey-glass}. Over one Lyapunov period, this
-NVAR has a NRMSE of $1.4\pm0.2\times10^{-1}$ with $\alpha =
-9\times10^{-2}$.
+NVAR has a NRMSE of $5.77\pm0.42\times10^{-2}$ with $\alpha =
+9\times10^{-3}$.
 
-The long autonomous forecast of the NVAR shares important features
-with the true attractor, most notably the gap between the
-bands. However, it does not reproduce the shape of the heel in the
-upper-left corner very well, and this is reflected in the high NRMSE.
-
-% FIXME cite kernel trick
+The long autonomous forecast (c) of the NVAR shares important features
+with the true attractor (a), most notably the gap between the
+bands. However, it does not get some fine details correct, notably the
+shape of the heel in the upper-left corner and the overlapping bands
+in the middle. This is reflected in the higher NRMSE than the other
+tasks. However, as before the NVAR prediction completely obscures the
+true system signal during training (b), and once autonomous
+forecasting (d) begins the NVAR forecast covers the true system for $2$
+Lyapunov periods.
 
 The shape of this heel can be better reproduced by including
 higher-order terms in the nonlinear function
 $\bm{g}_\text{out}$. However, it is not possible to do this with
 monomial terms as I have been doing without dramatically increasing
-the training time of $W_\text{out}$. It may be possible to instead add
+the training time of $W_\text{out}$. Adding a fourth-order term to $\bm{g}_\text{out}$ increases the number of weights in $W_\text{out}$ by a factor of $3$. This problem becomes even worse on input systems with a dimension higher than $d = 1$.
+
+It may be possible to instead add
 nonlinear terms to $\bm{g}_\text{out}$ with an infinite power series,
 such as $e^{v_iv_j}$ or $\sinh{v_i}\cosh{v_j}$. This would provide
 access to high-order nonlinearity without a corresponding large increase in training
@@ -534,7 +562,55 @@ Mackey-Glass forecasting example demonstrates that cubic terms are not
 completely sufficient for accurate forecasts. Nonetheless, the cubic
 NVAR used here shows promising performance from a simple model.
 
-% FIXME fixed point?
+\subsection{Fixed Points}
+
+Setting the derivative in \cref{eq:mackey-glass} to $0$ and assuming a
+constant past yields three fixed points, located at
+\begin{align}
+  u &= 0, \\
+  u &= \pm \left(\frac{\beta}{\gamma} - 1\right)^{1/n}.
+\end{align}
+I use these as initial guesses to find the fixed points of the trained NVAR, in a space uniformly scaled so that Mackey-Glass has unit variance.
+
+The distance to the true positive fixed point is
+$2.3\pm0.03\times10^{-3}$. The variance from repeated trials does not
+overlap the true fixed point, however, it does lie within $0.3\%$ of
+the truth.
+
+The NVAR completely fails to predict the $0$ fixed point and the
+negative fixed point. This is a consequence of my choice not to
+respect the known symmetries of the Mackey-Glass system in favor of
+more accurate prediction on the positive attractor. If accuracy on the
+non-positive fixed points is desired, the NVAR can be either modified
+to respect that symmetry ahead of time, or trained on data from both
+the positive and negative attractors.
+
+\subsection{Output Weights}\label{sec:nvar-mg-weights}
+
+The output weights for this task are in
+\cref{fig:nvar-predict-mackey-glass-wout}. As expected from the
+failure to predict the non-positive fixed points, the NVAR
+assigns non-zero weights to those terms (in red) that break the
+total inversion symmetry. As the training input does not include any
+data from the negative Mackey-Glass attractor, the NVAR has no cause
+to learn this symmetry and instead utilizes these terms to improve
+forecasting accuracy on the positive attractor. That the NVAR assigns
+non-zero weights to these terms, and that the resulting NVAR performs
+better than one constructed without these terms, justifies my
+inclusion of the even terms in this NVAR and demonstrates that an NVAR
+can use symmetry-breaking terms productively as long as it is only
+used for forecasting in an area of the underlying system that does not
+contain that symmetry.
+
+\begin{sidewaysfigure}
+  \includegraphics[width=\textwidth]{figures/nvar-predict-mackey-glass-wout}
+  \caption{Weights in the matrix $W_\text{out}$ for the NVAR trained
+    for Mackey-Glass system forecasting. Terms that break the
+    inversion symmetry are in red. In labels, $u_i$ is shorthand for $u(t - \tau_i \Delta t)$. As the training signal does not
+    reflect the inversion symmetry, the red terms are not trained to
+    near zero as they are in \cref{fig:nvar-infer-lorenz-wout}.}
+  \label{fig:nvar-predict-mackey-glass-wout}
+\end{sidewaysfigure}
 
 \section{Conclusion}
 
@@ -550,7 +626,7 @@ in many cases.
 
 The Mackey-Glass forecasting task sits at the very edge of this simple
 technique. It shows that a low number of time-delay taps remains
-sufficient even in systems with long, built-in time delays. However,
+sufficient even in systems with long, built-in time delays, as long as the taps are chosen carefully. However,
 it also demonstrates that a cubic nonlinearity is not sufficient to
 reproduce the precise shape of the Mackey-Glass attractor. To move
 forward with the NVAR technique, the nonlinear function
@@ -558,4 +634,16 @@ $\bm{g}_\text{n}$ will need to include much higher-order terms, and it
 will need to do so without the exponential increase in training time
 associated with adding more monomial terms to the output.
 
-% FIXME kernel trick here too
+The Mackey-Glass system also demonstrates that symmetry matching is
+not necessary or even desired in all cases when using an NVAR, if the
+signal the NVAR is trained on never encounters that symmetry. In that
+case, the NVAR will utilize terms that break the symmetry of the
+underlying system in order to improve forecasting accuracy within the
+volume of phase space that the training signal lies inside. This comes
+with a trade-off: prediction outside this volume of phase space, such
+as predicted fixed points, fails.
+
+Even with the unresolved questions, I find the NVAR method is very
+simple to implement and performs well. Due to its simplicity, I
+recommend attempting to use an NVAR first in all cases where an RC is
+considered.

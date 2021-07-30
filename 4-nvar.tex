@@ -295,10 +295,10 @@ $\bm{g}_\text{out}$. In this example, the ESN's $\bm{g}$ produces node values an
 values, while the NVAR's $\bm{g}_\text{n}$ produces all linear and
 quadratic terms it is possible to construct from the tap vector
 $\bm{v}$. The NVAR has quadratic terms that mix both the dimensions of the input $\bm{u}(t)$ as well as mix the tap delays $\tau_i$. In a practical application with a finite tap vector, this
-means that if $\bm{v}$ has $q$ taps, then $\bm{g}_\text{n}$ will have
-$q + q(q+1)/2$ components. This quadratic dependence on $q$ can
+means that if $\bm{v}$ has $q$ taps and $\bm{u}$ is dimension $d$, then $\bm{g}_\text{n}$ will have
+$qd + qd(qd+1)/2$ components. This quadratic dependence on $qd$ can
 rapidly cause the computational cost of the ridge regression to find $W_\text{out}$ to be very
-expensive.
+expensive, as either the number of taps or the input dimension increases.
 
 Putting all the pieces together, the NVAR method for transforming an
 input $\bm{u}(t)$ into an output $\bm{y}(t)$ is described by
@@ -328,9 +328,9 @@ practice, though, this method can only be implemented with a finite
 number of taps. If an NVAR implementation requires thousands of taps
 to work, it is not a realistic replacement for the ESN method.
 
-The number of taps $q$ used is also relevant for the quadratic
+The number of taps $q$ and input dimension $d$ are also relevant for the quadratic
 $\bm{g}_\text{n}$ described in \cref{eq:quadratic-nvar}. The output
-dimension of this function, $q + q(q + 1)/2$, is also one of the
+dimension of this function, $qd + qd(qd + 1)/2$, is also one of the
 dimensions of the output matrix $W_\text{out}$. As this dimension
 grows, so does the time required to perform ridge regression. This
 quadratic dependence on $q$ also emphasizes the need to keep the
@@ -348,7 +348,7 @@ can also be done more directly by simply adding higher-order monomial terms to
 $\bm{g}_\text{n}$. I explore this in
 \cref{ch:nvar-application}. However, this further emphasizes the
 requirement for a small number of taps, as the number of terms of
-order $n$ grows as $q^n$.
+order $n$ grows as $(qd)^n$.
 
 \begin{table}
   \caption{Summary of NVAR parameters. Compared to the ESN approach in
