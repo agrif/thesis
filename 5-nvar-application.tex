@@ -573,7 +573,7 @@ constant past yields three fixed points, located at
 I use these as initial guesses to find the fixed points of the trained NVAR, in a space uniformly scaled so that Mackey-Glass has unit variance.
 
 The distance to the true positive fixed point is
-$2.3\pm0.03\times10^{-3}$. The variance from repeated trials does not
+$2.25\pm0.03\times10^{-3}$. The variance from repeated trials does not
 overlap the true fixed point, however, it does lie within $0.3\%$ of
 the truth.
 
@@ -615,7 +615,9 @@ contain that symmetry.
 \section{Conclusion}
 
 In this chapter, I have demonstrated the NVAR approach on two classic
-RC problems: state inference and system forecasting. I show that
+RC problems: state inference and system forecasting.
+These results are summarized in \cref{tab:nvar-results}.
+I show that
 NVARs can solve these problems as well, or in some cases better, than
 the RC approach, despite the simplicity of the NVAR method. At the
 same time, I have resolved the remaining questions raised in
@@ -623,6 +625,29 @@ same time, I have resolved the remaining questions raised in
 time-delay taps, and a simple extension of the nonlinear function
 $\bm{g}_\text{n}$ to include higher-order monomial terms is sufficient
 in many cases.
+
+\begin{table}
+  \caption{Summary of results in this chapter: the dimension of
+    $W_\text{out}$, the ridge parameter $\alpha$, the NRMSE
+    ($\epsilon$ for inference, $\tilde{\epsilon}$ for forecasting),
+    and the normalized distance from true fixed points to predicted
+    fixed points.}
+  \begin{tabularx}{\linewidth}{llreff}
+    \multicolumn{2}{l}{Task} & \multicolumn{1}{c}{$W_\text{out}$} & \multicolumn{1}{c}{$\alpha$} & \multicolumn{1}{c}{$\epsilon$ / $\tilde{\epsilon}$} & \multicolumn{1}{c}{Fixed Points} \\
+    \hline
+    \rule{0pt}{4ex}
+    Lorenz '63 & Inference & $1 \times 45$ & 5.0\times10^{-2} & 1.75\pm0.3\times10^{-2} & \multicolumn{1}{c}{--} \\
+    \rule{0pt}{4ex}
+    Lorenz '63 & Forecasting & $3 \times 28$ & 2.5\times10^{-6} & 4.51\pm0.9\times10^{-3} & 1.2\pm1.4\times10^{-3} \\
+    &&&&& 11.6\pm3.0\times10^{-4} \\
+    &&&&& 7.4\pm1.5\times10^{-4} \\
+    \rule{0pt}{4ex}
+    Double-Scroll & Forecasting & $3 \times 62$ & 1.0\times10^{-3} & 2.15\pm0.6\times10^{-2} & 2.7\pm0.3\times10^{-3} \\
+    \rule{0pt}{4ex}
+    Mackey-Glass & Forecasting & $1 \times 84$ & 9.0\times10^{-3} & 5.77\pm0.4\times10^{-2} & 2.25\pm0.03\times10^{-3} \\
+  \end{tabularx}
+  \label{tab:nvar-results}
+\end{table}
 
 The Mackey-Glass forecasting task sits at the very edge of this simple
 technique. It shows that a low number of time-delay taps remains
