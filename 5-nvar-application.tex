@@ -281,7 +281,7 @@ measure.
 For a more quantitative measure of how well the NVAR learns the
 dynamics of the Lorenz system, I calculate the fixed points of the
 trained NVAR and then find their distance to the true Lorenz steady
-states.  For simplicity and consistency, in this dissertation I will
+states. This comparison has also been used for reservoir computers~\cite{krishnagopal2019}. For simplicity and consistency, in this dissertation I will
 refer to both the discrete-time fixed points of the NVAR and the
 continuous-time steady states of Lorenz and other systems as ``fixed
 points''.
@@ -307,7 +307,7 @@ variance. For this trained NVAR, the distance from the zero fixed point
 is $1.2\pm1.4\times10^{-3}$, and the distances between the predicted
 and true positive and negative fixed points are
 $11.6\pm3.0\times10^{-4}$ and $7.4\pm1.5\times10^{-4}$, respectively.
-% FIXME compare (check nvar paper)
+% FIXME compare (I can't find any quantitative results!)
 
 The NVAR shows good agreement on the zero fixed point, as the variance
 caused by different training windows overlaps with the true
