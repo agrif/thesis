@@ -293,14 +293,9 @@ find three fixed points of the Lorenz system located at
             &= [\pm \sqrt{\beta(\rho - 1)}, \pm \sqrt{\beta(\rho - 1)}, (\rho - 1)].
 \end{align}
 
-As a discrete-time map, the trained NVAR may have fixed points
-
-% FIXME
-% fsolve, 'hybr' method, "Powell hybrid method"
-% More, Jorge J., Burton S. Garbow, and Kenneth E. Hillstrom. 1980. User Guide for MINPACK-1.
 To find the fixed points of the NVAR system, I perform a trial
-single-step forecast with a constant past history, and use a
-root-finding algorithm to find the specific values of past history
+single-step forecast with a constant past history, and use the Powell hybrid method
+root-finding algorithm~\cite{more1980,powell1970} to find the specific values of past history
 that result in an unchanged forecast. This root-finding algorithm is
 used three times, using the three true Lorenz fixed points as initial
 guesses.
