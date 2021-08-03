@@ -102,7 +102,7 @@ $\bm{g}_\text{n}$.
     view of the same. The largest component is the constant offset, to
     account for the fact that the $z$ component of the Lorenz system
     is positive, even when both $x$ and $y$ are zero. Also note that
-    the linear terms in $x$ and $y$ have weights near zero. As the
+    the linear terms in $x$ and $y$ (highlighted in red) have weights near zero. As the
     Lorenz system has a $(x, y) \rightarrow (-x, -y)$ symmetry, the
     NVAR must have zero weights attached to these terms to respect
     that symmetry.}
@@ -165,7 +165,7 @@ average this over the $10$ trials to produce $\tilde{\epsilon}$ in
     (blue) during training overlaid with NVAR output (red) calculated
     after training is complete. (f)~--~(h) True (blue) and NVAR
     forecasted output (red). The NVAR shows good agreement with the
-    true system as far as $5$ Lyapunov periods in to the autonomous
+    true system as far as $6$ Lyapunov periods in to the autonomous
     forecast.}
   \label{fig:nvar-predict-lorenz}
 \end{figure}
@@ -184,7 +184,7 @@ light: only $10$ time units, corresponding to $400$ points at this
 time step, is enough to train the NVAR. During training, the NVAR's
 output (b)~--~(d) matches the true signal so well it obscures it, and
 during testing, the autonomous forecast (f)~--~(h) only visibly
-diverges from the truth after 5 Lyapunov exponents.
+diverges from the truth after $6$ Lyapunov exponents.
 
 \subsection{$z$ Return Map}
 
@@ -225,7 +225,6 @@ Runge-Kutta~5(4). Both algorithms agree after sharpening the tolerance
 to $10^{-5}$.  In this chapter, I use the
 Runge-Kutta~3(2)~\cite{dormand1980} integrator with $10^{-3}$ relative
 tolerance for both the Lorenz '63 and double-scroll systems.
-% FIXME use 10^-5
 
 The values of the maxima in the discrete-time solutions for both the
 NVAR and Lorenz '63 system depend on the time step $\Delta t$ used for
@@ -345,7 +344,7 @@ that it can also approximate quadratic polynomial systems.
   \includegraphics[width=\textwidth]{figures/nvar-predict-lorenz-wout}
   \caption{Weights in the matrix $W_\text{out}$ for the NVAR trained
     for Lorenz system forecasting. Terms that appear directly in the
-    Lorenz system (\cref{eq:lorenz}) are in red. There does not appear
+    Lorenz system (\cref{eq:lorenz}) are in dashed red. There does not appear
     to be any correlation between a large weight in the NVAR output,
     and presence in the Lorenz equations.}
   \label{fig:nvar-predict-lorenz-wout}
@@ -619,7 +618,7 @@ contain that symmetry.
   \includegraphics[width=\textwidth]{figures/nvar-predict-mackey-glass-wout}
   \caption{Weights in the matrix $W_\text{out}$ for the NVAR trained
     for Mackey-Glass system forecasting. Terms that break the
-    inversion symmetry are in red. In labels, $u_i$ is shorthand for $u(t - \tau_i \Delta t)$. As the training signal does not
+    inversion symmetry are in dashed red. In labels, $u_i$ is shorthand for $u(t - \tau_i \Delta t)$. As the training signal does not
     reflect the inversion symmetry, the red terms are not trained to
     near zero as they are in \cref{fig:nvar-infer-lorenz-wout}.}
   \label{fig:nvar-predict-mackey-glass-wout}
