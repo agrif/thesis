@@ -12,8 +12,8 @@ system.
 The work presented in this chapter is the result of a
 collaboration with Daniel~J.~Gauthier, Erik~Bollt, and Wendson~A.S.~Barbosa~\cite{gauthier2021}. My contribution involves the initial
 implementation and exploration of the NVAR method, discussion during
-the development of the Lorenz '63 results, as well as the
-implementation of the Lorenz return map, double-scroll forecasting,
+the development of the Lorenz '63 results, as well as
+implementing the Lorenz return map, double-scroll forecasting,
 and Mackey-Glass forecasting.
 
 \section{State Inference with Lorenz '63}
@@ -29,15 +29,15 @@ to infer these variables from easily-accessible external sensors. Once
 trained, the NVAR can now be reused on engines manufactured without
 the expensive internal instrumentation.
 
-For this task, I use an integration time-step of $\Delta t = 0.05$. To
-build an NVAR, I must choose the tap delays $\tau_i$, the
-nonlinearity $\bm{g}_\text{n}$, and ridge parameter $\alpha$. Takens'
-embedding theorem~\cite{takens1981} provides guidance on the expected
-number of taps: as the dimension of the Lorenz attractor is slightly
-larger than $2$, I choose to use $4$ equally spaced taps $\tau_0 =
-0$, $\tau_1 = 5$, $\tau_2 = 10$, and $\tau_3 = 15$. These taps are
-spaced to equally cover roughly one Lyapunov period, with the last tap
-at time $\tau_3 \Delta t = 0.75$.
+To build an NVAR, I must choose the time-step $\Delta t$, the tap
+delays $\tau_i$, the nonlinearity $\bm{g}_\text{n}$, and ridge
+parameter $\alpha$. For this task, I use an integration time-step of
+$\Delta t = 0.05$. Takens' embedding theorem~\cite{takens1981}
+provides guidance on the expected number of taps: as the dimension of
+the Lorenz attractor is slightly larger than $2$, I choose to use $4$
+equally spaced taps $\tau_0 = 0$, $\tau_1 = 5$, $\tau_2 = 10$, and
+$\tau_3 = 15$. These taps are spaced to equally cover roughly one
+Lyapunov period, with the last tap at time $\tau_3 \Delta t = 0.75$.
 
 For the nonlinearity $\bm{g}_\text{n}$, I use a slightly modified
 version of the quadratic output introduced in
@@ -51,7 +51,6 @@ terms of the tap vector $\bm{v}$. That is,
 The addition of a constant term allows the trained linear
 $W_\text{out}$ to fit a constant offset, which is useful here as the
 $z$ component is always positive, even when both $x$ and $y$ are zero.
-
 For this task, with $q = 4$ taps and $d = 2$ input dimensions, $x$ and $y$, the
 output of $\bm{g}_\text{n}$ has $1 + 8 + 36 = 45$ components, and the linear
 output matrix $W_\text{out}$ has dimension $1 \times 45$.
@@ -69,8 +68,8 @@ output matrix $W_\text{out}$ has dimension $1 \times 45$.
 
 I train this NVAR on $10$ different examples of the Lorenz '63
 system, using $x$ and $y$ as the example input and $z$ as the example
-output. Each training example is $20$ time units. I then evaluate
-the NVAR for $45$ time units to produce a NRMSE $\epsilon$ as in
+output. Each training example is $20$ time units ($400$ data points). I then evaluate
+the NVAR for $45$ time units ($900$ data points) to produce a NRMSE $\epsilon$ as in
 \cref{eq:nrmse}, and then average these errors over all $10$
 trials. During evaluation, the NVAR has access to only $x$ and $z$,
 and must produce an estimate of $z$. I then adjust $\alpha$ manually
@@ -117,13 +116,13 @@ and $y$ terms, in order to respect this symmetry the NVAR must predict
 the same $z(t)$ for both $\bm{u}(t)$ and $-\bm{u}(t)$. This is only
 possible if the linear terms in $x$ and $y$ have zero coefficients.
 
-In general, an NVAR does not need to respect the symmetries of the
-entire underlying system: if the NVAR is trained on only a small part
-of the input system's phase space, it does not need to respect
+In general, an NVAR does not need to respect any symmetries not
+present in the training input. Specifically, if the NVAR is trained on only a small
+part of the input system's phase space, it does not need to respect
 symmetries outside that space to perform well within that space. Here,
 however, the NVAR training input $\bm{u}_\text{train}(t)$ overlaps
-with its symmetric counterpart $-\bm{u}_\text{train}(t)$, and so learning
-the example input necessarily means learning the symmetry.
+with its symmetric counterpart $-\bm{u}_\text{train}(t)$, and so
+learning the example input necessarily means learning the symmetry.
 
 Later, in \cref{sec:nvar-mackey-glass}, I will investigate a task
 where the example input does not overlap with its symmetric
@@ -153,7 +152,7 @@ the nonlinear output of $\bm{g}_\text{n}$ has $1 + 6 + 21 = 28$
 components, and so $W_\text{out}$ has dimension $3 \times 28$.
 
 Again, I train this NVAR on $10$ different examples of the Lorenz '63
-system, each time training on $10$ time units. I then evaluate the
+system, each time training on $10$ time units ($400$ data points). I then evaluate the
 NVAR by performing an autonomous forecast for one Lyapunov period to
 calculate a NRMSE $\epsilon_1$, as in \cref{eq:nrmse}, and then
 average this over the $10$ trials to produce $\tilde{\epsilon}$ in
@@ -226,6 +225,7 @@ Runge-Kutta~5(4). Both algorithms agree after sharpening the tolerance
 to $10^{-5}$.  In this chapter, I use the
 Runge-Kutta~3(2)~\cite{dormand1980} integrator with $10^{-3}$ relative
 tolerance for both the Lorenz '63 and double-scroll systems.
+% FIXME use 10^-5
 
 The values of the maxima in the discrete-time solutions for both the
 NVAR and Lorenz '63 system depend on the time step $\Delta t$ used for
@@ -281,14 +281,22 @@ measure.
 
 For a more quantitative measure of how well the NVAR learns the
 dynamics of the Lorenz system, I calculate the fixed points of the
-trained NVAR and then find their distance to the true Lorenz fixed
-points. By setting the derivatives in \cref{eq:lorenz} to zero, I
+trained NVAR and then find their distance to the true Lorenz steady
+states.  For simplicity and consistency, in this dissertation I will
+refer to both the discrete-time fixed points of the NVAR and the
+continuous-time steady states of Lorenz and other systems as ``fixed
+points''.
+
+By setting the derivatives in \cref{eq:lorenz} to zero, I
 find three fixed points of the Lorenz system located at
 \begin{align}
   [x, y, z] &= [0, 0, 0], \\
             &= [\pm \sqrt{\beta(\rho - 1)}, \pm \sqrt{\beta(\rho - 1)}, (\rho - 1)].
 \end{align}
 
+As a discrete-time map, the trained NVAR may have fixed points
+
+% FIXME
 % fsolve, 'hybr' method, "Powell hybrid method"
 % More, Jorge J., Burton S. Garbow, and Kenneth E. Hillstrom. 1980. User Guide for MINPACK-1.
 To find the fixed points of the NVAR system, I perform a trial
@@ -305,6 +313,7 @@ variance. For this trained NVAR, the distance from the zero fixed point
 is $1.2\pm1.4\times10^{-3}$, and the distances between the predicted
 and true positive and negative fixed points are
 $11.6\pm3.0\times10^{-4}$ and $7.4\pm1.5\times10^{-4}$, respectively.
+% FIXME compare (check nvar paper)
 
 The NVAR shows good agreement on the zero fixed point, as the variance
 caused by different training windows overlaps with the true
@@ -316,14 +325,14 @@ training data does not include any of these points.
 \subsection{Output Weights}
 
 The particular choice of nonlinearity $\bm{g}_\text{n}$ for this task
-completely includes all terms on the right hand side of the Lorenz
+completely includes all terms in the vector field of the Lorenz
 system in \cref{eq:lorenz}. That is, the Lorenz system is described by
 a polynomial of degree $2$, and the choice of $\bm{g}_\text{n}$ allows
 the NVAR to describe \emph{any} polynomial of degree $2$. This raises
 a legitimate question: is the NVAR simply performing so well because
 it was equipped ahead of time with the perfect tools?
 
-The answer in a general context is no. Just as finite polynomials can
+The answer in a general context is no. Just as a finite truncation of an infinite Taylor series can
 approximate non-polynomial functions arbitrarily well, a continuous
 nonlinear dynamical system can be approximated arbitrarily well by a
 finite Volterra series~\cite{franz2006}, and NVARs with polynomial
@@ -465,7 +474,7 @@ using the single Mackey-Glass state variable $u$ in
 \cref{eq:mackey-glass} as input, with $\Delta t = 0.2$. I use the
 \texttt{jitcdde} Python package~\cite{ansmann2018} to integrate this
 time-delay differential equation. For this system, using two adjacent
-taps for the NVAR as in the previous examples is insufficient, as the
+taps for the NVAR as in the previous examples is not enough, as the
 Mackey-Glass system behavior depends strongly on both the value of
 $u(t)$ as well as $u(t - 17)$. One way to access this value in the
 NVAR is to add taps at every time step until they reach $t = 17$,
@@ -473,13 +482,17 @@ resulting in $85$ total taps. Even with only a quadratic output, this
 requires training a $W_\text{out}$ with dimension $1 \times
 3741$. This cost can be avoided by increasing the time step $\Delta
 t$, thus reducing the total number of taps, but this solution comes
-with the cost of a much more granular prediction.
+with the cost of a much more granular prediction. Granularity may not
+be a problem, as up to a point, as the NVAR's predictions can be
+interpolated to fill in the gaps. However, using a coarser $\Delta t$
+also changes the behavior of the NVAR, and for this task results in
+poor performance.
 
 Another way to access the value at $u(t-17)$ is to use sparse
 taps. Here, I use three clusters of two adjacent taps: one cluster at
 $\tau_0 = 0$ and $\tau_1 = 1$, one cluster at $\tau_2 = \floor{17 / 2
   \Delta t}$ and $\tau_3 = \tau_2 + 1$, and one cluster at $\tau_4 =
-\floor{17 / Delta t}$ and $\tau_5 = \tau_4 + 1$. Here, $\floor{a}$ refers to the integer floor of $a$. This gives the NVAR
+\floor{17 / \Delta t}$ and $\tau_5 = \tau_4 + 1$. Here, $\floor{a}$ refers to the integer floor of $a$. This gives the NVAR
 access to information at $u(t - 17)$ as well the midpoint $u(t -
 17/2)$. I find that adding the tap cluster at the midpoint improves performance
 by a factor of $3$, and increases the number of features available to
@@ -614,13 +627,13 @@ contain that symmetry.
 
 \section{Conclusion}
 
-In this chapter, I have demonstrated the NVAR approach on two classic
+In this chapter, I demonstrate the NVAR approach on two classic
 RC problems: state inference and system forecasting.
 These results are summarized in \cref{tab:nvar-results}.
 I show that
 NVARs can solve these problems as well, or in some cases better, than
 the RC approach, despite the simplicity of the NVAR method. At the
-same time, I have resolved the remaining questions raised in
+same time, I resolve the remaining questions raised in
 \cref{ch:nvar}: NVARs remain useful even with only a handful of
 time-delay taps, and a simple extension of the nonlinear function
 $\bm{g}_\text{n}$ to include higher-order monomial terms is sufficient
@@ -650,13 +663,13 @@ in many cases.
 \end{table}
 
 The Mackey-Glass forecasting task sits at the very edge of this simple
-technique. It shows that a low number of time-delay taps remains
-sufficient even in systems with long, built-in time delays, as long as the taps are chosen carefully. However,
-it also demonstrates that a cubic nonlinearity is not sufficient to
+technique. It shows that a low number of time-delay taps is
+enough even in systems with long, built-in time delays, as long as the taps are chosen carefully. However,
+it also demonstrates that a cubic nonlinearity is not enough to
 reproduce the precise shape of the Mackey-Glass attractor. To move
 forward with the NVAR technique, the nonlinear function
-$\bm{g}_\text{n}$ will need to include much higher-order terms, and it
-will need to do so without the exponential increase in training time
+$\bm{g}_\text{n}$ needs to include higher-order terms, and it
+needs to do so without the exponential increase in training time
 associated with adding more monomial terms to the output.
 
 The Mackey-Glass system also demonstrates that symmetry matching is
