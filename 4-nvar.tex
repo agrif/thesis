@@ -205,10 +205,13 @@ Working with a VAR, by training it and using it, is very similar to
 working with an RC. The most important difference is that using a VAR
 completely sidesteps the issue of choosing an internal
 reservoir. Building an ESN reservoir is a complicated process that
-starts with the meta-parameters listed in \cref{tab:esn-metaparameters}
-and ends with a random realization of a network, usually of 100 nodes
-or more. In contrast, building a VAR amounts to selecting which taps
-$\tau_i$ to use, and how many.
+starts with the meta-parameters listed in
+\cref{tab:esn-metaparameters} and ends with a random realization of a
+network, usually of 100 nodes or more. In contrast, building a VAR
+amounts to selecting which taps $\tau_i$ to use, and how many. This
+dramatic reduction in the parameter space makes VARs easier to build
+and use, and the lack of a random component makes it possible to
+deterministically specify a VAR's construction.
 
 By describing the VAR method within the reservoir computing framework,
 there are a few benefits to the VAR method as well. Previous work with
@@ -238,7 +241,7 @@ The ESN model has two possible sources of nonlinearity: the
 activation function $f$ and the read-out function $\bm{g}$. Most
 commonly, including in \cref{ch:low-connectivity}, $f =
 \tanh$. However, a nonlinear $f$ is mathematically difficult to work
-with, as it lies in the middle of the ESNs internal state equation. In
+with, as it lies in the middle of the ESN's internal state equation. In
 contrast, the read-out function $\bm{g}$ sits only on the output
 layer. Consider the linear ESN described in
 \cref{eq:esn-var-mat} modified to have a nonlinear read-out function
@@ -259,7 +262,7 @@ time-delay taps of $\bm{u}(t)$, and so the square of a node value
 contains only quadratic terms of the form $u_i(t-j\Delta
 t)u_k(t-l\Delta t)$.
 
-Putting this together, the ESNs output $\bm{y}(t)$ can written in
+Putting this together, the ESN's output $\bm{y}(t)$ can written in
 terms of the time-delay tap vector $\bm{v}(t)$ in \cref{eq:var-v},
 using an infinite number of taps $\tau_i = i$,
 \begin{equation}
@@ -278,7 +281,7 @@ vector that contains as components all unique terms of the form $v_i
 v_j$.
 
 This construction, a VAR that wraps the delay tap vector in a
-nonlinear function $\bm{g}_\text{N}$ before the building the linear
+nonlinear function $\bm{g}_\text{n}$ before the building the linear
 combination for the output, is known as a nonlinear VAR (NVAR). This
 concludes a sketch of Bollt's proof that a linear ESN with quadratic
 read-out is mathematically equivalent to an NVAR with infinite

@@ -116,7 +116,7 @@ The ridge parameter $\alpha$ is included to prevent over-fitting, and
 to help the RC generalize from the example input to unknown inputs. In
 practice, this value depends on the scale of the input signal
 $\bm{u}_\text{train}(t)$; for roughly unit-scale inputs, $\alpha$ may be
-anywhere from $10^-{9}$ to $10^9$. Since the ridge regression can be
+anywhere from $10^{-9}$ to $10^9$. Since the ridge regression can be
 calculated quickly, and the result is only logarithmically sensitive
 to the value of $\alpha$, the best value for $\alpha$ can be found
 simply by grid search or cross-validation on the example input.
@@ -163,7 +163,7 @@ basis for forecasting. This priming step synchronizes the reservoir
 state $\bm{r}(t)$ to the input, and intuitively provides the RC with
 the past history it will draw on to produce the forecast. This is a
 warm-up step, similar to that used during training. At the moment
-forecasting begins, the approximation \cref{eq:approx-output-input} is
+forecasting begins, the approximation \cref{eq:approx-output-forecast} is
 substituted in to the reservoir equation \cref{eq:reservoir},
 effectively connecting the input of the RC to the output. The RC now
 evolves forward in time according to
@@ -407,7 +407,7 @@ Which dynamic systems make for good reservoirs, and what properties
 are desired in a reservoir, remains an open question. There are a
 handful of known desirable properties that are used to guide reservoir
 design, and in particular ESN design. Chief among these is the
-\emph{fading memory property}, which states that the reservoir's
+\emph{fading memory property}, also known as the echo state property, which states that the reservoir's
 response to its input should have a vanishing dependence on the value
 of that input signal in the distant past~\cite{jaeger2001,jaeger2002}.
 

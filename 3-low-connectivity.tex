@@ -312,9 +312,8 @@ to optimize. However, unlike the other meta-parameters, modifying
 $\alpha$ does not require re-integration and can be optimized with
 simpler methods.  I select an $\alpha$ from among $10^{-5}$ to $10^5$
 by leave-one-out cross-validation, which has an extremely efficient
-implementation for ridge regression~\cite{rifkin2007}. This method
-also reduces the number of dimensions the Bayesian algorithm must work
-with.
+implementation for ridge regression~\cite{rifkin2007}.
+Using the computationally cheaper cross-validation for $\alpha$ instead of the Bayesian algorithm helps to keep the optimizer's computational effort focused on those parameters that most benefit from it.
 
 To evaluate the performance of the trained ESN, I use it to perform
 autonomous forecasting using the autonomous equation \cref{tab:esn}~(b). I choose $50$ times
@@ -367,7 +366,7 @@ long-term Lorenz attractor.
 
 \subsection{Forecasting Lorenz '63}
 
-First, I run all five reservoir structures through 100 iterations of
+First, I run reservoir networks of all five structures through 100 iterations of
 the Bayesian algorithm using the Lorenz system as input, and record
 the best-performance RC for each structure according to the metric
 $\tilde{\epsilon}$. These reservoirs, and the meta-parameters that
