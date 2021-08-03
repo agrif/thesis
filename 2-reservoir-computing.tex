@@ -47,8 +47,6 @@ $\bm{u}$-to-$\bm{y}$ transformation, to introduce nonlinearity to an
 otherwise completely linear RC, or to model incomplete measurements of
 a physical system being used as a reservoir.
 
-% FIXME figure for generic reservoir
-
 Together, \cref{eq:reservoir} and \cref{eq:output} define a reservoir
 computer, and define the transformation from input signal $\bm{u}(t)$
 to output $\bm{y}(t)$.
@@ -121,7 +119,6 @@ calculated quickly, and the result is only logarithmically sensitive
 to the value of $\alpha$, the best value for $\alpha$ can be found
 simply by grid search or cross-validation on the example input.
 
-% FIXME better cite
 The fact that training an RC amounts to a linear regression is a major
 feature worth highlighting. Linear regressions are very fast, compared
 to other machine learning techniques like gradient descent and
@@ -177,7 +174,6 @@ output layer in \cref{eq:output}, is the forecasted signal.
 
 \section{Echo State Networks}\label{sec:esn}
 
-% FIXME cite echo state more
 Although there are many choices for the dynamic reservoir at the heart
 of an RC, the reservoir computing method originated as a practical way
 to train recurrent neural networks by only training the weights in the
@@ -269,7 +265,6 @@ in \cref{tab:esn}.
   \label{tab:esn}
 \end{table}
 
-% FIXME cite \gamma \Delta t = 1
 The Euler integration is only an accurate representation of
 \cref{eq:esn} when $\gamma \Delta t \ll 1$. However, many authors will
 take $\gamma \Delta t = 1$. Although this is no longer an accurate
