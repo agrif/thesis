@@ -1,0 +1,40 @@
+\mode<presentation>
+
+\defbeamertemplate*{headline}{osu}[1][]{
+  \begin{beamercolorbox}[wd=\paperwidth]{headline}
+    \begin{minipage}[t]{2.7in}
+      \vspace{3ex}
+    
+      \hspace{2ex} \osulogoalt[width=2in]{1c-rev-horiz}{%
+        \vspace{0.5ex}
+        
+        \hspace{2ex} The Ohio State University
+        
+        \vspace{1em}
+      }
+    
+      \vspace{3ex}
+    \end{minipage}
+    \begin{minipage}[t]{2.2in} % FIXME better math here
+      \begin{flushright}
+        \vspace{4.5ex}
+      
+        \insertsection
+
+        \insertsubsection
+
+        \vspace{3ex}
+      \end{flushright}
+    \end{minipage}
+  \end{beamercolorbox}
+}
+
+\defbeamertemplate{frametitle}{osu}[1][]{
+  \begin{beamercolorbox}[wd=\paperwidth]{frametitle}
+    \insertframetitle
+    
+    \insertframesubtitle
+  \end{beamercolorbox}
+}
+
+\mode<all>

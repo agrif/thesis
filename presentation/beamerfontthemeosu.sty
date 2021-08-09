@@ -1,0 +1,18 @@
+\RequirePackage{fontspec}
+\usefonttheme{professionalfonts}
+
+\IfFileExists{proxima/ProximaNova-Regular.otf}{
+  \usefonttheme{serif}
+  \setmainfont{ProximaNova}[
+    Path = proxima/ ,
+    Extension = .otf ,
+    UprightFont = *-Regular ,
+    BoldFont = *-Bold ,
+    ItalicFont = *-RegularItalic ,
+    BoldItalicFont = *-BoldIt ,
+  ]
+}{}
+
+\setbeamerfont{block title}{size=\LARGE,series=\bfseries}
+\setbeamerfont{block title example}{size=\large,series=\bfseries}
+\setbeamerfont{block title alerted}{size=\large,series=\bfseries}

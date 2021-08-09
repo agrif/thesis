@@ -1,0 +1,81 @@
+\mode<presentation>
+
+% circular bullets
+\setbeamertemplate{items}[circle]
+\setbeamertemplate{sections/subsections in toc}[circle]
+
+% title page
+\defbeamertemplate*{title page}{osu}[1][]{
+  \vspace{8ex}
+  
+  \begin{beamercolorbox}[center,wd=\paperwidth,#1]{normal text}
+    \osulogoalt[width=3.5in]{4c-horiz}{{\Large The Ohio State University}}
+  \end{beamercolorbox}
+
+  \vspace{3ex}
+  
+  \begin{beamercolorbox}[center,wd=\paperwidth,#1]{palette primary}
+    \vspace{4ex}
+    
+    \usebeamerfont{title}{\Huge\inserttitle}
+
+    \vspace{1ex}
+
+    \usebeamerfont{subtitle}\insertsubtitle
+
+    \vspace{1ex}
+
+    \usebeamerfont{author}\insertauthor
+
+    \usebeamerfont{date}\insertdate
+
+    \vspace{4ex}
+  \end{beamercolorbox}
+  \vfill
+}
+
+\defbeamertemplate*{block begin}{osu}[1][]{
+  \begin{beamercolorbox}{block title}
+    \usebeamerfont*{block title}\textsc{\insertblocktitle}
+  \end{beamercolorbox}
+  \vspace{3ex}
+  \usebeamerfont{block body}
+  \begin{beamercolorbox}{block body}
+}
+
+\defbeamertemplate*{block example begin}{osu}[1][]{
+  \begin{beamercolorbox}{block title example}
+    \usebeamerfont*{block title example}\insertblocktitle
+  \end{beamercolorbox}
+  \vspace{1ex}
+  \usebeamerfont{block body}
+  \begin{beamercolorbox}{block body}
+}
+
+\defbeamertemplate*{block alerted begin}{osu}[1][]{
+  \begin{beamercolorbox}{block title alerted}
+    \usebeamerfont*{block title alerted}\insertblocktitle
+  \end{beamercolorbox}
+  \vspace{1ex}
+  \usebeamerfont{block body}
+  \begin{beamercolorbox}{block body}
+}
+
+\defbeamertemplate*{block end}{osu}[1][]{
+  \end{beamercolorbox}
+  \vspace*{4ex}
+}
+
+
+\defbeamertemplate*{block example end}{osu}[1][]{
+  \end{beamercolorbox}
+  \vspace*{4ex}
+}
+
+
+\defbeamertemplate*{block alerted end}{osu}[1][]{
+  \end{beamercolorbox}
+  \vspace*{4ex}
+}
+
+\mode<all>
