@@ -15,7 +15,6 @@
 \usepackage{hyperref}
 \usepackage[nameinlink,capitalize]{cleveref}
 \usepackage{siunitx}
-\usepackage{enumitem}
 \usepackage{floatrow}
 \usepackage{bm}
 \usepackage{mathtools}
@@ -95,45 +94,76 @@
 
 \frame{\tableofcontents[hideallsubsections]}
 
-\section{Reservoir Computers}
+\begin{frame}{Machine Learning and Neural Networks}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \begin{itemize}
+    \item neural networks are universal models
+    \item learn relationship between input and output from example data
+    \item very useful if this relationship is unknown, but examples are easy to find
+    \item canonical example: learn how to turn images of digits into labels
+    \end{itemize}
+    \column{0.5\textwidth}
+    \centering
+    \includegraphics[width=0.7\textwidth]{figures/mnist.png}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Machine Learning in Physics}
+  \begin{itemize}
+  \item Elsewhere:
+    \begin{itemize}
+    \item find masses of particles from decay data\footnote{\fullcite{lonnblad1992}}
+    \item separate quark and gluon jets in $e^+ e^-$ annihilation\footnote{\fullcite{csabai1991}}
+    \end{itemize}
+  \item In this presentation:
+    \begin{itemize}
+    \item \textbf{system state inference}: given $x(t)$ and $y(t)$, find $z(t)$
+    \item \textbf{chaotic system forecasting}: given the beginning of a signal $u(t)$, what happens after?
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Chaotic System Forecasting}
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/prediction-example.eps}
+\end{frame}
+
+\begin{frame}{The Problem with Neural Networks}
+  \begin{itemize}
+  \item very expensive to train
+    \begin{itemize}
+    \item data hungry: require many examples
+    \item deep networks take longer to train: ``vanishing gradient problem''
+    \end{itemize}
+  \item alternative: \textbf{Reservoir Computers}
+    \begin{itemize}
+    \item quick training
+    \item physical interpretation
+    \item physical implementation
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\section{Reservoir Computing}
 
 \tocframe
-
-\begin{frame}{This is a frame title.}
-  This is some frame text.
-\end{frame}
 
 \section{Low-Connectivity Reservoirs}
 
 \tocframe
 
-\begin{frame}{This is a frame title.}
-  This is some frame text.
-\end{frame}
-
 \section{RCs without Reservoirs: NVARs}
 
 \tocframe
-
-\begin{frame}{This is a frame title.}
-  This is some frame text.
-\end{frame}
 
 \section{NVARs in Practice}
 
 \tocframe
 
-\begin{frame}{This is a frame title.}
-  This is some frame text.
-\end{frame}
-
 \section{Conclusion}
 
 \tocframe
-
-\begin{frame}{This is a frame title.}
-  This is some frame text.\footnote{\fullcite{pathak2017}}
-\end{frame}
 
 \begin{frame}
   \begin{center}
