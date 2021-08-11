@@ -23,6 +23,8 @@
 \usetheme{osu}
 \hypersetup{hidelinks}
 \bibliography{thesis.bib}
+% https://tex.stackexchange.com/questions/10102/multiple-references-to-the-same-footnote-with-hyperref-support-is-there-a-bett/10116#10116
+\crefformat{footnote}{#2\footnotemark[#1]#3}
 % http://tex.stackexchange.com/questions/21913/how-can-i-change-the-footnote-line-thickness-length
 \renewcommand{\footnoterule}{%
   \kern -3pt
@@ -63,6 +65,7 @@
   \addtocounter{footnote}{-1}%
   \endgroup
 }
+
 % toc slide
 \newcommand\tocframe{%
   \frame{\tableofcontents[currentsection,hideallsubsections]}
@@ -243,6 +246,124 @@
 \section{Low-Connectivity Reservoirs}
 
 \tocframe
+
+\begin{frame}{Exploring ESN Parameters}
+  \begin{columns}
+    \column{0.6\textwidth}
+    \begin{itemize}
+    \item use Bayesian optimization to find ESN parameters that work well for Lorenz system forecasting
+    \item strange result: optimized parameters often had $k = 1$
+    \item ESNs with $k = 1$ have very simple structure, but perform as well as $k > 1$
+    \item inspired by this, I also look at three other simple structures...
+    \end{itemize}
+    \column{0.4\textwidth}
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/topology-b}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Structure of Low-Connectivity Reservoirs}
+    \begin{columns}
+      \column{0.4\textwidth}
+      \small
+      (a) general construction \\
+      (b) $k = 1$, single cycle \\
+      (c) $k = 1$, cut cycle \\
+      (d) \emph{simple cycle reservoir}\footnote[frame]{\fullcite{rodan2011}\label{fn:rodan}} \\
+      (e) \emph{delay line reservoir}\cref{fn:rodan} \\~\\
+      In all cases, networks with more than one connected component are discarded and regenerated
+      \column{0.6\textwidth}
+      \centering
+      \includegraphics[width=1.0\textwidth]{figures/topology}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Training, Forecasting, and Evaluation}
+  \begin{itemize}
+  \item for each structure, I search for the parameters to optimize $\tilde{\epsilon}$ on Lorenz forecasting
+  \item for each set of trial parameters...
+    \begin{itemize}
+    \item build a 100-node ESN with those parameters
+    \item train for 100 units of time ($\Delta t = 0.01$)
+    \item evaluate $\tilde{\epsilon}$ by averaging $50$ $\epsilon_1$ errors
+    \end{itemize}
+    \vspace{2em}
+  \item in the end, have one ESN from each structure type that performs well
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{ESN Symmetries and their Consequences}
+  \begin{itemize}
+  \item when $f = \tanh$ and $\bm{g}(\bm{r}) = \bm{r}$, ESN equation has $\bm{r} \rightarrow -\bm{r}$ symmetry, and therefore $\bm{y} \rightarrow -\bm{y}$ symmetry
+    \begin{align*}
+      \dot{\bm{r}}(t) &= - \gamma \bm{r}(t) + \gamma \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;\bm{u}(t) \right) \\
+      \bm{y}(t) &= W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)
+    \end{align*}
+  \item Lorenz does \emph{not}!
+  \item Solution: break the symmetry by using a non-linear $\bm{g}$\footnote{\fullcite{herteux2020}}
+    \begin{equation*}
+      g_i(\bm{r}) = \begin{cases}
+        r_i & \text{if } i \leq N / 2, \\
+        r_i^2 & \text{if } i > N / 2.
+      \end{cases}
+    \end{equation*}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{ESN Symmetries and their Consequences}
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/lorenz-symmetry}
+\end{frame}
+
+\begin{frame}{$\epsilon_1$ vs. $\tilde{\epsilon}$}
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{figures/epsilon-failure}
+  \end{center}
+
+  {\small
+    (i) overemphasizes lobe where $\epsilon_1$ resides \\
+    (ii) good short-term forecast, but falls into periodic orbit as $t \rightarrow \inf$}
+\end{frame}
+
+\begin{frame}{Results}
+  \centering
+  \begin{tabularx}{\linewidth}{l l@{\extracolsep{\fill}} l}
+    & Structure & $\tilde{\epsilon}$ \\
+    \hline
+    (a) & Any $k$ & 0.022 $\pm$ 0.004 \\
+    (b) & $k = 1$ with cycle & 0.024 $\pm$ 0.005 \\
+    (c) & $k = 1$ no cycle & 0.028 $\pm$ 0.005$^*$ \\
+    (d) & cycle & 0.023 $\pm$ 0.008 \\
+    (e) & line & 0.024 $\pm$ 0.003$^*$ \\
+  \end{tabularx}
+
+  \vspace{3em}
+  $^*$ \emph{no recurrence in network!}
+\end{frame}
+
+\begin{frame}{Results}
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/lowk-attractors}
+\end{frame}
+
+\begin{frame}{ESN Variation}
+  \begin{itemize}
+    \item ESN construction is random -- what if I re-generate a network with the same parameters as best performers?
+  \end{itemize}
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/epsilon-distribution}
+\end{frame}
+
+\begin{frame}{Conclusion}
+  \begin{itemize}
+  \item $\tilde{\epsilon}$ captures forecasting quality more reliably than $\epsilon_1$
+  \item very simple ESNs can perform as well as ESNs with more complicated connectivity
+  \item this is still true even when the network is a single cycle, or a line
+  \item however, well-performing simple ESNs are harder to find
+    \vspace{3em}
+  \item If line networks work well... maybe all the network does is combine time-delayed copies of the input?
+  \end{itemize}
+\end{frame}
 
 \section{RCs without Reservoirs: NVARs}
 
