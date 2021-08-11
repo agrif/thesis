@@ -91,6 +91,7 @@
 \setbeamertemplate{navigation symbols}{\textcolor{osured}{\tiny\insertframenumber\,/\,\inserttotalframenumber}}
 
 \section{Introduction}
+% why RC? use word 'examples'
 
 \frame{\tableofcontents[hideallsubsections]}
 
@@ -126,7 +127,7 @@
 
 \begin{frame}{Chaotic System Forecasting}
   \centering
-  \includegraphics[width=0.7\textwidth]{figures/prediction-example.eps}
+  \includegraphics[width=0.7\textwidth]{figures/prediction-example}
 \end{frame}
 
 \begin{frame}{The Problem with Neural Networks}
@@ -148,6 +149,96 @@
 \section{Reservoir Computing}
 
 \tocframe
+
+\begin{frame}{Reservoir Computers}
+  \begin{itemize}
+  \item RC transforms an input signal $\bm{u}(t)$ into an output $\bm{y}(t)$
+  \item input $\bm{u}(t)$ acts as driving input to dynamical system $\bm{R}$ \\ (the ``reservoir''),
+    $$ \dot{\bm{r}}(t) = \bm{R}(\bm{r}, \bm{u}, t) $$
+  \item reservoir response $\bm{r}(t)$ is read-out via $\bm{g}$, and linearly combined into output
+    $$ \bm{y}(t) = W_\text{out}\;\bm{g}\left(\bm{r}\left(t\right)\right) $$
+  \item reservoir $\bm{R}$ and read-out $\bm{g}$ fixed ahead of time, but $W_\text{out}$ is trained to fit example data
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Reservoir Computers}
+  \centering
+  \includegraphics[width=0.8\textwidth]{figures/reservoir-generic}
+\end{frame}
+
+\begin{frame}{Training an RC}
+  \begin{itemize}
+  \item use example input $\bm{u}_\text{train}(t)$ and example output $\bm{y}_\text{train}(t)$
+  \item example input produces example reservoir response $\bm{r}_\text{train}(t)$
+  \item Goal: find $W_\text{out}$ such that
+    $$ \bm{y}_\text{train}(t) \approx W_\text{out}\;\bm{g}\left(\bm{r}_\text{train}\left(t\right)\right)$$
+  \item this is \emph{linear regression}! this is \emph{fast}!
+  \item usually, RCs use ridge regression
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Forecasting with an RC}
+  \begin{itemize}
+  \item for system forecasting, find $W_\text{out}$ such that
+    $$ \bm{u}_\text{train}(t) \approx W_\text{out}\;\bm{g}\left(\bm{r}_\text{train}\left(t\right)\right)$$
+  \item after training, feed output of RC back into itself as input
+  \end{itemize}
+  \centering
+  \includegraphics[width=0.6\textwidth]{figures/reservoir-predict}
+\end{frame}
+
+\begin{frame}{Evaluating an RC}
+  \begin{itemize}
+  \item use normalized root-mean-squared error (NRMSE),
+    $$ \epsilon = {\left(\sum_i\frac{\int \left| y_i(t) - y_{\text{test},i}(t) \right|^2 \;dt}{T \operatorname{Var}\left[y_{\text{test},i}(t)\right]}\right)}^{1/2} $$
+  \item for chaotic system forecasting, a forecast \emph{must} diverge eventually, so only calculate for 1 Lyapunov period ($\epsilon_1$)
+  \item if forecasting starts near an unstable part of the input system, small errors will amplify and $\epsilon_1$ is misleading
+  \item instead, perform $m$ forecasts and average the errors
+    $$ \tilde{\epsilon} = {\left( \frac{1}{m} \sum_{i=1}^m \epsilon_{1,i}^2 \right)}^{1/2} $$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Evaluating an RC}
+  \centering
+  \includegraphics[width=0.8\textwidth]{figures/nrmse-avg}
+\end{frame}
+
+\begin{frame}{Echo State Networks}
+  \begin{itemize}
+  \item use an \emph{untrained} neural network as reservoir
+  \item $N$ exponential decay nodes
+  \item each node has inputs drawn from $u(t)$ or other nodes
+  \item summed inputs pass through activation function $f$ to drive exponential
+  \end{itemize}
+  \centering
+  \begin{align*}
+    \dot{\bm{r}}(t) &= - \gamma \bm{r}(t) + \gamma \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;\bm{u}(t) \right) \\
+    \bm{y}(t) &= W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)
+  \end{align*}
+\end{frame}
+
+\begin{frame}{Echo State Networks}
+  \centering
+  \includegraphics[width=0.8\textwidth]{figures/reservoir}
+\end{frame}
+
+\begin{frame}{Constructing ESNs}
+  \begin{itemize}
+  \item $\gamma$ (node decay rate) is tuned to match input timescale
+  \item $f$ (activation function) is traditionally $\tanh$
+    \vspace{2em}
+  \item $W_r$ and $W_\text{in}$ chosen \emph{randomly}
+    \begin{itemize}
+    \item $k$, recurrent inputs for each node
+    \item $\rho_r$, spectral radius of $W_r$
+    \item $\sigma$, probability of external input per node
+    \item $\rho_\text{in}$, scale of $W_\text{in}$
+    \end{itemize}
+    \vspace{2em}
+  \item What reservoirs work well? What ESN parameters work well?
+  \item \emph{How much of this is necessary?}
+  \end{itemize}
+\end{frame}
 
 \section{Low-Connectivity Reservoirs}
 
