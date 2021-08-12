@@ -322,7 +322,7 @@
 
   {\small
     (i) overemphasizes lobe where $\epsilon_1$ resides \\
-    (ii) good short-term forecast, but falls into periodic orbit as $t \rightarrow \inf$}
+    (ii) good short-term forecast, but falls into periodic orbit as $t \rightarrow \infty$}
 \end{frame}
 
 \begin{frame}{Results}
@@ -369,9 +369,198 @@
 
 \tocframe
 
+\begin{frame}{NVARs are equivalent to ESNs}
+  \begin{itemize}
+  \item in 2020, Erik Bollt proved that a linear ESN ($f$ and $\bm{g}$ both identity functions) is equivalent to a \emph{vector auto-regression} (VAR)
+  \item shortly after, he extended this proof to equivalence between output-nonlinear ESNs ($\bm{g}$ nonlinear) and nonlinear VARs
+    \vspace{2em}
+  \item a full mathematical equivalence proof that (at least some) ESNs are exactly equivalent to combining time-delayed copies of the input!\usebeamercolor[fg]{frametitle}{!!}
+    \blfootnote{\fullcite{bollt2021}}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Nonlinear VARs}
+  \begin{itemize}
+  \item transforms an input $\bm{u}(t)$ into output $\bm{y}(t)$
+  \item given a time step $\Delta t$ and tap delays $\tau_0, \dots, \tau_{q-1}$, build
+    $$ \bm{v}(t + \Delta t) = \bm{u}(t - \tau_0 \Delta t) \oplus \bm{u}(t - \tau_1 \Delta t) \oplus \cdots \oplus \bm{u}(t - \tau_{q-1} \Delta t) $$
+  \item construct the output from a nonlinear function of $\bm{v}$,
+    $$ \bm{y}(t + \Delta t) = W_\text{out}\;\bm{g}_\text{n}\left(\bm{v}(t + \Delta t)\right) $$
+    \vspace{2em}
+    \item note similarity to RC approach: replace $\bm{r}(t)$ with $\bm{v}(t)$, and $\bm{g}(\bm{r})$ with $\bm{g}_\text{n}(\bm{v})$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Nonlinear VARs}
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/var-infer}
+\end{frame}
+
+\begin{frame}{Training and Testing}
+  \begin{itemize}
+  \item same process as for RCs!
+  \item feed in example input $\bm{u}_\text{train}(t)$ to produce $\bm{v}_\text{train}(t)$, then use ridge regression to find $W_\text{out}$
+  \item for forecasting, connect output to input as with RCs, but modify output slightly
+    $$ \bm{y}(t + \Delta t) = \bm{u}(t) + W_\text{out}\;\bm{g}_\text{n}\left(\bm{v}(t + \Delta t)\right) $$
+  \item testing also uses NRMSE $\epsilon$ and $\tilde{\epsilon}$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{$\bm{g}$ vs. $\bm{g}_\text{n}$}
+  \begin{itemize}
+  \item important: under equivalence, the $\bm{g}$ of the ESN is \emph{not} identical to $\bm{g}_\text{n}$
+  \item for an ESN with quadratic readout $\bm{g}(\bm{r})$
+    \begin{equation*}
+      g_i(\bm{r}) = \begin{cases}
+        r_i & \text{if } i \leq N, \\
+        r_{i - N}^2 & \text{if } N < i \leq 2N.
+      \end{cases}
+    \end{equation*}
+  \item equivalent NVAR $\bm{g}_\text{n}(\bm{v})$ has all possible linear and quadratic terms of components of $\bm{v}$
+    $$ \bm{g}_\text{n}(\bm{v}) = \bm{v} \oplus \ceil{\bm{v} \otimes \bm{v}} $$
+  \item this suggests an easy extension: keep adding higher order terms to $\bm{g}_\text{n}$ until NVAR works
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Practical Considerations}
+  \begin{itemize}
+  \item NVARs are equivalent to ESNs, but completely sidestep the issue of choosing a network
+  \item replace reservoir with simple time-delay taps
+  \item why ever use an ESN if an NVAR will work?
+    \vspace{2em}
+  \item for $q$ taps, $d$ input dimensions, and $n$-degree polynomial terms, $W_\text{out}$ has to fit $(qd)^n$ components
+  \item mathematically, equivalence only holds for \emph{infinite taps} ($q \rightarrow \infty$)
+  \item are NVARs still useful for low $q$ and low $n$?
+  \end{itemize}
+\end{frame}
+
 \section{NVARs in Practice}
 
 \tocframe
+
+\begin{frame}{NVARs in Practice}
+  Low-tap, low-degree NVARs perform well on
+  \begin{itemize}
+  \item Lorenz '63 state inference
+  \item Lorenz '63 forecasting
+  \item double-scroll circuit forecasting
+  \item Mackey-Glass forecasting
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Lorenz '63 State Inference}
+  \begin{itemize}
+  \item Goal: infer Lorenz $z$ from $x$ and $y$
+  \item four taps, $\tau_0 = 0$, $\tau_1 = 5$, $\tau_2 = 10$, $\tau_3 = 15$
+  \item $\Delta t = 0.05$ (20 points per Lyapunov period)
+  \item $\bm{g}_\text{n}$ includes constant, linear, and quadratic terms
+    $$ \bm{g}_\text{n}(\bm{v}) = 1 \oplus \bm{v} \oplus \ceil{\bm{v} \otimes \bm{v}} $$
+  \item train on 20 time units (400 data points)
+  \item evaluate on 45 time units (900 data points)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Lorenz '63 State Inference Results}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{figures/nvar-infer-lorenz-testing}
+  \end{center}
+  \begin{itemize}
+  \item NRMSE $\epsilon = 1.75\pm0.3\times10^{-2}$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Lorenz '63 Forecasting}
+  \begin{itemize}
+  \item Goal: forecasting on Lorenz $x$, $y$, and $z$
+  \item two taps, $\tau_0 = 0$ and $\tau_1 = 1$
+  \item $\Delta t = 0.025$ (40 points per Lyapunov period)
+  \item $\bm{g}_\text{n}$ includes constant, linear, and quadratic terms
+    $$ \bm{g}_\text{n}(\bm{v}) = 1 \oplus \bm{v} \oplus \ceil{\bm{v} \otimes \bm{v}} $$
+  \item train on 10 time units (400 data points)
+  \item evaluate $\tilde{\epsilon}$ with 10 trials of $\epsilon_1$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Lorenz '63 Forecasting Results}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{figures/nvar-predict-lorenz}
+  \end{center}
+  \begin{itemize}
+  \item NRMSE $\tilde{\epsilon} = 4.51\pm0.85\times10^{-3}$
+  (~5$\times$ better than ESNs earlier!)
+  \end{itemize}
+\end{frame}
+
+% put rmap here if needed
+
+\begin{frame}{Lorenz '63 Forecasting $W_\text{out}$}
+  \begin{columns}
+    \column{0.4\textwidth}
+    \begin{itemize}
+    \item Lorenz vector field is quadratic
+    \item is NVAR only working because it has matching quadratic terms?
+    \item \textbf{No.} Terms in Lorenz (in red) are not favored over others.
+    \end{itemize}
+    \column{0.6\textwidth}
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/nvar-predict-lorenz-wout}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Double-Scroll Forecasting}
+  \begin{itemize}
+  \item Goal: forecasting for double-scroll circuit
+  \item two taps, $\tau_0 = 0$ and $\tau_1 = 1$
+  \item $\Delta t = 0.25$ (40 points per Lyapunov period)
+  \item $\bm{g}_\text{n}$ includes linear and cubic terms, to match symmetry
+    $$ \bm{g}_\text{n}(\bm{v}) = \bm{v} \oplus \ceil{\bm{v} \otimes \bm{v} \otimes \bm{v}} $$
+  \item train on 100 time units (400 data points)
+  \item evaluate $\tilde{\epsilon}$ with 10 trials of $\epsilon_1$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Double-Scroll Forecasting Results}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{figures/nvar-predict-dscroll}
+  \end{center}
+  \begin{itemize}
+  \item NRMSE $\tilde{\epsilon} = 2.15\pm0.63\times10^{-2}$
+  (~1.5$\times$ better)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Mackey-Glass Forecasting}
+  \begin{itemize}
+  \item Goal: forecasting for Mackey-Glass system
+  \item four taps, $\tau_0 = 0$, $\tau_1 = 1$, $\tau_2 = \floor{17/2\Delta t}$, $\tau_3 = \tau_2 + 1$
+  \item $\Delta t = 0.2$ (500 points per Lyapunov period)
+  \item $\bm{g}_\text{n}$ includes constant up to cubic terms
+    $$ \bm{g}_\text{n}(\bm{v}) = 1 \oplus \bm{v} \oplus \ceil{\bm{v} \otimes \bm{v}} \oplus \ceil{\bm{v} \otimes \bm{v} \otimes \bm{v}} $$
+  \item train on 1000 time units (5000 data points\emph{!})
+  \item evaluate $\tilde{\epsilon}$ with 10 trials of $\epsilon_1$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Mackey-Glass Forecasting Results}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{figures/nvar-predict-mackey-glass}
+  \end{center}
+  \begin{itemize}
+  \item NRMSE $\tilde{\epsilon} = 5.77\pm0.42\times10^{-2}$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Conclusion}
+  \begin{itemize}
+  \item NVARs have comparable performance to ESNs on Lorenz '63 and double-scroll circuit
+  \item only need a few taps and low-order nonlinearity
+  \item careful tap positioning can aid in keeping number of taps low
+    \vspace{2em}
+  \item not quite as great on Mackey-Glass
+  \item $\bm{g}_\text{n}$ needs access to higher order terms without exponential explosion in size of $W_\text{out}$
+  \item possible future research: using full nonlinear functions, rather than monomial terms
+  \end{itemize}
+\end{frame}
 
 \section{Conclusion}
 
