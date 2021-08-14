@@ -94,60 +94,43 @@
 \setbeamertemplate{navigation symbols}{\textcolor{osured}{\tiny\insertframenumber\,/\,\inserttotalframenumber}}
 
 \section{Introduction}
-% why RC? use word 'examples'
 
-\frame{\tableofcontents[hideallsubsections]}
-
-\begin{frame}{Machine Learning and Neural Networks}
+\begin{frame}{What are Reservoir Computers?}
   \begin{columns}
-    \column{0.5\textwidth}
+    \column{0.4\textwidth}
     \begin{itemize}
-    \item neural networks are universal models
-    \item learn relationship between input and output from example data
-    \item very useful if this relationship is unknown, but examples are easy to find
-    \item canonical example: learn how to turn images of digits into labels
+    \item reservoir computers learn how to transform an input signal into an output signal, by example
+    \item perform system forecasting, by example
+      \vspace{2em}
+    \item perform system control, by example\footnote[frame]{\fullcite{canaday2020}}
     \end{itemize}
-    \column{0.5\textwidth}
+    \column{0.6\textwidth}
     \centering
-    \includegraphics[width=0.7\textwidth]{figures/mnist.png}
+    \includegraphics[width=0.95\textwidth]{figures/prediction-example}
   \end{columns}
 \end{frame}
 
-\begin{frame}{Machine Learning in Physics}
+\begin{frame}{Compared to other ML Techniques}
+  Reservoir computers...
   \begin{itemize}
-  \item Elsewhere:
-    \begin{itemize}
-    \item find masses of particles from decay data\footnote{\fullcite{lonnblad1992}}
-    \item separate quark and gluon jets in $e^+ e^-$ annihilation\footnote{\fullcite{csabai1991}}
-    \end{itemize}
-  \item In this presentation:
-    \begin{itemize}
-    \item \textbf{system state inference}: given $x(t)$ and $y(t)$, find $z(t)$
-    \item \textbf{chaotic system forecasting}: given the beginning of a signal $u(t)$, what happens after?
-    \end{itemize}
+  \item train very quickly via linear regression
+  \item do not require much data
+  \item naturally handle time-varying signals
+    \vspace{2em}
+  \item use an internal dynamic system to do computation
+  \item have interesting hardware implementations
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Chaotic System Forecasting}
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/prediction-example}
-\end{frame}
-
-\begin{frame}{The Problem with Neural Networks}
+\begin{frame}{Questions Answered in the next 30 Minutes}
   \begin{itemize}
-  \item very expensive to train
-    \begin{itemize}
-    \item data hungry: require many examples
-    \item deep networks take longer to train: ``vanishing gradient problem''
-    \end{itemize}
-  \item alternative: \textbf{Reservoir Computers}
-    \begin{itemize}
-    \item quick training
-    \item physical interpretation
-    \item physical implementation
-    \end{itemize}
+  \item What is a reservoir computer?
+  \item How simple can I make an RC before it stops working?
+  \item What parts of an RC are essential for function?
   \end{itemize}
 \end{frame}
+
+\frame{\tableofcontents[hideallsubsections]}
 
 \section{Reservoir Computing}
 
