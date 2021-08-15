@@ -97,53 +97,82 @@
 
 \section{Chapter 1: Introduction}
 
-%% \begin{frame}{What are Reservoir Computers?}
-%%   \begin{columns}
-%%     \column{0.4\textwidth}
-%%     \begin{itemize}
-%%     \item reservoir computers learn how to transform an input signal into an output signal, by example
-%%     \item perform system forecasting, by example
-%%       \vspace{2em}
-%%     \item perform system control, by example\footnote[frame]{\fullcite{canaday2020}}
-%%     \end{itemize}
-%%     \column{0.6\textwidth}
-%%     \centering
-%%     \includegraphics[width=0.95\textwidth]{figures/prediction-example}
-%%   \end{columns}
-%% \end{frame}
+\begin{frame}{What are Reservoir Computers?}
+  \begin{columns}
+    \column{0.5\textwidth}
+    Reservoir computers learn by example how to...
+    \begin{itemize}
+    \item transform an input signal into an output signal
+    \item perform system forecasting
+      \vspace{2em}
+    \item perform system control\footnote[frame]{\fullcite{canaday2020}}
+    \end{itemize}
+    \column{0.5\textwidth}
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/prediction-example}
+  \end{columns}
+\end{frame}
 
-%% \begin{frame}{Compared to other ML Techniques}
-%%   Reservoir computers...
-%%   \begin{itemize}
-%%   \item train very quickly via linear regression
-%%   \item do not require much data
-%%   \item naturally handle time-varying signals
-%%     \vspace{2em}
-%%   \item use an internal dynamic system to do computation
-%%   \item have interesting hardware implementations
-%%   \end{itemize}
-%% \end{frame}
+\begin{frame}{Compared to other ML Techniques}
+  \begin{columns}
+    \column{0.6\textwidth}
+  Reservoir computers...
+  \begin{itemize}
+  \item train very quickly via linear regression
+  \item do not require much data
+    \vspace{2em}
+  \item naturally handle time-varying signals
+  \item use an internal dynamic system to do computation
+  \item have interesting hardware implementations
+  \end{itemize}
+  \column{0.4\textwidth}
+  \centering
+      \includegraphics[width=1.0\textwidth]{figures/reservoir}
+      \end{columns}
+\end{frame}
 
 \begin{frame}{Questions Answered in the next 30 Minutes}
   \begin{itemize}
   \item What is a reservoir computer?
+  \end{itemize}
+  \vspace{1em}
+  {\usebeamercolor[fg]{frametitle}{Contributions:}}
+  \begin{itemize}
   \item How simple can I make an RC before it stops working?
   \item What parts of an RC are essential for function?
   \end{itemize}
+  \centering
+  \begin{columns}
+    \column{0.6\textwidth}
+    \begin{enumerate}
+    \item Introduction
+    \item Reservoir Computing
+    \item \textbf{Low-Connectivity Reservoirs}
+    \item RCs without Reservoirs: NVARs
+    \item \textbf{NVARs in Practice}
+    \item Conclusion
+    \end{enumerate}
+    \column{0.4\textwidth}
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/topology-b}
+  \end{columns}
   % needed for... TeX reasons
-  \blfootnote{}
+  %\blfootnote{}
 \end{frame}
 
-\frame{\tableofcontents[hideallsubsections]}
+%\frame{\tableofcontents[hideallsubsections]}
 
 \begin{frame}{Publications}
   \begin{itemize}
-  \item {\usebeamercolor[fg]{frametitle}{Chapter 3}} \\
-    A.~Griffith, A.~Pomerance, and D.~J.~Gauthier, ``Forecasting chaotic systems with very low connectivity reservoir computers,'' \href{https://doi.org/10.1063/1.5120710}{Chaos \textbf{29}, 123108 (2019)}.
-  \item {\usebeamercolor[fg]{frametitle}{Chapter 5}} \\
-    D.~J.~Gauthier, E.~Bollt, A.~Griffith, W.~A.~S.~Barbosa, ``Next generation reservoir computing,'' \href{https://arxiv.org/abs/2106.07688}{(2021), arXiv:2106.07688~[cs.LG]}.
-  \item D.~Canaday, A.~Griffith, and D.~J.~Gauthier, ``Rapid time series prediction with a hardware-based reservoir computer,'' \href{https://doi.org/10.1063/1.5048199}{Chaos \textbf{28}, 123119 (2018)}.
-    \item W.~A.~S.~Barbosa, A.~Griffith, G.~E.~Rowlands, L.~C.~G.~Govia, G.~J.~Ribeill, M.-H.~Nguyen, T.~A.~Ohki, and D.~J.~Gauthier, ``Symmetry-aware reservoir computing,'' \href{https://arxiv.org/abs/2102.00310}{(2021), arXiv:2102.00310~[cs.NE]}.
+  \item {\usebeamercolor[fg]{frametitle}{Chapter 3: Low-Connectivity Reservoirs}} \\
+    {\small A.~Griffith, A.~Pomerance, and D.~J.~Gauthier, ``Forecasting chaotic systems with very low connectivity reservoir computers,'' \href{https://doi.org/10.1063/1.5120710}{Chaos \textbf{29}, 123108 (2019)}.}
+    \vspace{0.5em}
+  \item {\usebeamercolor[fg]{frametitle}{Chapter 5: NVARs in Practice}} \\
+    {\small D.~J.~Gauthier, E.~Bollt, A.~Griffith, W.~A.~S.~Barbosa, ``Next generation reservoir computing,'' \href{https://arxiv.org/abs/2106.07688}{(2021), arXiv:2106.07688~[cs.LG]}.}
+      \vspace{0.5em}
+    \item {\small D.~Canaday, A.~Griffith, and D.~J.~Gauthier, ``Rapid time series prediction with a hardware-based reservoir computer,'' \href{https://doi.org/10.1063/1.5048199}{Chaos \textbf{28}, 123119 (2018)}.}
+      \vspace{0.5em}
+    \item {\small W.~A.~S.~Barbosa, A.~Griffith, G.~E.~Rowlands, L.~C.~G.~Govia, G.~J.~Ribeill, M.-H.~Nguyen, T.~A.~Ohki, and D.~J.~Gauthier, ``Symmetry-aware reservoir computing,'' \href{https://arxiv.org/abs/2102.00310}{(2021), arXiv:2102.00310~[cs.NE]}.}
 
   %% \item {\usebeamercolor[fg]{frametitle}{Chapter 3}} \\ \fullcite{griffith2019}
   %% \item {\usebeamercolor[fg]{frametitle}{Chapter 5}} \\ \fullcite{gauthier2021}
@@ -171,12 +200,16 @@
 
 \subsection{2.3 Echo State Networks}
 \begin{frame}{What System to use as Reservoir?}
-  \begin{itemize}
-  \item One common choice: an Echo State Network
-    \vspace{1em}
-  \end{itemize}
-  \centering
-  \includegraphics[width=0.6\textwidth]{figures/reservoir}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \begin{itemize}
+    \item one common choice: a Echo State Network
+    \item network should$^*$ be recurrent\footnote[frame]{\fullcite{jaeger2001}}
+    \end{itemize}
+    \column{0.5\textwidth}
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/reservoir}
+  \end{columns}
   \begin{align*}
     \dot{\bm{r}}(t) &= - \gamma \bm{r}(t) + \gamma \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;\bm{u}(t) \right) \\
     \bm{y}(t) &= W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)
@@ -190,6 +223,7 @@
 
 \subsection{2.1 Training an RC}
 \begin{frame}{Training an RC}
+  % FIXME illustration?
   \begin{itemize}
   \item use example input $\bm{u}_\text{train}(t)$ and example output $\bm{y}_\text{train}(t)$
   \item example input produces example reservoir response $\bm{r}_\text{train}(t)$
@@ -223,10 +257,10 @@
     \centering
     \includegraphics[width=1.0\textwidth]{figures/nrmse-avg}
   \end{columns}
-  \vspace{2em}
+  \vspace{1em}
   \begin{itemize}
   \item $\epsilon_1$ is misleading: if forecasting starts near an unstable part of the input system, small errors are amplified
-  \item instead, perform $m$ forecasts and average the errors into $\tilde{\epsilon}$
+  \item {\usebeamercolor[fg]{frametitle}{Contribution:}}\footnote{\fullcite{griffith2019}} perform $m$ forecasts and average the errors into $\tilde{\epsilon}$
   \end{itemize}
 \end{frame}
 
@@ -334,16 +368,16 @@
 %%   \includegraphics[width=0.7\textwidth]{figures/lorenz-symmetry}
 %% \end{frame}
 
-\subsection{3.4 Training, Forecasting, and Evaluation}
-\begin{frame}{Along the Way: $\epsilon_1$ vs. $\tilde{\epsilon}$}
-  \begin{center}
-    \includegraphics[width=0.7\textwidth]{figures/epsilon-failure}
-  \end{center}
+%% \subsection{3.4 Training, Forecasting, and Evaluation}
+%% \begin{frame}{Along the Way: $\epsilon_1$ vs. $\tilde{\epsilon}$}
+%%   \begin{center}
+%%     \includegraphics[width=0.7\textwidth]{figures/epsilon-failure}
+%%   \end{center}
 
-  {\small
-    (i) overemphasizes lobe where $\epsilon_1$ resides \\
-    (ii) good short-term forecast, but falls into periodic orbit as $t \rightarrow \infty$}
-\end{frame}
+%%   {\small
+%%     (i) overemphasizes lobe where $\epsilon_1$ resides \\
+%%     (ii) good short-term forecast, but falls into periodic orbit as $t \rightarrow \infty$}
+%% \end{frame}
 
 \subsection{3.5 Results}
 \begin{frame}{Results}
@@ -352,7 +386,7 @@
   \item in the end, have one ESN from each structure type that performs well
   \item they all perform the same!
   \end{itemize}
-  \vspace{3em}
+  \vspace{2em}
   \centering
   \begin{tabularx}{\linewidth}{l l@{\extracolsep{\fill}} l}
     & Structure & $\tilde{\epsilon}$ \\
@@ -364,13 +398,13 @@
     (e) & line & 0.024 $\pm$ 0.003$^*$ \\
   \end{tabularx}
   \vspace{3em}
-  $^*$ \emph{no recurrence in network!}
+  $^*$ \emph{no recurrence in network!} (against conventional wisdom)
 \end{frame}
 
-\begin{frame}{Results}
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/lowk-attractors}
-\end{frame}
+%% \begin{frame}{Results}
+%%   \centering
+%%   \includegraphics[width=0.7\textwidth]{figures/lowk-attractors}
+%% \end{frame}
 
 %% \subsection{3.5.2 ESN Variation}
 %% \begin{frame}{ESN Variation}
@@ -384,12 +418,17 @@
 \subsection{3.6 Conclusion}
 \begin{frame}{Conclusion}
   \begin{itemize}
-  \item $\tilde{\epsilon}$ captures forecasting quality more reliably than $\epsilon_1$
   \item very simple ESNs can perform as well as ESNs with more complicated connectivity
-  \item this is still true even when the network is a single cycle, or a line
   \item however, well-performing simple ESNs are harder to find
-    \vspace{3em}
-  \item If line networks work well... maybe all the network does is combine time-delayed copies of the input?
+  \item line networks work well -- so how do line networks behave?
+  \end{itemize}
+  \begin{center}
+    % FIXME line network with inputs
+    \includegraphics[draft,width=\textwidth,height=4em]{figures/lorenz}
+  \end{center}
+  \begin{itemize}
+  \item each node has finite rise/fall time, and delays inputs
+  \item a line network creates many time-delayed copies of the input and combines them
   \end{itemize}
 \end{frame}
 
@@ -610,17 +649,17 @@
 \tocframe
 
 \begin{frame}{Conclusion}
-  Topics for future research:
-  \begin{itemize}
-  \item a measure to directly compare forecasted attractors to true
-  \item a method to include higher-order nonlinearity in an NVAR without an exponential increase in size of $W_\text{out}$
-  \item any task previously done with an RC should be attempted with an NVAR -- both success and failure would be interesting!
-  \end{itemize}
   \vspace{2em}
   Take-aways:
   \begin{itemize}
   \item ESNs are often more complicated than necessary
-    \item for any task where you would use an ESN, try an NVAR first. They are \emph{so much simpler}.
+  \item NVARs are ESNs without any extra steps. Always try an NVAR first!
+  \end{itemize}
+  Topics for future research:
+  \begin{itemize}
+  \item any task previously done with an RC should be attempted with an NVAR -- both success and failure would be interesting!
+  \item for ML, reframes VARs in a reservoir computing framework.
+  \item for Physics, get a new simple ML approach that works well on physical problems
   \end{itemize}
 \end{frame}
 
