@@ -23,6 +23,8 @@
 \usetheme{osu}
 \hypersetup{hidelinks}
 \bibliography{thesis.bib}
+% https://latex.org/forum/viewtopic.php?t=25601
+\setbeamertemplate{section in toc}{$\bullet$ \inserttocsection}
 % https://tex.stackexchange.com/questions/10102/multiple-references-to-the-same-footnote-with-hyperref-support-is-there-a-bett/10116#10116
 \crefformat{footnote}{#2\footnotemark[#1]#3}
 % http://tex.stackexchange.com/questions/21913/how-can-i-change-the-footnote-line-thickness-length
@@ -93,7 +95,7 @@
 % https://tex.stackexchange.com/questions/434923/frame-number-does-not-work-since-ubuntu-update?noredirect=1&lq=1
 \setbeamertemplate{navigation symbols}{\textcolor{osured}{\tiny\insertframenumber\,/\,\inserttotalframenumber}}
 
-\section{Introduction}
+\section{Chapter 1: Introduction}
 
 \begin{frame}{What are Reservoir Computers?}
   \begin{columns}
@@ -132,7 +134,24 @@
 
 \frame{\tableofcontents[hideallsubsections]}
 
-\section{Reservoir Computing}
+\begin{frame}{Publications}
+  \begin{itemize}
+  \item {\usebeamercolor[fg]{frametitle}{Chapter 3}} \\
+    A.~Griffith, A.~Pomerance, and D.~J.~Gauthier, ``Forecasting chaotic systems with very low connectivity reservoir computers,'' \href{https://doi.org/10.1063/1.5120710}{Chaos \textbf{29}, 123108 (2019)}.
+  \item {\usebeamercolor[fg]{frametitle}{Chapter 5}} \\
+    D.~J.~Gauthier, E.~Bollt, A.~Griffith, W.~A.~S.~Barbosa, ``Next generation reservoir computing,'' \href{https://arxiv.org/abs/2106.07688}{(2021), arXiv:2106.07688~[cs.LG]}.
+  \item D.~Canaday, A.~Griffith, and D.~J.~Gauthier, ``Rapid time series prediction with a hardware-based reservoir computer,'' \href{https://doi.org/10.1063/1.5048199}{Chaos \textbf{28}, 123119 (2018)}.
+    \item W.~A.~S.~Barbosa, A.~Griffith, G.~E.~Rowlands, L.~C.~G.~Govia, G.~J.~Ribeill, M.-H.~Nguyen, T.~A.~Ohki, and D.~J.~Gauthier, ``Symmetry-aware reservoir computing,'' \href{https://arxiv.org/abs/2102.00310}{(2021), arXiv:2102.00310~[cs.NE]}.
+
+  %% \item {\usebeamercolor[fg]{frametitle}{Chapter 3}} \\ \fullcite{griffith2019}
+  %% \item {\usebeamercolor[fg]{frametitle}{Chapter 5}} \\ \fullcite{gauthier2021}
+  %%   \vspace{1em}
+  %% \item \fullcite{canaday2018}
+  %% \item \fullcite{barbosa2021}
+  \end{itemize}
+\end{frame}
+
+\section{Chapter 2: Reservoir Computing}
 
 \tocframe
 
@@ -153,6 +172,7 @@
   \includegraphics[width=0.8\textwidth]{figures/reservoir-generic}
 \end{frame}
 
+\subsection{2.1 Training an RC}
 \begin{frame}{Training an RC}
   \begin{itemize}
   \item use example input $\bm{u}_\text{train}(t)$ and example output $\bm{y}_\text{train}(t)$
@@ -164,6 +184,7 @@
   \end{itemize}
 \end{frame}
 
+\subsection{2.2 Forecasting with an RC}
 \begin{frame}{Forecasting with an RC}
   \begin{itemize}
   \item for system forecasting, find $W_\text{out}$ such that
@@ -174,6 +195,7 @@
   \includegraphics[width=0.6\textwidth]{figures/reservoir-predict}
 \end{frame}
 
+\subsection{2.6 Evaluating Reservoirs}
 \begin{frame}{Evaluating an RC}
   \begin{itemize}
   \item use normalized root-mean-squared error (NRMSE),
@@ -190,6 +212,7 @@
   \includegraphics[width=0.8\textwidth]{figures/nrmse-avg}
 \end{frame}
 
+\subsection{2.3 Echo State Networks}
 \begin{frame}{One Reservoir Choice: Echo State Networks}
   \begin{itemize}
   \item what system to use for reservoir?
@@ -212,6 +235,7 @@
   \includegraphics[width=0.8\textwidth]{figures/reservoir}
 \end{frame}
 
+\subsection{2.4 Constructing ESNs}
 \begin{frame}{Constructing ESNs}
   \begin{itemize}
   \item $\gamma$ (node decay rate) is tuned to match input timescale
@@ -231,7 +255,7 @@
   \end{itemize}
 \end{frame}
 
-\section{Low-Connectivity Reservoirs}
+\section{Chapter 3: Low-Connectivity Reservoirs}
 
 \tocframe
 
@@ -256,6 +280,7 @@
     \end{columns}
 \end{frame}
 
+\subsection{3.2 Structure of Low-Connectivity Reservoirs}
 \begin{frame}{Surprise!}
   \begin{columns}
     \column{0.6\textwidth}
@@ -286,6 +311,7 @@
   \end{columns}
 \end{frame}
 
+\subsection{3.4 Training, Forecasting, and Evaluation}
 \begin{frame}{Training, Forecasting, and Evaluation}
   \begin{itemize}
   \item for each structure, I search for the parameters to optimize $\tilde{\epsilon}$ on Lorenz forecasting
@@ -301,6 +327,7 @@
   \end{itemize}
 \end{frame}
 
+\subsection{3.3 ESN Symmetries and their Consequences}
 \begin{frame}{Along the Way: ESN~Symmetries~and~their~Consequences}
   \begin{itemize}
   \item when $f = \tanh$ and $\bm{g}(\bm{r}) = \bm{r}$, ESN forecast equation has $\bm{r} \rightarrow -\bm{r}$ and $\bm{y} \rightarrow -\bm{y}$ symmetry
@@ -324,6 +351,7 @@
   \includegraphics[width=0.7\textwidth]{figures/lorenz-symmetry}
 \end{frame}
 
+\subsection{3.4 Training, Forecasting, and Evaluation}
 \begin{frame}{Along the Way: $\epsilon_1$ vs. $\tilde{\epsilon}$}
   \begin{center}
     \includegraphics[width=0.7\textwidth]{figures/epsilon-failure}
@@ -334,6 +362,7 @@
     (ii) good short-term forecast, but falls into periodic orbit as $t \rightarrow \infty$}
 \end{frame}
 
+\subsection{3.5 Results}
 \begin{frame}{Results}
   \centering
   \begin{tabularx}{\linewidth}{l l@{\extracolsep{\fill}} l}
@@ -355,6 +384,7 @@
   \includegraphics[width=0.7\textwidth]{figures/lowk-attractors}
 \end{frame}
 
+\subsection{3.5.2 ESN Variation}
 \begin{frame}{ESN Variation}
   \begin{itemize}
     \item ESN construction is random -- what if I re-generate a network with the same parameters as best performers?
@@ -363,6 +393,7 @@
   \includegraphics[width=0.7\textwidth]{figures/epsilon-distribution}
 \end{frame}
 
+\subsection{3.6 Conclusion}
 \begin{frame}{Conclusion}
   \begin{itemize}
   \item $\tilde{\epsilon}$ captures forecasting quality more reliably than $\epsilon_1$
@@ -374,7 +405,7 @@
   \end{itemize}
 \end{frame}
 
-\section{RCs without Reservoirs: NVARs}
+\section{Chapter 4: RCs without Reservoirs: NVARs}
 
 \tocframe
 
@@ -388,6 +419,7 @@
   \end{itemize}
 \end{frame}
 
+\subsection{4.3 Nonlinear Vector Autoregressions (NVARs)}
 \begin{frame}{What is a Nonlinear VAR?}
   \begin{itemize}
   \item transforms an input $\bm{u}(t)$ into output $\bm{y}(t)$ via a time-delay vector $\bm{v}(t)$
@@ -431,6 +463,7 @@
   \end{itemize}
 \end{frame}
 
+\subsection{4.4 Practical Considerations}
 \begin{frame}{Practical Considerations}
   \begin{itemize}
   \item NVARs are equivalent to ESNs, but completely sidestep the issue of choosing a network
@@ -443,7 +476,7 @@
   \end{itemize}
 \end{frame}
 
-\section{NVARs in Practice}
+\section{Chapter 5: NVARs in Practice}
 
 \tocframe
 
@@ -459,6 +492,7 @@
   This is a whirlwind tour -- more details in my dissertation.
 \end{frame}
 
+\subsection{5.1 State Inference with Lorenz '63}
 \begin{frame}{Lorenz '63 State Inference}
   \begin{itemize}
   \item Goal: infer Lorenz $z$ from $x$ and $y$
@@ -482,6 +516,7 @@
   \end{itemize}
 \end{frame}
 
+\subsection{5.2 Forecasting Lorenz '63}
 \begin{frame}{Lorenz '63 Forecasting}
   \begin{itemize}
   \item Goal: forecasting on Lorenz $x$, $y$, and $z$
@@ -506,6 +541,7 @@
 
 % put rmap here if needed
 
+\subsection{5.2.3 Output Weights}
 \begin{frame}{Lorenz '63 Forecasting $W_\text{out}$}
   \begin{columns}
     \column{0.4\textwidth}
@@ -520,6 +556,7 @@
   \end{columns}
 \end{frame}
 
+\subsection{5.3 Forecasting the Double-Scroll Circuit}
 \begin{frame}{Double-Scroll Forecasting}
   \begin{itemize}
   \item Goal: forecasting for double-scroll circuit
@@ -542,6 +579,7 @@
   \end{itemize}
 \end{frame}
 
+\subsection{5.4 Forecasting Mackey-Glass}
 \begin{frame}{Mackey-Glass Forecasting}
   \begin{itemize}
   \item Goal: forecasting for Mackey-Glass system
@@ -563,6 +601,7 @@
   \end{itemize}
 \end{frame}
 
+\subsection{5.5 Conclusion}
 \begin{frame}{Conclusion}
   \begin{itemize}
   \item NVARs have comparable performance to ESNs on Lorenz '63 and double-scroll circuit
@@ -575,7 +614,7 @@
   \end{itemize}
 \end{frame}
 
-\section{Conclusion}
+\section{Chapter 6: Conclusion}
 
 \tocframe
 
