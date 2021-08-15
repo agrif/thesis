@@ -97,32 +97,32 @@
 
 \section{Chapter 1: Introduction}
 
-\begin{frame}{What are Reservoir Computers?}
-  \begin{columns}
-    \column{0.4\textwidth}
-    \begin{itemize}
-    \item reservoir computers learn how to transform an input signal into an output signal, by example
-    \item perform system forecasting, by example
-      \vspace{2em}
-    \item perform system control, by example\footnote[frame]{\fullcite{canaday2020}}
-    \end{itemize}
-    \column{0.6\textwidth}
-    \centering
-    \includegraphics[width=0.95\textwidth]{figures/prediction-example}
-  \end{columns}
-\end{frame}
+%% \begin{frame}{What are Reservoir Computers?}
+%%   \begin{columns}
+%%     \column{0.4\textwidth}
+%%     \begin{itemize}
+%%     \item reservoir computers learn how to transform an input signal into an output signal, by example
+%%     \item perform system forecasting, by example
+%%       \vspace{2em}
+%%     \item perform system control, by example\footnote[frame]{\fullcite{canaday2020}}
+%%     \end{itemize}
+%%     \column{0.6\textwidth}
+%%     \centering
+%%     \includegraphics[width=0.95\textwidth]{figures/prediction-example}
+%%   \end{columns}
+%% \end{frame}
 
-\begin{frame}{Compared to other ML Techniques}
-  Reservoir computers...
-  \begin{itemize}
-  \item train very quickly via linear regression
-  \item do not require much data
-  \item naturally handle time-varying signals
-    \vspace{2em}
-  \item use an internal dynamic system to do computation
-  \item have interesting hardware implementations
-  \end{itemize}
-\end{frame}
+%% \begin{frame}{Compared to other ML Techniques}
+%%   Reservoir computers...
+%%   \begin{itemize}
+%%   \item train very quickly via linear regression
+%%   \item do not require much data
+%%   \item naturally handle time-varying signals
+%%     \vspace{2em}
+%%   \item use an internal dynamic system to do computation
+%%   \item have interesting hardware implementations
+%%   \end{itemize}
+%% \end{frame}
 
 \begin{frame}{Questions Answered in the next 30 Minutes}
   \begin{itemize}
@@ -130,6 +130,8 @@
   \item How simple can I make an RC before it stops working?
   \item What parts of an RC are essential for function?
   \end{itemize}
+  % needed for... TeX reasons
+  \blfootnote{}
 \end{frame}
 
 \frame{\tableofcontents[hideallsubsections]}
@@ -167,10 +169,24 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Reservoir Computer Overview}
+\subsection{2.3 Echo State Networks}
+\begin{frame}{What System to use as Reservoir?}
+  \begin{itemize}
+  \item One common choice: an Echo State Network
+    \vspace{1em}
+  \end{itemize}
   \centering
-  \includegraphics[width=0.8\textwidth]{figures/reservoir-generic}
+  \includegraphics[width=0.6\textwidth]{figures/reservoir}
+  \begin{align*}
+    \dot{\bm{r}}(t) &= - \gamma \bm{r}(t) + \gamma \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;\bm{u}(t) \right) \\
+    \bm{y}(t) &= W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)
+  \end{align*}
 \end{frame}
+
+%\begin{frame}{Reservoir Computer Overview}
+%  \centering
+%  \includegraphics[width=0.8\textwidth]{figures/reservoir-generic}
+%\end{frame}
 
 \subsection{2.1 Training an RC}
 \begin{frame}{Training an RC}
@@ -197,42 +213,21 @@
 
 \subsection{2.6 Evaluating Reservoirs}
 \begin{frame}{Evaluating an RC}
+  \begin{columns}
+    \column{0.5\textwidth}
+    \begin{itemize}
+    \item use normalized root-mean-squared error (NRMSE)
+    \item for chaotic system forecasting, a forecast \emph{must} diverge eventually, so only calculate for 1 Lyapunov period ($\epsilon_1$)
+    \end{itemize}
+    \column{0.5\textwidth}
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/nrmse-avg}
+  \end{columns}
+  \vspace{2em}
   \begin{itemize}
-  \item use normalized root-mean-squared error (NRMSE),
-    $$ \epsilon = {\left(\sum_i\frac{\int \left| y_i(t) - y_{\text{test},i}(t) \right|^2 \;dt}{T \operatorname{Var}\left[y_{\text{test},i}(t)\right]}\right)}^{1/2} $$
-  \item for chaotic system forecasting, a forecast \emph{must} diverge eventually, so only calculate for 1 Lyapunov period ($\epsilon_1$)
   \item $\epsilon_1$ is misleading: if forecasting starts near an unstable part of the input system, small errors are amplified
-  \item instead, perform $m$ forecasts and average the errors
-    $$ \tilde{\epsilon} = {\left( \frac{1}{m} \sum_{i=1}^m \epsilon_{1,i}^2 \right)}^{1/2} $$
+  \item instead, perform $m$ forecasts and average the errors into $\tilde{\epsilon}$
   \end{itemize}
-\end{frame}
-
-\begin{frame}{Evaluating an RC}
-  \centering
-  \includegraphics[width=0.8\textwidth]{figures/nrmse-avg}
-\end{frame}
-
-\subsection{2.3 Echo State Networks}
-\begin{frame}{One Reservoir Choice: Echo State Networks}
-  \begin{itemize}
-  \item what system to use for reservoir?
-    \vspace{2em}
-  \item One common choice: use an \emph{untrained} neural network as reservoir
-  \item $N$ exponential decay nodes
-  \item each node has inputs drawn from $u(t)$ or other nodes
-  \item summed inputs pass through activation function $f$ to drive exponential
-  \item network is (usually) \emph{recurrent}
-  \end{itemize}
-  \centering
-  \begin{align*}
-    \dot{\bm{r}}(t) &= - \gamma \bm{r}(t) + \gamma \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;\bm{u}(t) \right) \\
-    \bm{y}(t) &= W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)
-  \end{align*}
-\end{frame}
-
-\begin{frame}{Echo State Network Overview}
-  \centering
-  \includegraphics[width=0.8\textwidth]{figures/reservoir}
 \end{frame}
 
 \subsection{2.4 Constructing ESNs}
@@ -272,12 +267,13 @@
             \dot{z} &= x\,y - \beta z,
           \end{aligned}
         \end{equation*}
-        with $\sigma = 10$, $\rho = 28$, and $\beta = 8/3$.\footnote[frame]{\fullcite{lorenz1963}}
+        with $\sigma = 10$, $\rho = 28$, and $\beta = 8/3$.
       \end{itemize}
       \column{0.5\textwidth}
       \centering
       \includegraphics[width=1.0\textwidth]{figures/lorenz}
     \end{columns}
+    \blfootnote{\fullcite{lorenz1963}}
 \end{frame}
 
 \subsection{3.2 Structure of Low-Connectivity Reservoirs}
@@ -296,60 +292,47 @@
 \end{frame}
 
 \begin{frame}{Structure of Low-Connectivity Reservoirs}
-    \begin{columns}
+  \begin{columns}
       \column{0.4\textwidth}
       \small
       (a) general construction \\
       (b) $k = 1$, single cycle \\
       (c) $k = 1$, cut cycle \\
       (d) \emph{simple cycle reservoir}\footnote[frame]{\fullcite{rodan2011}\label{fn:rodan}} \\
+      %(d) \emph{simple cycle reservoir} \\
       (e) \emph{delay line reservoir}\cref{fn:rodan} \\~\\
+      %(e) \emph{delay line reservoir} \\~\\
       In all cases, networks with more than one connected component are discarded and regenerated.
       \column{0.6\textwidth}
       \centering
       \includegraphics[width=1.0\textwidth]{figures/topology}
   \end{columns}
+  %\blfootnote{\fullcite{rodan2011}}
 \end{frame}
 
-\subsection{3.4 Training, Forecasting, and Evaluation}
-\begin{frame}{Training, Forecasting, and Evaluation}
-  \begin{itemize}
-  \item for each structure, I search for the parameters to optimize $\tilde{\epsilon}$ on Lorenz forecasting
-  \item total 100 trial parameters for each structure
-  \item for each set of trial parameters...
-    \begin{itemize}
-    \item build a 100-node ESN with those parameters
-    \item train for 100 units of time ($\Delta t = 0.01$)
-    \item evaluate $\tilde{\epsilon}$ by averaging $50$ $\epsilon_1$ errors
-    \end{itemize}
-    \vspace{2em}
-  \item in the end, have one ESN from each structure type that performs well
-  \end{itemize}
-\end{frame}
+%% \subsection{3.3 ESN Symmetries and their Consequences}
+%% \begin{frame}{Along the Way: ESN~Symmetries~and~their~Consequences}
+%%   \begin{itemize}
+%%   \item when $f = \tanh$ and $\bm{g}(\bm{r}) = \bm{r}$, ESN forecast equation has $\bm{r} \rightarrow -\bm{r}$ and $\bm{y} \rightarrow -\bm{y}$ symmetry
+%%     \begin{align*}
+%%       \dot{\bm{r}}(t) &= - \gamma \bm{r}(t) + \gamma \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;W_\text{out}\bm{g}\left(\bm{r}(t)\right)\right) \\
+%%       \bm{y}(t) &= W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)
+%%     \end{align*}
+%%   \item Lorenz does \emph{not}!
+%%   \item Solution: break the symmetry by using a non-linear $\bm{g}$\footnote{\fullcite{herteux2020}}
+%%     \begin{equation*}
+%%       g_i(\bm{r}) = \begin{cases}
+%%         r_i & \text{if } i \leq N / 2, \\
+%%         r_i^2 & \text{if } i > N / 2.
+%%       \end{cases}
+%%     \end{equation*}
+%%     \end{itemize}
+%% \end{frame}
 
-\subsection{3.3 ESN Symmetries and their Consequences}
-\begin{frame}{Along the Way: ESN~Symmetries~and~their~Consequences}
-  \begin{itemize}
-  \item when $f = \tanh$ and $\bm{g}(\bm{r}) = \bm{r}$, ESN forecast equation has $\bm{r} \rightarrow -\bm{r}$ and $\bm{y} \rightarrow -\bm{y}$ symmetry
-    \begin{align*}
-      \dot{\bm{r}}(t) &= - \gamma \bm{r}(t) + \gamma \bm{f}\left( W_r\;\bm{r}(t) + W_\text{in}\;W_\text{out}\bm{g}\left(\bm{r}(t)\right)\right) \\
-      \bm{y}(t) &= W_\text{out}\;\bm{g}\left(\bm{r}(t)\right)
-    \end{align*}
-  \item Lorenz does \emph{not}!
-  \item Solution: break the symmetry by using a non-linear $\bm{g}$\footnote{\fullcite{herteux2020}}
-    \begin{equation*}
-      g_i(\bm{r}) = \begin{cases}
-        r_i & \text{if } i \leq N / 2, \\
-        r_i^2 & \text{if } i > N / 2.
-      \end{cases}
-    \end{equation*}
-    \end{itemize}
-\end{frame}
-
-\begin{frame}{Example of Symmetric ESN Failure on Lorenz '63}
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/lorenz-symmetry}
-\end{frame}
+%% \begin{frame}{Example of Symmetric ESN Failure on Lorenz '63}
+%%   \centering
+%%   \includegraphics[width=0.7\textwidth]{figures/lorenz-symmetry}
+%% \end{frame}
 
 \subsection{3.4 Training, Forecasting, and Evaluation}
 \begin{frame}{Along the Way: $\epsilon_1$ vs. $\tilde{\epsilon}$}
@@ -364,6 +347,12 @@
 
 \subsection{3.5 Results}
 \begin{frame}{Results}
+  \begin{itemize}
+  \item for each structure, I search for the parameters to optimize $\tilde{\epsilon}$ on Lorenz forecasting
+  \item in the end, have one ESN from each structure type that performs well
+  \item they all perform the same!
+  \end{itemize}
+  \vspace{3em}
   \centering
   \begin{tabularx}{\linewidth}{l l@{\extracolsep{\fill}} l}
     & Structure & $\tilde{\epsilon}$ \\
@@ -374,7 +363,6 @@
     (d) & cycle & 0.023 $\pm$ 0.008 \\
     (e) & line & 0.024 $\pm$ 0.003$^*$ \\
   \end{tabularx}
-
   \vspace{3em}
   $^*$ \emph{no recurrence in network!}
 \end{frame}
@@ -384,14 +372,14 @@
   \includegraphics[width=0.7\textwidth]{figures/lowk-attractors}
 \end{frame}
 
-\subsection{3.5.2 ESN Variation}
-\begin{frame}{ESN Variation}
-  \begin{itemize}
-    \item ESN construction is random -- what if I re-generate a network with the same parameters as best performers?
-  \end{itemize}
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/epsilon-distribution}
-\end{frame}
+%% \subsection{3.5.2 ESN Variation}
+%% \begin{frame}{ESN Variation}
+%%   \begin{itemize}
+%%     \item ESN construction is random -- what if I re-generate a network with the same parameters as best performers?
+%%   \end{itemize}
+%%   \centering
+%%   \includegraphics[width=0.7\textwidth]{figures/epsilon-distribution}
+%% \end{frame}
 
 \subsection{3.6 Conclusion}
 \begin{frame}{Conclusion}
@@ -447,21 +435,21 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{$\bm{g}$ vs. $\bm{g}_\text{n}$}
-  \begin{itemize}
-  \item important: under equivalence, the $\bm{g}$ of the ESN is \emph{not} identical to $\bm{g}_\text{n}$
-  \item for an ESN with quadratic readout $\bm{g}(\bm{r})$
-    \begin{equation*}
-      g_i(\bm{r}) = \begin{cases}
-        r_i & \text{if } i \leq N, \\
-        r_{i - N}^2 & \text{if } N < i \leq 2N.
-      \end{cases}
-    \end{equation*}
-  \item equivalent NVAR $\bm{g}_\text{n}(\bm{v})$ has all possible linear and quadratic terms of components of $\bm{v}$
-    $$ \bm{g}_\text{n}(\bm{v}) = \bm{v} \oplus \ceil{\bm{v} \otimes \bm{v}} $$
-  \item this suggests an easy extension: keep adding higher order terms to $\bm{g}_\text{n}$ until NVAR works
-  \end{itemize}
-\end{frame}
+%% \begin{frame}{$\bm{g}$ vs. $\bm{g}_\text{n}$}
+%%   \begin{itemize}
+%%   \item important: under equivalence, the $\bm{g}$ of the ESN is \emph{not} identical to $\bm{g}_\text{n}$
+%%   \item for an ESN with quadratic readout $\bm{g}(\bm{r})$
+%%     \begin{equation*}
+%%       g_i(\bm{r}) = \begin{cases}
+%%         r_i & \text{if } i \leq N, \\
+%%         r_{i - N}^2 & \text{if } N < i \leq 2N.
+%%       \end{cases}
+%%     \end{equation*}
+%%   \item equivalent NVAR $\bm{g}_\text{n}(\bm{v})$ has all possible linear and quadratic terms of components of $\bm{v}$
+%%     $$ \bm{g}_\text{n}(\bm{v}) = \bm{v} \oplus \ceil{\bm{v} \otimes \bm{v}} $$
+%%   \item this suggests an easy extension: keep adding higher order terms to $\bm{g}_\text{n}$ until NVAR works
+%%   \end{itemize}
+%% \end{frame}
 
 \subsection{4.4 Practical Considerations}
 \begin{frame}{Practical Considerations}
@@ -470,7 +458,7 @@
   \item replace complicated reservoir with simple time-delay taps
   \item \emph{Why ever use an ESN if an NVAR will work?}
     \vspace{2em}
-  \item for $q$ taps, $d$ input dimensions, and $n$-degree polynomial terms, $W_\text{out}$ has to fit $(qd)^n$ components (expensive!)
+  \item for $q$ taps, $d$ input dimensions, and $\bm{g}_\text{n}$ with $n$-degree polynomial terms, $W_\text{out}$ has to fit $(qd)^n$ components (expensive!)
   \item mathematically, equivalence only holds for \emph{infinite taps}!
   \item Are NVARs still useful for low $q$ and low $n$?
   \end{itemize}
@@ -484,59 +472,54 @@
   To show that NVARs work even in non-theoretical settings, I use them for
   \begin{itemize}
   \item Lorenz '63 state inference
-  \item Lorenz '63 forecasting
+  \item \textbf{Lorenz '63 forecasting}
   \item double-scroll circuit forecasting
-  \item Mackey-Glass forecasting
+  \item \textbf{Mackey-Glass forecasting}
   \end{itemize}
   \vspace{2em}
   This is a whirlwind tour -- more details in my dissertation.
 \end{frame}
 
-\subsection{5.1 State Inference with Lorenz '63}
-\begin{frame}{Lorenz '63 State Inference}
-  \begin{itemize}
-  \item Goal: infer Lorenz $z$ from $x$ and $y$
-  \item four taps, $\tau_0 = 0$, $\tau_1 = 5$, $\tau_2 = 10$, $\tau_3 = 15$
-  \item $\Delta t = 0.05$ (20 points per Lyapunov period)
-  \item $\bm{g}_\text{n}$ includes constant, linear, and quadratic terms
-    $$ \bm{g}_\text{n}(\bm{v}) = 1 \oplus \bm{v} \oplus \ceil{\bm{v} \otimes \bm{v}} $$
-  \item Lorenz $z$ has non-zero mean, constant term helps fit that
-    \vspace{2em}
-  \item train on 20 time units (400 data points)
-  \item evaluate on 45 time units (900 data points)
-  \end{itemize}
-\end{frame}
+%% \subsection{5.1 State Inference with Lorenz '63}
+%% \begin{frame}{Lorenz '63 State Inference}
+%%   \begin{itemize}
+%%   \item Goal: infer Lorenz $z$ from $x$ and $y$
+%%   \item four taps, $\tau_0 = 0$, $\tau_1 = 5$, $\tau_2 = 10$, $\tau_3 = 15$
+%%   \item $\Delta t = 0.05$ (20 points per Lyapunov period)
+%%   \item $\bm{g}_\text{n}$ includes constant, linear, and quadratic terms
+%%     $$ \bm{g}_\text{n}(\bm{v}) = 1 \oplus \bm{v} \oplus \ceil{\bm{v} \otimes \bm{v}} $$
+%%   \item Lorenz $z$ has non-zero mean, constant term helps fit that
+%%     \vspace{2em}
+%%   \item train on 20 time units (400 data points)
+%%   \item evaluate on 45 time units (900 data points)
+%%   \end{itemize}
+%% \end{frame}
 
-\begin{frame}{Lorenz '63 State Inference Results}
-  \begin{center}
-    \includegraphics[width=0.8\textwidth]{figures/nvar-infer-lorenz-testing}
-  \end{center}
-  \begin{itemize}
-  \item NRMSE $\epsilon = 1.75\pm0.3\times10^{-2}$
-  \end{itemize}
-\end{frame}
+%% \begin{frame}{Lorenz '63 State Inference Results}
+%%   \begin{center}
+%%     \includegraphics[width=0.8\textwidth]{figures/nvar-infer-lorenz-testing}
+%%   \end{center}
+%%   \begin{itemize}
+%%   \item NRMSE $\epsilon = 1.75\pm0.3\times10^{-2}$
+%%   \end{itemize}
+%% \end{frame}
 
 \subsection{5.2 Forecasting Lorenz '63}
 \begin{frame}{Lorenz '63 Forecasting}
   \begin{itemize}
-  \item Goal: forecasting on Lorenz $x$, $y$, and $z$
-  \item two taps, $\tau_0 = 0$ and $\tau_1 = 1$
-  \item $\Delta t = 0.025$ (40 points per Lyapunov period)
-  \item $\bm{g}_\text{n}$ includes constant, linear, and quadratic terms
+  \item use two adjacent taps
+    \item $\bm{g}_\text{n}$ includes constant, linear, and quadratic terms of $\bm{v}(t)$
     $$ \bm{g}_\text{n}(\bm{v}) = 1 \oplus \bm{v} \oplus \ceil{\bm{v} \otimes \bm{v}} $$
-  \item train on 10 time units (400 data points)
-  \item evaluate $\tilde{\epsilon}$ with 10 trials of $\epsilon_1$
+    \vspace{3em}
+  \item NRMSE $\tilde{\epsilon} = 4.51\pm0.85\times10^{-3}$
+    (~5$\times$ better than ESN!)
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Lorenz '63 Forecasting Results}
   \begin{center}
-    \includegraphics[width=0.8\textwidth]{figures/nvar-predict-lorenz}
+    \includegraphics[width=0.9\textwidth]{figures/nvar-predict-lorenz}
   \end{center}
-  \begin{itemize}
-  \item NRMSE $\tilde{\epsilon} = 4.51\pm0.85\times10^{-3}$
-  (~5$\times$ better than ESN!)
-  \end{itemize}
 \end{frame}
 
 % put rmap here if needed
@@ -556,45 +539,53 @@
   \end{columns}
 \end{frame}
 
-\subsection{5.3 Forecasting the Double-Scroll Circuit}
-\begin{frame}{Double-Scroll Forecasting}
-  \begin{itemize}
-  \item Goal: forecasting for double-scroll circuit
-  \item two taps, $\tau_0 = 0$ and $\tau_1 = 1$
-  \item $\Delta t = 0.25$ (40 points per Lyapunov period)
-  \item $\bm{g}_\text{n}$ includes linear and cubic terms, to match symmetry
-    $$ \bm{g}_\text{n}(\bm{v}) = \bm{v} \oplus \ceil{\bm{v} \otimes \bm{v} \otimes \bm{v}} $$
-  \item train on 100 time units (400 data points)
-  \item evaluate $\tilde{\epsilon}$ with 10 trials of $\epsilon_1$
-  \end{itemize}
-\end{frame}
+%% \subsection{5.3 Forecasting the Double-Scroll Circuit}
+%% \begin{frame}{Double-Scroll Forecasting}
+%%   \begin{itemize}
+%%   \item Goal: forecasting for double-scroll circuit
+%%   \item two taps, $\tau_0 = 0$ and $\tau_1 = 1$
+%%   \item $\Delta t = 0.25$ (40 points per Lyapunov period)
+%%   \item $\bm{g}_\text{n}$ includes linear and cubic terms, to match symmetry
+%%     $$ \bm{g}_\text{n}(\bm{v}) = \bm{v} \oplus \ceil{\bm{v} \otimes \bm{v} \otimes \bm{v}} $$
+%%   \item train on 100 time units (400 data points)
+%%   \item evaluate $\tilde{\epsilon}$ with 10 trials of $\epsilon_1$
+%%   \end{itemize}
+%% \end{frame}
 
-\begin{frame}{Double-Scroll Forecasting Results}
-  \begin{center}
-    \includegraphics[width=0.8\textwidth]{figures/nvar-predict-dscroll}
-  \end{center}
-  \begin{itemize}
-  \item NRMSE $\tilde{\epsilon} = 2.15\pm0.63\times10^{-2}$
-  (~1.5$\times$ better)
-  \end{itemize}
-\end{frame}
+%% \begin{frame}{Double-Scroll Forecasting Results}
+%%   \begin{center}
+%%     \includegraphics[width=0.8\textwidth]{figures/nvar-predict-dscroll}
+%%   \end{center}
+%%   \begin{itemize}
+%%   \item NRMSE $\tilde{\epsilon} = 2.15\pm0.63\times10^{-2}$
+%%   (~1.5$\times$ better)
+%%   \end{itemize}
+%% \end{frame}
 
 \subsection{5.4 Forecasting Mackey-Glass}
 \begin{frame}{Mackey-Glass Forecasting}
   \begin{itemize}
-  \item Goal: forecasting for Mackey-Glass system
-  \item four taps, $\tau_0 = 0$, $\tau_1 = 1$, $\tau_2 = \floor{17/2\Delta t}$, $\tau_3 = \tau_2 + 1$
-  \item $\Delta t = 0.2$ (500 points per Lyapunov period)
+  \item Mackey-Glass system
+    \begin{equation*}
+      \dot{u}(t) = \beta \frac{u(t - 17)}{1 + u(t - 17)^{10}} - \gamma u(t),
+    \end{equation*}
+    with standard parameters $\beta = 0.2$, $\gamma = 0.1$.
+    \vspace{2em}
+  \item use three clusters of two taps each:
+    \begin{itemize}
+      \item $\tau_0 = 0$, $\tau_1 = 1$
+      \item $\tau_2 = \floor{17/2\Delta t}$, $\tau_3 = \tau_2 + 1$
+      \item $\tau_4 = \floor{17/\Delta t}$, $\tau_5 = \tau_4 + 1$
+    \end{itemize}
   \item $\bm{g}_\text{n}$ includes constant up to cubic terms
     $$ \bm{g}_\text{n}(\bm{v}) = 1 \oplus \bm{v} \oplus \ceil{\bm{v} \otimes \bm{v}} \oplus \ceil{\bm{v} \otimes \bm{v} \otimes \bm{v}} $$
-  \item train on 1000 time units (5000 data points\emph{!})
-  \item evaluate $\tilde{\epsilon}$ with 10 trials of $\epsilon_1$
   \end{itemize}
+  \blfootnote{\fullcite{mackey1977}}
 \end{frame}
 
 \begin{frame}{Mackey-Glass Forecasting Results}
   \begin{center}
-    \includegraphics[width=0.8\textwidth]{figures/nvar-predict-mackey-glass}
+    \includegraphics[width=0.9\textwidth]{figures/nvar-predict-mackey-glass}
   \end{center}
   \begin{itemize}
   \item NRMSE $\tilde{\epsilon} = 5.77\pm0.42\times10^{-2}$
