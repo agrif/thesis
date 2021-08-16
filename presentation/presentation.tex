@@ -513,10 +513,10 @@
   \item Lorenz '63 state inference
   \item \textbf{Lorenz '63 forecasting}
   \item double-scroll circuit forecasting
-  \item \textbf{Mackey-Glass forecasting}
+  \item Mackey-Glass forecasting
   \end{itemize}
   \vspace{2em}
-  This is a whirlwind tour -- more details in my dissertation.
+  I will highlight only Lorenz '63 forecasting -- more details in my dissertation.
 \end{frame}
 
 %% \subsection{5.1 State Inference with Lorenz '63}
@@ -546,12 +546,13 @@
 \subsection{5.2 Forecasting Lorenz '63}
 \begin{frame}{Lorenz '63 Forecasting}
   \begin{itemize}
-  \item use two adjacent taps
-    \item $\bm{g}_\text{n}$ includes constant, linear, and quadratic terms of $\bm{v}(t)$
+  \item use two adjacent taps, $\tau_0 = 0$ and $\tau_1 = 1$
+  \item $\bm{g}_\text{n}$ includes constant, linear, and quadratic terms of $\bm{v}(t)$
     $$ \bm{g}_\text{n}(\bm{v}) = 1 \oplus \bm{v} \oplus \ceil{\bm{v} \otimes \bm{v}} $$
-    \vspace{3em}
+    \vspace{2em}
   \item NRMSE $\tilde{\epsilon} = 4.51\pm0.85\times10^{-3}$
     (~5$\times$ better than ESN!)
+  \item low number of taps, low order nonlinearity
   \end{itemize}
 \end{frame}
 
@@ -601,35 +602,35 @@
 %%   \end{itemize}
 %% \end{frame}
 
-\subsection{5.4 Forecasting Mackey-Glass}
-\begin{frame}{Mackey-Glass Forecasting}
-  \begin{itemize}
-  \item Mackey-Glass system
-    \begin{equation*}
-      \dot{u}(t) = \beta \frac{u(t - 17)}{1 + u(t - 17)^{10}} - \gamma u(t),
-    \end{equation*}
-    with standard parameters $\beta = 0.2$, $\gamma = 0.1$.
-    \vspace{2em}
-  \item use three clusters of two taps each:
-    \begin{itemize}
-      \item $\tau_0 = 0$, $\tau_1 = 1$
-      \item $\tau_2 = \floor{17/2\Delta t}$, $\tau_3 = \tau_2 + 1$
-      \item $\tau_4 = \floor{17/\Delta t}$, $\tau_5 = \tau_4 + 1$
-    \end{itemize}
-  \item $\bm{g}_\text{n}$ includes constant up to cubic terms
-    $$ \bm{g}_\text{n}(\bm{v}) = 1 \oplus \bm{v} \oplus \ceil{\bm{v} \otimes \bm{v}} \oplus \ceil{\bm{v} \otimes \bm{v} \otimes \bm{v}} $$
-  \end{itemize}
-  \blfootnote{\fullcite{mackey1977}}
-\end{frame}
+%% \subsection{5.4 Forecasting Mackey-Glass}
+%% \begin{frame}{Mackey-Glass Forecasting}
+%%   \begin{itemize}
+%%   \item Mackey-Glass system
+%%     \begin{equation*}
+%%       \dot{u}(t) = \beta \frac{u(t - 17)}{1 + u(t - 17)^{10}} - \gamma u(t),
+%%     \end{equation*}
+%%     with standard parameters $\beta = 0.2$, $\gamma = 0.1$.
+%%     \vspace{2em}
+%%   \item use three clusters of two taps each:
+%%     \begin{itemize}
+%%       \item $\tau_0 = 0$, $\tau_1 = 1$
+%%       \item $\tau_2 = \floor{17/2\Delta t}$, $\tau_3 = \tau_2 + 1$
+%%       \item $\tau_4 = \floor{17/\Delta t}$, $\tau_5 = \tau_4 + 1$
+%%     \end{itemize}
+%%   \item $\bm{g}_\text{n}$ includes constant up to cubic terms
+%%     $$ \bm{g}_\text{n}(\bm{v}) = 1 \oplus \bm{v} \oplus \ceil{\bm{v} \otimes \bm{v}} \oplus \ceil{\bm{v} \otimes \bm{v} \otimes \bm{v}} $$
+%%   \end{itemize}
+%%   \blfootnote{\fullcite{mackey1977}}
+%% \end{frame}
 
-\begin{frame}{Mackey-Glass Forecasting Results}
-  \begin{center}
-    \includegraphics[width=0.9\textwidth]{figures/nvar-predict-mackey-glass}
-  \end{center}
-  \begin{itemize}
-  \item NRMSE $\tilde{\epsilon} = 5.77\pm0.42\times10^{-2}$
-  \end{itemize}
-\end{frame}
+%% \begin{frame}{Mackey-Glass Forecasting Results}
+%%   \begin{center}
+%%     \includegraphics[width=0.9\textwidth]{figures/nvar-predict-mackey-glass}
+%%   \end{center}
+%%   \begin{itemize}
+%%   \item NRMSE $\tilde{\epsilon} = 5.77\pm0.42\times10^{-2}$
+%%   \end{itemize}
+%% \end{frame}
 
 \subsection{5.5 Conclusion}
 \begin{frame}{Conclusion}
@@ -638,7 +639,6 @@
   \item only need a few taps and low-order nonlinearity
   \item careful tap positioning can aid in keeping number of taps low
     \vspace{2em}
-  \item not quite as great on Mackey-Glass...
   \item $\bm{g}_\text{n}$ needs access to higher order terms without exponential explosion in size of $W_\text{out}$
   \item possible future research: using full nonlinear functions, rather than monomial terms
   \end{itemize}
