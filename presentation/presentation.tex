@@ -109,10 +109,13 @@
     Reservoir computers are an ML tool that learn by example how to...
     \begin{itemize}
     \item transform an input signal into an output signal
-    \item perform system forecasting
-      \vspace{2em}
-    \item perform system control\footnote[frame]{\fullcite{canaday2020}}
+    \item infer system state
+    \item \textbf{forecast chaotic systems}
+      \vspace{1em}
+    \item control dynamic systems\footnote[frame]{\fullcite{canaday2020}}
     \end{itemize}
+    \vspace{1em}
+    In general: they are good at dynamic systems.
     \column{0.5\textwidth}
     \centering
     \includegraphics[width=0.95\textwidth]{figures/prediction-example}
@@ -126,10 +129,13 @@
   \begin{itemize}
   \item train very quickly via linear regression
   \item do not require much data
-    \vspace{2em}
+  \end{itemize}
+  \vspace{2em}
+  They are physically interesting:
+  \begin{itemize}
   \item naturally handle time-varying signals
   \item use an internal dynamic system to do computation
-  \item have interesting hardware implementations
+  \item hardware implementations can use physical systems
   \end{itemize}
   \column{0.4\textwidth}
   \centering
@@ -497,11 +503,15 @@
 
 \subsection{4.4 Practical Considerations}
 \begin{frame}{Practical Considerations}
+  Positives:
   \begin{itemize}
   \item NVARs are equivalent to ESNs, but completely sidestep the issue of choosing a network
   \item replace complicated reservoir with simple time-delay taps
   \item \emph{Why ever use an ESN if an NVAR will work?}
-    \vspace{2em}
+  \end{itemize}
+  \vspace{1em}
+  Possible problems:
+  \begin{itemize}
   \item for $q$ taps, $d$ input dimensions, and $\bm{g}_\text{n}$ with $n$-degree polynomial terms, $W_\text{out}$ has to fit $(qd)^n$ components (expensive!)
   \item mathematically, equivalence only holds for \emph{infinite taps}!
   \item Are NVARs still useful for low $q$ and low $n$?
@@ -639,11 +649,15 @@
 
 \subsection{5.5 Conclusion}
 \begin{frame}{Conclusion}
+  Positives:
   \begin{itemize}
   \item NVARs have comparable performance to ESNs on Lorenz '63 and double-scroll circuit
   \item only need a few taps and low-order nonlinearity
   \item careful tap positioning can aid in keeping number of taps low
-    \vspace{2em}
+  \end{itemize}
+  \vspace{1em}
+  Possible improvements:
+  \begin{itemize}
   \item $\bm{g}_\text{n}$ needs access to higher order terms without exponential explosion in size of $W_\text{out}$
   \item possible future research: using full nonlinear functions, rather than monomial terms
   \end{itemize}
@@ -660,6 +674,7 @@
   \item ESNs are often more complicated than necessary
   \item NVARs are ESNs without any extra steps. Always try an NVAR first!
   \end{itemize}
+  \vspace{1em}
   Topics for future research:
   \begin{itemize}
   \item any task previously done with an RC should be attempted with an NVAR -- both success and failure would be interesting!
