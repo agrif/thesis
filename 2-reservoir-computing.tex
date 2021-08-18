@@ -10,15 +10,15 @@ then be used to perform the trained transformation on inputs it has
 not seen before.
 
 The RC does this by means of an internal dynamic system called the
-\emph{reservoir}, which is coupled to the input $\bm{u}(t)$. If the
+\emph{reservoir}, which is coupled to the input vector $\bm{u}(t)$. If the
 reservoir's dynamics can be expressed as a first-order differential
 equation, which covers a broad range of interesting choices of
-reservoir, then the reservoir's internal state $\bm{r}$ is given by
+reservoir, then the reservoir's internal state vector $\bm{r}$ is given by
 \begin{equation}
   \label{eq:reservoir}
   \dot{\mathbf{r}}(t) = \mathbf{R}\left(\mathbf{r}, \mathbf{u}, t\right),
 \end{equation}
-where $\mathbf{R}$ defines the dynamics of the reservoir.
+where the vector function $\mathbf{R}$ defines the dynamics of the reservoir. For most systems, $\mathbf{R}$ is a function of time only implicitly through $\bm{r}(t)$ and $\bm{u}(t)$.
 
 The reservoir is commonly a specific type of system called an
 \emph{echo state network}, discussed in \cref{sec:esn}, but this is
@@ -32,9 +32,9 @@ in \cref{sec:reservoir-properties}, the most direct and practical way
 to know if a given reservoir will work is to build, train, and test
 it.
 
-The output $\bm{y}(t)$ of the RC is a linear
+The output vector $\bm{y}(t)$ of the RC is a linear
 combination of a set of \emph{read-out} signals, constructed from the
-reservoir state $\bm{r}(t)$ by means of a read-out function $\bm{g}$,
+reservoir state $\bm{r}(t)$ by means of a vector read-out function $\bm{g}$ and matrix $W_\text{out}$,
 \begin{equation}
   \label{eq:output}
   \bm{y}(t) = W_\text{out}\;\bm{g}\left(\bm{r}(t)\right).
@@ -79,7 +79,7 @@ $\bm{y}_\text{train}(t)$ would be the $z$ component. An RC trained on this
 example would learn how to infer the $z$ component of the system from
 the other two.
 
-The first step is to feed the example input $\bm{u}_\text{train}(t)$ into the reservoir, producing an example reservoir response $\bm{r}_\text{train}(t)$. Using \cref{eq:output}, the final goal of training is to find a $W_\text{out}$ such that
+The first step is to feed the example input $\bm{u}_\text{train}(t)$ into the reservoir, producing an example reservoir response $\bm{r}_\text{train}(t)$. Using \cref{eq:output}, the final goal of training is to find a matrix $W_\text{out}$ such that
 \begin{equation}
   \label{eq:approx-output}
   \mathbf{y}_\text{train}(t) \approx W_\text{out}\;\mathbf{g}\left(\mathbf{r}_\text{train}(t)\right).
@@ -122,7 +122,7 @@ simply by grid search or cross-validation on the example input.
 The fact that training an RC amounts to a linear regression is a major
 feature worth highlighting. Linear regressions are very fast, compared
 to other machine learning techniques like gradient descent and
-backpropogation~\cite{lukosevicius2009}. As a result, training an RC
+backpropagation~\cite{lukosevicius2009}. As a result, training an RC
 is also fast. This opens the door to many interesting applications
 where the ability to rapidly retrain the RC to a new system without the aid of
 a supercomputer is desirable. For example, an RC that controls the
@@ -228,7 +228,11 @@ Put together, the dynamics of an echo state network RC are
   \bm{y}(t) &= W_\text{out}\;\bm{g}\left(\bm{r}(t)\right), \nonumber
 \end{align}
 where the vector function $\bm{f}$ is understood to mean applying the
-one-dimensional activation function $f$ component-by-component. This
+one-dimensional activation function $f$ component-by-component,
+\begin{equation}
+  f_i(\bm{x}) = f(x_i).
+\end{equation}
+This
 construction is summarized in \cref{fig:reservoir}. I will discuss
 choosing the matrices $W_\text{in}$ and $W_r$, the parameter $\gamma$,
 and the activation function $f$ in \cref{sec:esn-construction}.
@@ -444,26 +448,26 @@ recommendations are not hard and fast rules. Nonetheless, this history
 has cemented spectral radius as the standard measure of scale for
 $W_r$ in ESNs.
 
-Another desirable property of the reservoir is \emph{separability} and
-\emph{continuity of response}. Similar inputs to the reservoir should produce
+Another desirable property of the reservoir is \emph{continuity of response} to the input:
+similar inputs to the reservoir should produce
 similar responses. This is especially important in real-world
 applications, where the input to the RC is likely to be noisy. This
 excludes a wide class of chaotic systems from consideration as a
 reservoir, as even very small differences in two input signals would
-be amplified. Likewise, a good reservoir should produce different
+be amplified. Likewise, a good reservoir should show \emph{separability} of inputs: it should produce different
 responses to different inputs. In the extreme case, a reservoir that
 produces a constant zero regardless of input would form a very poor RC,
 despite meeting the other criteria listed so far.
 
 More recently, these requirements have been unified under the umbrella
-of \emph{invertable generalized
+of \emph{invertible generalized
   synchronization}~(IGS)~\cite{lu2018,lymburn2019,lu2020}, which claims that
 a good reservoir is one that is synchronized to its
 input. Specifically, the reservoir $\bm{r}(t)$ is in a state of
 generalized synchronization with its input $\bm{u}(t)$ if there is a
 function $\bm{H}$ such that, as $t \rightarrow \infty$, $\bm{r}(t)
 \rightarrow \bm{H}\left(\bm{u}(t)\right)$. This already implies the
-fading memory property. If $\bm{H}$ is continuous, this implies continuity of response, and if $\bm{H}$ is invertable, this implies separability. An invertable $\bm{H}$ also ensures that
+fading memory property. If $\bm{H}$ is continuous, this implies continuity of response, and if $\bm{H}$ is invertible, this implies separability. An invertible $\bm{H}$ also ensures that
 \begin{equation}
   \bm{u}(t) \approx \bm{H}^{-1}\left(\bm{r}(t)\right).
 \end{equation}
@@ -521,7 +525,7 @@ chaotic system, good forecasting requires the forecast to diverge
 eventually. In these situations, the testing error is calculated only
 for a period of $T = 1/\lambda_\text{max}$, where $\lambda_\text{max}$
 is the largest Lyapunov exponent of the system the RC is
-forecasting. In this dissertation, I will refer to this one Lyapunov period
+forecasting. In this dissertation I will refer to the arbitrary-$T$ error as $\epsilon$, and the one Lyapunov period
 error as $\epsilon_1$.
 
 Using $\epsilon_1$ as a testing metric for forecasting RCs is common,
@@ -589,7 +593,7 @@ autonomous mode to perform system forecasting.
 The RC approach is robust to the choice of reservoir system, however
 the specific requirements the reservoir must have to function are
 largely unknown. When an RC fails, it is difficult to know why. Recent
-work on invertable generalized synchronization is an exciting path
+work on invertible generalized synchronization is an exciting path
 towards learning more.
 
 Echo state networks are a network-based reservoir choice that is easy
