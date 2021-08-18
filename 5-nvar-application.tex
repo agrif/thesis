@@ -358,9 +358,9 @@ NVAR to rely on Lorenz terms only.
 From this I derive an interpretation: a trained NVAR is finding the
 best possible one-step-ahead integrator it can find, given the example
 input and the available terms in $\bm{g}_\text{n}$. When the time step
-is large enough, a strictly linear prediction becomes more and more
-inaccurate, and so the NVAR relies on the nonlinear and time-delayed
-terms to make up the difference.
+is large enough, a prediction that is linear in the vector field becomes more and more
+inaccurate, and so the NVAR relies on those terms not present in the vector field
+to make up the difference. In other words, the NVAR is learning how to move from $\bm{u}(t)$ to $\bm{u}(t + \Delta t)$, and for coarse time steps $\Delta t$ this is not the same as learning the vector field of $\bm{u}(t)$.
 
 \section{Forecasting the Double-Scroll Circuit}
 
@@ -674,6 +674,22 @@ underlying system in order to improve forecasting accuracy within the
 volume of phase space that the training signal lies inside. This comes
 with a trade-off: prediction outside this volume of phase space, such
 as predicted fixed points, fails.
+
+Unlike RCs, the weight matrix $W_\text{out}$ of a trained NVAR is
+often interpretable. For example, it can reveal symmetries in the
+training data that the NVAR has learned to replicate. However, the
+ridge regression I use in this chapter does not encourage sparsity,
+and so the trained weight matrix is often dense, with many small
+coefficients. Using a sparse regression technique, such as Lasso
+regression~\cite{tibshirani1996}, may lead to more
+interpretable results.
+
+Due to their simplicity, the NVAR approach would be well-suited
+to hardware implementation. As an example, a hardware NVAR could be
+used in an engine to rapidly infer the internal, inaccessible state of
+the engine from external sensors. Hardware NVARs could also be used in
+forecasting mode as a fast signal generator that can produce a variety
+of signals, including many chaotic signals, only by modifying $W_\text{out}$.
 
 Even with the unresolved questions, I find the NVAR method is very
 simple to implement and performs well. Due to its simplicity, I

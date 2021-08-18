@@ -39,12 +39,15 @@ reservoir state $\bm{r}(t)$ by means of a vector read-out function $\bm{g}$ and 
   \label{eq:output}
   \bm{y}(t) = W_\text{out}\;\bm{g}\left(\bm{r}(t)\right).
 \end{equation}
-This is called the RCs \emph{output layer}. Often, $\bm{g}$ is the
+This is called the RCs \emph{output layer}. The read-out function $\bm{g}$
+selects which components of $\bm{r}(t)$ are used by the matrix $W_\text{out}$,
+possibly modifying them in the process.
+Often, $\bm{g}$ is the
 identity function, and the output signal $\bm{y}(t)$ is a direct
 linear combination of the state variables of the reservoir. However, a
 non-identity $\bm{g}$ can be used to break unwanted symmetries in the
-$\bm{u}$-to-$\bm{y}$ transformation, to introduce nonlinearity to an
-otherwise completely linear RC, or to model incomplete measurements of
+$\bm{u}$-to-$\bm{y}$ transformation (as in \cref{sec:lowk-symmetries}), to introduce nonlinearity to an
+otherwise completely linear RC (as in \cref{sec:nvar}), or to model incomplete measurements of
 a physical system being used as a reservoir.
 
 Together, \cref{eq:reservoir} and \cref{eq:output} define a reservoir
