@@ -422,6 +422,36 @@ summarized in \cref{tab:nvar-complexity}. Even with this conservative
 analysis, the NVAR achieves a significant speed-up over the ESNs while
 retaining high accuracy.
 
+\subsection{Robustness to Noise}
+
+\begin{figure}
+  \includegraphics[width=\textwidth]{figures/nvar-predict-lorenz-noisy}
+  \caption{The long-term trajectory of a noise-driven Lorenz '63 system (a) and NVAR predicted attractor
+    (e) for a single training trial. (b)~--~(d) Noise-driven Lorenz system
+    (blue) during training overlaid with NVAR output (red) calculated
+    after training is complete. (f)~--~(h) True, noise-free Lorenz (blue) and NVAR
+    forecasted output (red).}
+  \label{fig:nvar-predict-lorenz-noisy}
+\end{figure}
+
+To explore how robust the NVAR approach is to noise, I train this same
+NVAR construction on the Lorenz '63 system modified to contain
+additive Gaussian noise on the right-hand side of the differential
+equations for each variable. I set the scale of this noise to be 12\%
+of the root-mean-square values of each variable, which are $7.9$,
+$9.0$, and $8.6$ for $x$, $y$, and $z$ respectively.
+
+To generalize well after training, I increase the ridge parameter
+$\alpha = 1.4\times10^{-2}$, but otherwise leave the NVAR
+unmodified. Once the NVAR is trained on the noisy data, I then perform
+a forecast with the NVAR and compare the forecast to the noise-free
+Lorenz '63 dynamics, and find a one Lyapunov period error of
+$\epsilon_1 = 4.18\times10^{-2}$. The performance of this trained NVAR
+is summarized in \cref{fig:nvar-predict-lorenz-noisy}. This low error
+indicates that the NVAR is still capable of learning the Lorenz '63
+system even when it is trained on noisy data, and this is supported by
+how well the NVAR is able to reproduce the Lorenz attractor.
+
 \section{Forecasting the Double-Scroll Circuit}
 
 For this task, I use an NVAR in forecasting mode to use all
