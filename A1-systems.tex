@@ -97,12 +97,6 @@ projection of the attractor on to the $V_1$/$I$ plane, depicted in
 
 \section{Mackey-Glass}\label{sec:mackey-glass}
 
-\begin{figure}
-  \includegraphics[width=0.6\textwidth]{figures/mackey-glass}
-  \caption{The true Mackey-Glass attractor represented as a time delay embedding using $\tau$ as the delay, produced by integrating \cref{eq:mackey-glass}.}%
-  \label{fig:mackey-glass}
-\end{figure}
-
 The Mackey-Glass system is described by the time-delay differential equation
 \begin{equation}
   \dot{u}(t) = \beta \frac{u(t - \tau)}{1 + u(t - \tau)^n} - \gamma u(t),
@@ -112,3 +106,9 @@ with standard parameters $\beta = 0.2$, $\gamma = 0.1$, $\tau = 17$,
 $n = 10$~\cite{mackey1977}. The attractor of this system is most
 commonly visualized as a time-delay embedding of the trajectory, using
 $\tau$ as the delay parameter, as depicted in \cref{fig:mackey-glass}.
+
+\begin{figure}
+  \includegraphics[width=0.6\textwidth]{figures/mackey-glass}
+  \caption{The true Mackey-Glass attractor represented as a time delay embedding using $\tau$ as the delay, produced by integrating \cref{eq:mackey-glass}.}%
+  \label{fig:mackey-glass}
+\end{figure}
