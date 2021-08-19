@@ -316,6 +316,14 @@ truth. However, in all three cases, the fixed points lie within
 approximately $0.1\%$ of the true location, despite the fact that the
 training data does not include any of these points.
 
+The NVAR also occasionally exhibits fixed points that do not have a
+corresponding fixed point in the Lorenz system. These spurious fixed
+points depend on which specific segment of Lorenz data is used to
+train the NVAR, and will move around or disappear as the training data
+changes. Future research could identify how many of these spurious
+fixed points exist, as well as how to prevent them or otherwise
+control for their presence.
+
 \subsection{Output Weights}
 
 The particular choice of nonlinearity $\bm{g}_\text{n}$ for this task
