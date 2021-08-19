@@ -362,6 +362,66 @@ is large enough, a prediction that is linear in the vector field becomes more an
 inaccurate, and so the NVAR relies on those terms not present in the vector field
 to make up the difference. In other words, the NVAR is learning how to move from $\bm{u}(t)$ to $\bm{u}(t + \Delta t)$, and for coarse time steps $\Delta t$ this is not the same as learning the vector field of $\bm{u}(t)$.
 
+\subsection{Computational Complexity}
+
+To compare the computational speed of training an NVAR on the Lorenz
+forecasting task against that of training an ESN, I estimate the
+number of multiplications required for training in each method. To do
+this, I first identify the parameters in each method that contribute
+most to the computational complexity.
+
+Both the NVAR and ESN approaches share three parameters: the number of
+warm-up steps $M_\text{warmup}$, the number of training steps
+$M_\text{train}$, and the size of the feature vector
+$N_\text{total}$. For an NVAR, $N_\text{total}$ is the dimension of
+$\bm{g}_\text{n}(\bm{v})$, while for an ESN it is the dimension of
+$\bm{g}(\bm{r})$. ESNs also have the number of nodes in the network
+$N$, as well as a parameter $\sigma_r$ that controls the sparsity of
+internal network connections.
+
+For ESNs, I conservatively assume that sparse matrix multiplication
+has no additional overhead, and that special function evaluations
+(such as $\tanh$) are free. In reality, such evaluations may involve
+many multiplications, and so ESNs will be more costly than my
+estimate expects.
+
+The largest contribution to the computational complexity for the NVAR
+is the ridge regression performed over the training time, which is
+$\mathcal{O}(M_\text{train}N_\text{total}^2)$. The largest
+contributions for an ESN are the matrix multiplication $W_r\;\bm{r}$
+over the warm-up and training time, which is
+$\mathcal{O}\left(\sigma_r\left(M_\text{warmup} +
+M_\text{train}\right)N^2\right)$, and the ridge
+regression over the training time, which is
+$\mathcal{O}(M_\text{train}N_\text{total}^2)$.
+
+\begin{table}
+  \caption{Estimated speed-up of the NVAR on the Lorenz '63
+    forecasting task, compared to ESNs described in
+    \cref{ch:low-connectivity}~\cite{griffith2019} and in other
+    work~\cite{pathak2017,lu2018}.}.
+  \begin{tabular}{lcccccc}
+    Method & $M_\text{warmup}$ & $M_\text{train}$ & $N_\text{total}$ & $N$ & $\sigma_r$ & speed-up \\
+    \hline
+    \rule{0pt}{4ex}%
+    NVAR & 2 & 400 & 28 & - & - & - \\
+    \rule{0pt}{4ex}%
+    ESN~\cite{griffith2019} & 1000 & 1000 & 100 & 100 & 0.01--0.05 & 33--163 \\
+    ESN~\cite{pathak2017} & ? (set to 0) & 5000 & 300 & 300 & 0.02 & $1.5\times10^3$ \\
+    ESN~\cite{lu2018} & $10^5$ & $6\times10^4$ & 4000 & 2000 & 0.02 & $3.2\times10^6$ \\
+  \end{tabular}
+  \label{tab:nvar-complexity}
+\end{table}
+
+I estimate the speed-up by summing the largest contributions for the
+ESN and then divide by the contributions from the NVAR. I perform this
+comparison against the ESNs used in
+\cref{ch:low-connectivity}~\cite{griffith2019}, as well as ESNs found
+in other work~\cite{pathak2017,lu2018}. These comparisons are
+summarized in \cref{tab:nvar-complexity}. Even with this conservative
+analysis, the NVAR achieves a significant speed-up over the ESNs while
+retaining high accuracy.
+
 \section{Forecasting the Double-Scroll Circuit}
 
 For this task, I use an NVAR in forecasting mode to use all
