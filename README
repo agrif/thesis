@@ -5,7 +5,7 @@ For the paper, compile `./thesis.tex`. For the presentation, compile
 
 I recommend using makelatex:
 
-    http://www.cs.mtu.edu/~kuhl/software/makelatex
+    https://gitlab.com/kuhl/makelatex
 
 The presentation uses a font and some logos I do not have the rights
 to redistribute. It will compile fine without them, but see also
