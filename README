@@ -1,0 +1,12 @@
+This is the LaTeX source of my dissertation, "Essential Reservoir Computing."
+
+For the paper, compile `./thesis.tex`. For the presentation, compile
+`./presentation/presentation.tex`.
+
+I recommend using makelatex:
+
+    http://www.cs.mtu.edu/~kuhl/software/makelatex
+
+The presentation uses a font and some logos I do not have the rights
+to redistribute. It will compile fine without them, but see also
+`logos` and `proxima` inside the `presentation` directory.
