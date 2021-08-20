@@ -189,9 +189,9 @@
       \newcommand\@committee{Master's Examination}
   }{\relax}
 }
-\geometry{top=1in, left=1.25in, right=1.25in, bottom=1in, nohead, includefoot,
+\geometry{top=1in, inner=1.5in, outer=1in, bottom=1in, nohead, includefoot,
           footskip=1.5\baselineskip, letterpaper, portrait,
-          twocolumn=false, twoside=false}
+          twocolumn=false, twoside=true}
 %%\pdfpagewidth \paperwidth
 %%\pdfpageheight \paperheight
 \newcommand\@advisorlist{\relax}
@@ -283,7 +283,7 @@
 \renewcommand\appendix{\oldappendix
        %manually add \chaptersname to table of contents
        \addtocontents{toc}{\protect \contentsline {part}{\appendicesname}{\pageref{appendix.A}}{appendix.A}}
-       \clearpage
+       \cleardoublepage
        \pdfbookmark[-1]{\appendicesname}{appendices} %manually add PDF bookmark for Chapters
        }
 \newcommand\copyrightpage{
@@ -305,7 +305,7 @@
 \providecommand*{\toclevel@front}{0} %define a table of contents level for type front, to prevent warnings
 
 \renewenvironment{abstract}{
-  \clearpage
+  \cleardoublepage
   \setlength\chapterskip{1in-\topskip-\parskip-\lineskip-\baselineskip-1em}
   \chapter*{\abstractname}
   \addcontentsline{toc}{front}{\abstractname}
@@ -317,7 +317,7 @@
   \pagebreak
 }
 \newcommand\dedication[1]{
-  \clearpage
+  \cleardoublepage
   \thispagestyle{plain}
   \phantomsection %add a phantom section to allow the proper page number to appear in the TOC and proper hyperlinking
   \addcontentsline{toc}{front}{\dedicationname}
@@ -325,7 +325,7 @@
   \begin{center}#1\end{center}
   \vfill\pagebreak}
 \newenvironment{acknowledgments}{
-  \clearpage
+  \cleardoublepage
   \setlength\chapterskip{1in-\topskip-\parskip-\lineskip-\baselineskip-1em}
   \chapter*{\acknowledgmentsname}
   \addcontentsline{toc}{front}{\acknowledgmentsname}
@@ -339,7 +339,7 @@
 \let\acknowledgements\acknowledgments
 \let\endacknowledgements\endacknowledgments
 \newenvironment{vita}{
-  \clearpage
+  \cleardoublepage
   \setlength\chapterskip{1in-\topskip-\parskip-\lineskip-\baselineskip-1em}
   \chapter*{\vitaname}
   \addcontentsline{toc}{front}{\vitaname}
@@ -422,13 +422,13 @@
 \renewenvironment{thebibliography}[1]
                  {\begin{oldthebibliography}{#1}\begin{singlespace}}
                  {\end{singlespace}\end{oldthebibliography}}
-\newcommand\frontmatter{\pagenumbering{alph} %change (undisplayed) page numbering of title page to 'a' to prevent warning about duplicate page numbers
-\maketitle\pagenumbering{roman}\copyrightpage}
+\newcommand\frontmatter{\pagenumbering{roman} %change (undisplayed) page numbering of title page to 'a' to prevent warning about duplicate page numbers
+\maketitle\copyrightpage}
 \newcommand\mainmatter{\addtocontents{toc}{\protect \contentsline {part}{\chaptersname}{\pageref{chapter.1}}{chapter.1}} %manually add a TOC entry pointing to the first chapter
-                       \clearpage
+                       \cleardoublepage
        \pdfbookmark[-1]{\chaptersname}{chapters} %manually add a PDF bookmark pointing to the first chapter
        \pagenumbering{arabic}\thespacing}
-\newcommand\backmatter{\clearpage
+\newcommand\backmatter{\cleardoublepage
 \phantomsection %create a phantom section for hyperlinks to point to
 \pdfbookmark[-1]{\bibname}{bib} %add PDF bookmark for the bibliography
 \addtocontents{toc}{\protect \contentsline {chapter}{\bibname}{\thepage}{\@currentHref}}} %add TOC line for the bibliograpy
@@ -448,6 +448,7 @@
 
 \let\Oldtableofcontents\tableofcontents
 \renewcommand\tableofcontents{
+\cleardoublepage
 \pdfbookmark[0]{\contentsname}{tableofcontents}
 \Oldtableofcontents}
 }

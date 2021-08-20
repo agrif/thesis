@@ -151,22 +151,28 @@
 
 \tableofcontents
 
-\clearpage
+\cleardoublepage
 \listoffigures 
 
-\clearpage
+\cleardoublepage
 \listoftables 
 
 %\clearpage
 %\PrintListofAbbreviations{List of Abbreviations}
 
 \mainmatter
+\cleardoublepage
 \include{1-introduction}
+\cleardoublepage
 \include{2-reservoir-computing}
-\addtocontents{toc}{\protect\newpage} % prevent ugly TOC, maybe remove later
+\cleardoublepage
 \include{3-low-connectivity}
+\addtocontents{toc}{\protect\newpage} % prevent ugly TOC, maybe remove later
+\cleardoublepage
 \include{4-nvar}
+\cleardoublepage
 \include{5-nvar-application}
+\cleardoublepage
 \include{6-conclusion}
 
 \backmatter
